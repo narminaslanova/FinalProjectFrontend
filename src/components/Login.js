@@ -32,7 +32,7 @@ const Login = (props) => {
         <Form>
           <LoginForm>
             <form onSubmit={(e) => e.preventDefault()}>
-              <input type="email" value="" placeholder="Email" />
+              <input type="email"  placeholder="Email" />
               <input type="password" placeholder="Password" />
               <button type="submit">Log In</button>
             </form>

@@ -6,7 +6,7 @@ import useForm from "../hooks/useForm";
 import validateInfo from "../validateinfo";
 import FormConfirm from "../components/FormConfirm";
 
-const JoinNow = ({ submitForm }) => {
+const JoinNow = ({submitForm}) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   function submitForm() {
     setIsSubmitted(true);
