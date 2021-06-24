@@ -5,6 +5,7 @@ import PostModal from "./PostModal";
 import { connect } from "react-redux";
 import { getArticlesAPI } from "../actions";
 import ReactPlayer from "react-player";
+import { deleteArticleAPI } from "../actions";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
@@ -33,6 +34,7 @@ const Main = (props) => {
   };
 
 
+
   return (
     <>
       {props.articles.length === 0 ? (
@@ -42,7 +44,7 @@ const Main = (props) => {
           <ShareBox>
             <div>
               {props.user && props.user.photoURL ? (
-                <img src={props.user.photoURL}/>
+                <img src={props.user.photoURL} />
               ) : (
                 <img src="/images/user.svg" alt="" />
               )}
@@ -77,64 +79,68 @@ const Main = (props) => {
             {props.loading && <img src="/images/spin-loader.svg" />}
             {props.articles.length > 0 &&
               props.articles.map((article, key) => (
-            <Article>
-              <SharedActor>
-                <a>
-                  <img src={article.actor.image} alt="" />
-                  <div>
-                    <span>{article.actor.title}</span>
-                    <span>{article.actor.email}</span>
-                    <span>
-                      {article.actor.date.toDate().toLocaleDateString()}
-                    </span>
-                  </div>
-                </a>
-                <button>
-                  <img src="/images/ellipsis.svg" alt="" />
-                </button>
-              </SharedActor>
-              <Description>{article.description}</Description>
-              <SharedImg>
-                <a>
-                  {!article.sharedImg && article.video ? (
-                    <ReactPlayer width={"100%"} url={article.video} />
-                  ) : (
-                    article.sharedImg && <img src={article.sharedImg} />
-                  )}
-                </a>
-              </SharedImg>
-              <SocialCounts>
-                <li>
-                  <button>
-                    <img src="/images/like1.svg" alt="" />
-                    <img src="/images/clap.svg" alt="" />
-                    <img src="/images/heart.svg" alt="" />
-                    <span>75</span>
-                  </button>
-                </li>
-                <li>
-                  <a>{article.comments} comments</a>
-                </li>
-              </SocialCounts>
-              <SocialActions>
-                <button>
-                  <img src="/images/like.svg" alt="" />
-                  <span>Like</span>
-                </button>
-                <button>
-                  <img src="/images/comment.svg" alt="" />
-                  <span>Comment</span>
-                </button>
-                <button>
-                  <img src="/images/share.svg" alt="" />
-                  <span>Share</span>
-                </button>
-                <button>
-                  <img src="/images/send.svg" alt="" />
-                  <span>Send</span>
-                </button>
-              </SocialActions>
-            </Article>
+                <Article key={key}>
+                  <SharedActor>
+                    <a>
+                      <img src={article.actor.image} alt="" />
+                      <div>
+                        <span>{article.actor.title}</span>
+                        <span>{article.actor.email}</span>
+                        <span>
+                          {article.actor.date.toDate().toLocaleDateString()}
+                        </span>
+                      </div>
+                    </a>
+                    <button
+                      onClick={() => {
+                        console.log(props.user);
+                      }}
+                    >
+                      <img src="/images/ellipsis.svg" alt="" />
+                    </button>
+                  </SharedActor>
+                  <Description>{article.description}</Description>
+                  <SharedImg>
+                    <a>
+                      {!article.sharedImg && article.video ? (
+                        <ReactPlayer width={"100%"} url={article.video} />
+                      ) : (
+                        article.sharedImg && <img src={article.sharedImg} />
+                      )}
+                    </a>
+                  </SharedImg>
+                  <SocialCounts>
+                    <li>
+                      <button>
+                        <img src="/images/like1.svg" alt="" />
+                        <img src="/images/clap.svg" alt="" />
+                        <img src="/images/heart.svg" alt="" />
+                        <span>75</span>
+                      </button>
+                    </li>
+                    <li>
+                      <a>{article.comments} comments</a>
+                    </li>
+                  </SocialCounts>
+                  <SocialActions>
+                    <button>
+                      <img src="/images/like.svg" alt="" />
+                      <span>Like</span>
+                    </button>
+                    <button>
+                      <img src="/images/comment.svg" alt="" />
+                      <span>Comment</span>
+                    </button>
+                    <button>
+                      <img src="/images/share.svg" alt="" />
+                      <span>Share</span>
+                    </button>
+                    <button>
+                      <img src="/images/send.svg" alt="" />
+                      <span>Send</span>
+                    </button>
+                  </SocialActions>
+                </Article>
               ))}
           </Content>
           <PostModal showModal={showModal} handleClick={handleClick} />
@@ -224,6 +230,11 @@ const Article = styled(CommonCard)`
   padding: 0;
   margin: 0 0 8px;
   overflow: visible;
+  button {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 const SharedActor = styled.div`

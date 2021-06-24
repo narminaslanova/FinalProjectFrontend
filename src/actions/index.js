@@ -72,17 +72,17 @@ export function postArticleAPI(payload){
         },error => console.log(error.code), 
         async ()=>{
           const downloadURL = await upload.snapshot.ref.getDownloadURL();
-          db.collection('articles').add({
-            actor:{
+          db.collection("articles").add({
+            actor: {
               email: payload.user.email,
               title: payload.user.displayName,
               date: payload.timestamp,
-              image: payload.user.photoURL
+              image: payload.user.photoURL,
             },
             video: payload.video,
             sharedImg: downloadURL,
             comments: 0,
-            description: payload.description
+            description: payload.description,
           });
           dispatch(setLoading(false))
         }
@@ -111,10 +111,12 @@ export function getArticlesAPI(){
     let payload;
 
     db.collection("articles")
-    .orderBy("actor.date", "desc")
-    .onSnapshot((snapshot)=>{
-      payload = snapshot.docs.map((doc)=> doc.data());
-      dispatch(getArticles(payload))
-    })
+      .orderBy("actor.date", "desc")
+      .onSnapshot((snapshot) => {
+        payload = snapshot.docs.map((doc) => doc.data());
+        console.log(payload);
+        dispatch(getArticles(payload));
+      });
   }
 }
+

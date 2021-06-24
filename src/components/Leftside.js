@@ -8,16 +8,19 @@ const Leftside = (props) => {
       <ArtCard>
         <UserInfo>
           <CardBackground />
-          <a href="#">
-            <Photo/>
+          <Photo>
+            {props.user && props.user.photoURL ? (
+              <img src={props.user.photoURL} />
+            ) : (
+              <img src="/images/user.svg" alt="" />
+            )}
+          </Photo>
+          <a>
             <Link>{props.user ? props.user.displayName : "Username"}</Link>
-          </a>
-          <a href="#">
-            <AddPhotoText>Add a photo</AddPhotoText>
           </a>
         </UserInfo>
         <Widget>
-          <a href="#">
+          <a>
             <div>
               <span>Connections</span>
               <span>Grow your network</span>
@@ -33,19 +36,19 @@ const Leftside = (props) => {
         </Item>
       </ArtCard>
       <CommunityCard>
-        <a href="#">
+        <a>
           <span>Groups</span>
         </a>
-        <a href="#">
+        <a>
           <span>
             Events
             <img src="/images/plus-icon.svg" alt="" />
           </span>
         </a>
-        <a href="#">
+        <a>
           <span>Follow Hashtags</span>
         </a>
-        <a href="#">
+        <a>
           <span>Discover more</span>
         </a>
       </CommunityCard>
@@ -86,19 +89,17 @@ const CardBackground = styled.div`
 `;
 
 const Photo = styled.div`
-  box-shadow: none;  
-  background-image: url("/images/photo.svg");
   width: 72px;
   height: 72px;
-  box-sizing: border-box;
-  background-clip: content-box;
-  background-color: white;
-  background-position: center;
-  background-size: 60%;
-  background-repeat: no-repeat;
   border: 2px solid white;
-  margin: -38px auto 12px;
   border-radius: 50%;
+  margin: -38px auto 12px;
+  img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
 `;
 
 const Link = styled.div`
