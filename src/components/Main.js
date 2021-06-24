@@ -33,8 +33,6 @@ const Main = (props) => {
     }
   };
 
-
-
   return (
     <>
       {props.articles.length === 0 ? (
@@ -57,11 +55,11 @@ const Main = (props) => {
             </div>
 
             <div>
-              <button>
+              <button onClick={handleClick}>
                 <img src="/images/photo1.svg" alt="" />
                 <span>Photo</span>
               </button>
-              <button>
+              <button onClick={handleClick}>
                 <img src="/images/video.svg" alt="" />
                 <span>Video</span>
               </button>
@@ -92,8 +90,8 @@ const Main = (props) => {
                       </div>
                     </a>
                     <button
-                      onClick={() => {
-                        console.log(props.user);
+                      onClick={(article) => {
+                        console.log(article.id);
                       }}
                     >
                       <img src="/images/ellipsis.svg" alt="" />

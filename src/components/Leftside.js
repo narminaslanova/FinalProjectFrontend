@@ -15,8 +15,8 @@ const Leftside = (props) => {
               <img src="/images/user.svg" alt="" />
             )}
           </Photo>
-          <a>
-            <Link>{props.user ? props.user.displayName : "Username"}</Link>
+          <a href="/myprofile">
+            {props.user ? props.user.displayName : "Username"}
           </a>
         </UserInfo>
         <Widget>
@@ -78,6 +78,12 @@ const UserInfo = styled.div`
   padding: 12px 12px 16px;
   word-wrap: break-word;
   word-break: break-word;
+  a {
+    text-decoration: none;
+    &:visited {
+      color: black;
+    }
+  }
 `;
 
 const CardBackground = styled.div`

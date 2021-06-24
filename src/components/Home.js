@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 const Home = (props) => {
   return (
     <Container>
-      {!props.user && <Redirect to="/" />}
+      {!props.user && <Redirect to="/home" />}
       <Layout>
         <Leftside />
         <Main />

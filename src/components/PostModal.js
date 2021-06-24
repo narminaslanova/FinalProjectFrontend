@@ -39,8 +39,9 @@ const PostModal = (props) => {
      video: videoLink,
      user: props.user,
      description: editorText,
-     timestamp: firebase.firestore.Timestamp.now()
-   }
+     timestamp: firebase.firestore.Timestamp.now(),
+     id: 1,
+   };
    props.postArticle(payload);
    reset(e);
  }
