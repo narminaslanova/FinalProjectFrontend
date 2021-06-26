@@ -5,7 +5,6 @@ import PostModal from "./PostModal";
 import { connect } from "react-redux";
 import { getArticlesAPI } from "../actions";
 import ReactPlayer from "react-player";
-import { deleteArticleAPI } from "../actions";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");

@@ -1,7 +1,20 @@
 import React from "react";
-import styled from "styled-components";
+import { useState, useEffect, useRef } from "react";
+import styled, { css } from "styled-components";
 
 const Rightside = (props) => {
+  const bannerCard = useRef();
+  const [fixedPosition, setFixedPosition] = useState(false);
+  useEffect(() => {
+    const initialTop = bannerCard.current.getBoundingClientRect().top;
+    const handleScroll = () => {
+      setFixedPosition(window.scrollY > 237);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <Container>
       <FollowCard>
@@ -36,7 +49,7 @@ const Rightside = (props) => {
           <img src="/images/right-icon.svg" alt="" />
         </Recommendation>
       </FollowCard>
-      <BannerCard>
+      <BannerCard fixed={fixedPosition} ref={bannerCard}>
         <img src="/images/dreamjob.png" alt="" />
       </BannerCard>
     </Container>
@@ -122,9 +135,34 @@ const BannerCard = styled(FollowCard)`
   padding-bottom: 0px;
   img {
     width: 100%;
-    height: 100%;
     object-fit: contain;
   }
+  @media (max-width: 768px) {
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    border: none;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
+    padding-top: 0px;
+    padding-bottom: 0px;
+    img {
+    width: 100%;
+    object-fit: contain;
+    }
+  }
+  ${(props) =>
+    props.fixed &&
+  css`
+    position: fixed;
+    top: 59px;
+      img {
+        width: 381.88px;
+        object-fit: contain;
+      } 
+  `}    
 `;
 
 export default Rightside;

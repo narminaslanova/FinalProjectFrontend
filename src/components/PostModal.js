@@ -40,7 +40,6 @@ const PostModal = (props) => {
      user: props.user,
      description: editorText,
      timestamp: firebase.firestore.Timestamp.now(),
-     id: 1,
    };
    props.postArticle(payload);
    reset(e);

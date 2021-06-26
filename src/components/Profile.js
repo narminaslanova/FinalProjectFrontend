@@ -25,7 +25,7 @@ const Layout = styled.div`
   grid-template-areas: "leftpart rightpart";
   grid-template-columns: minmax(0, 12fr) minmax(300px, 5fr);
   column-gap: 25px;
-  row-gap: 25px;
+  row-gap: 15px;
   grid-template-rows: auto;
   margin: 25px 0;
   @media (max-width: 768px) {
@@ -36,6 +36,7 @@ const Layout = styled.div`
 `;
 
 const mapStateToProps = (state) => {
+   console.log(state.userState.user);
   return {
     user: state.userState.user,
   };

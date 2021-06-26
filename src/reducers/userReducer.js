@@ -1,7 +1,8 @@
-import { SET_USER } from "../actions/actionType";
+import { SET_USER, UPDATE_CONTACTINFO } from "../actions/actionType";
 
 const INITAL_STATE = {
   user: null,
+  contactInfo: [],
 };
 
 const userReducer = (state = INITAL_STATE, action) => {
@@ -10,6 +11,11 @@ const userReducer = (state = INITAL_STATE, action) => {
       return {
         ...state,
         user: action.user,
+      };
+    case UPDATE_CONTACTINFO:
+      return {
+        ...state,
+        contactInfo: action.contactInfo,
       };
     default:
       return state;

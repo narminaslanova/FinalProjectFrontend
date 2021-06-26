@@ -1,8 +1,22 @@
 import React from "react";
-import styled from "styled-components";
+import { useState, useEffect, useRef } from "react";
+import styled, { css } from "styled-components";
 import { connect } from "react-redux";
 
+
 const Leftside = (props) => {
+  const communityCard = useRef();
+  const [fixedPosition, setFixedPosition] = useState(false);
+  useEffect(() => {
+    const initialTop = communityCard.current.getBoundingClientRect().top;
+    const handleScroll = () => {
+      setFixedPosition(window.scrollY > 275);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <Container>
       <ArtCard>
@@ -35,23 +49,25 @@ const Leftside = (props) => {
           </span>
         </Item>
       </ArtCard>
-      <CommunityCard>
-        <a>
-          <span>Groups</span>
-        </a>
-        <a>
-          <span>
-            Events
-            <img src="/images/plus-icon.svg" alt="" />
-          </span>
-        </a>
-        <a>
-          <span>Follow Hashtags</span>
-        </a>
-        <a>
-          <span>Discover more</span>
-        </a>
-      </CommunityCard>
+      
+        <CommunityCard fixed={fixedPosition} ref={communityCard}>
+          <a>
+            <span>Groups</span>
+          </a>
+          <a>
+            <span>
+              Events
+              <img src="/images/plus-icon.svg" alt="" />
+            </span>
+          </a>
+          <a>
+            <span>Follow Hashtags</span>
+          </a>
+          <a>
+            <span>Discover more</span>
+          </a>
+        </CommunityCard>
+      
     </Container>
   );
 };
@@ -108,20 +124,7 @@ const Photo = styled.div`
   }
 `;
 
-const Link = styled.div`
-  font-size: 16px;
-  line-height: 1.5;
-  color: rgba(0, 0, 0, 0.9);
-  font-weight: 600;
-`;
 
-const AddPhotoText = styled.div`
-  color: #0a66c2;
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 1.33;
-  font-weight: 400;
-`;
 
 const Widget = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -210,6 +213,14 @@ const CommunityCard = styled(ArtCard)`
       }
     }
   }
+  ${(props) =>
+    props.fixed &&
+    css`
+      position: fixed;
+      top: 59px;
+      width: 289.91px;
+      height: 113.8px;
+    `}
 `;
 
 const mapStatetoProps = (state) => {

@@ -102,7 +102,22 @@ export function postArticleAPI(payload){
          description: payload.description
       });
       dispatch(setLoading(false))
+    }else if(payload.description){
+      db.collection("articles").add({
+        actor:{
+          email:payload.user.email,
+          title: payload.user.displayName,
+          date: payload.timestamp,
+          image: payload.user.photoURL
+        },
+        video:"",
+        sharedImg:"",
+        comments:0,
+        description:payload.description
+      })
+      dispatch(setLoading(false));
     }
+
   }
 }
 
@@ -114,9 +129,19 @@ export function getArticlesAPI(){
       .orderBy("actor.date", "desc")
       .onSnapshot((snapshot) => {
         payload = snapshot.docs.map((doc) => doc.data());
-        console.log(payload);
+        // console.log(payload);
         dispatch(getArticles(payload));
       });
   }
 }
 
+export function changeContactInfo(payload) {
+  return () => {
+    db.collection("contactInfo").setState({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      country: payload.country,
+      city: payload.city,
+    });
+  };
+}
