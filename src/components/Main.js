@@ -3,15 +3,42 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostModal from "./PostModal";
 import { connect } from "react-redux";
-import { getArticlesAPI } from "../actions";
+//import { getArticlesAPI } from "../actions";
 import ReactPlayer from "react-player";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+
+
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
 
+  const [posts, setPosts] = useState([]);
+  const test = useSelector((state) => state.articleState);
+  const getData = async () => {
+   // const token = await authService.getAccessToken();
+    axios
+      .get("https://localhost:44331/api/Post", {
+        // headers: !token ? {} : { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        const myPosts = response.data;
+        // setPosts({ posts: response.data });
+        setPosts(myPosts);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
-    props.getArticles();
-  }, []);
+   getData();
+      //console.log(test)
+  },[]);
+
+  // useEffect(() => {
+  //   props.getArticles();
+  // }, []);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -34,118 +61,174 @@ const Main = (props) => {
 
   return (
     <>
-      {props.articles.length === 0 ? (
+      {/* {props.articles.length === 0 ? (
         <p>There are no articles</p>
-      ) : (
-        <Container>
-          <ShareBox>
-            <div>
-              {props.user && props.user.photoURL ? (
-                <img src={props.user.photoURL} />
-              ) : (
-                <img src="/images/user.svg" alt="" />
-              )}
-              <button
-                onClick={handleClick}
-                disabled={props.loading ? true : false}
-              >
-                Start a post
-              </button>
-            </div>
+      ) : ( */}
+      <Container>
+        <ShareBox>
+          <div>
+            {props.user && props.user.photoURL ? (
+              <img src={props.user.photoURL} />
+            ) : (
+              <img src="/images/user.svg" alt="" />
+            )}
+            <button
+              onClick={handleClick}
+              disabled={props.loading ? true : false}
+            >
+              Start a post
+            </button>
+          </div>
 
-            <div>
-              <button onClick={handleClick}>
-                <img src="/images/photo1.svg" alt="" />
-                <span>Photo</span>
-              </button>
-              <button onClick={handleClick}>
-                <img src="/images/video.svg" alt="" />
-                <span>Video</span>
-              </button>
-              <button>
-                <img src="/images/event.svg" alt="" />
-                <span>Event</span>
-              </button>
-              <button>
-                <img src="/images/article.svg" alt="" />
-                <span>Write article</span>
-              </button>
-            </div>
-          </ShareBox>
-          <Content>
-            {props.loading && <img src="/images/spin-loader.svg" />}
-            {props.articles.length > 0 &&
-              props.articles.map((article, key) => (
-                <Article key={key}>
-                  <SharedActor>
-                    <a>
-                      <img src={article.actor.image} alt="" />
-                      <div>
-                        <span>{article.actor.title}</span>
-                        <span>{article.actor.email}</span>
-                        <span>
-                          {article.actor.date.toDate().toLocaleDateString()}
-                        </span>
-                      </div>
-                    </a>
-                    <button
-                      onClick={(article) => {
-                        console.log(article.id);
-                      }}
-                    >
-                      <img src="/images/ellipsis.svg" alt="" />
-                    </button>
-                  </SharedActor>
-                  <Description>{article.description}</Description>
-                  <SharedImg>
-                    <a>
-                      {!article.sharedImg && article.video ? (
-                        <ReactPlayer width={"100%"} url={article.video} />
-                      ) : (
-                        article.sharedImg && <img src={article.sharedImg} />
-                      )}
-                    </a>
-                  </SharedImg>
-                  <SocialCounts>
-                    <li>
-                      <button>
-                        <img src="/images/like1.svg" alt="" />
-                        <img src="/images/clap.svg" alt="" />
-                        <img src="/images/heart.svg" alt="" />
-                        <span>75</span>
-                      </button>
-                    </li>
-                    <li>
-                      <a>{article.comments} comments</a>
-                    </li>
-                  </SocialCounts>
-                  <SocialActions>
+          <div>
+            <button onClick={handleClick}>
+              <img src="/images/photo1.svg" alt="" />
+              <span>Photo</span>
+            </button>
+            <button onClick={handleClick}>
+              <img src="/images/video.svg" alt="" />
+              <span>Video</span>
+            </button>
+            <button>
+              <img src="/images/event.svg" alt="" />
+              <span>Event</span>
+            </button>
+            <button>
+              <img src="/images/article.svg" alt="" />
+              <span>Write article</span>
+            </button>
+          </div>
+        </ShareBox>
+        <Content>
+          {posts.map((post) => (
+            <Article key={post.id}>
+              <SharedActor>
+                <a>
+                  <img src="/images/google.svg" alt="" />
+                  <div>
+                    <span>{post.title}</span>
+                    <span>{post.userId}</span>
+                    <span>
+                      {post.id}
+                    </span>
+                  </div>
+                </a>
+                <button
+                  onClick={(article) => {
+                    console.log(article.id);
+                  }}
+                >
+                  <img src="/images/ellipsis.svg" alt="" />
+                </button>
+              </SharedActor>
+              <Description>{post.body}</Description>
+              <SocialCounts>
+                <li>
+                  <button>
+                    <img src="/images/like1.svg" alt="" />
+                    <img src="/images/clap.svg" alt="" />
+                    <img src="/images/heart.svg" alt="" />
+                    <span>75</span>
+                  </button>
+                </li>
+                <li>
+                  <a> comments</a>
+                </li>
+              </SocialCounts>
+              <SocialActions>
+                <button>
+                  <img src="/images/like.svg" alt="" />
+                  <span>Like</span>
+                </button>
+                <button>
+                  <img src="/images/comment.svg" alt="" />
+                  <span>Comment</span>
+                </button>
+                <button>
+                  <img src="/images/share.svg" alt="" />
+                  <span>Share</span>
+                </button>
+                <button>
+                  <img src="/images/send.svg" alt="" />
+                  <span>Send</span>
+                </button>
+              </SocialActions>
+            </Article>
+          ))}
+
+          {/* {props.loading && <img src="/images/spin-loader.svg" />}
+          {props.articles.length > 0 &&
+            props.articles.map((article, key) => (
+              <Article key={key}>
+                <SharedActor>
+                  <a>
+                    <img src={article.actor.image} alt="" />
+                    <div>
+                      <span>{article.actor.title}</span>
+                      <span>{article.actor.email}</span>
+                      <span>
+                        {article.actor.date.toDate().toLocaleDateString()}
+                      </span>
+                    </div>
+                  </a>
+                  <button
+                    onClick={(article) => {
+                      console.log(article.id);
+                    }}
+                  >
+                    <img src="/images/ellipsis.svg" alt="" />
+                  </button>
+                </SharedActor>
+                <Description>{article.description}</Description>
+                <SharedImg>
+                  <a>
+                    {!article.sharedImg && article.video ? (
+                      <ReactPlayer width={"100%"} url={article.video} />
+                    ) : (
+                      article.sharedImg && <img src={article.sharedImg} />
+                    )}
+                  </a>
+                </SharedImg>
+                <SocialCounts>
+                  <li>
                     <button>
-                      <img src="/images/like.svg" alt="" />
-                      <span>Like</span>
+                      <img src="/images/like1.svg" alt="" />
+                      <img src="/images/clap.svg" alt="" />
+                      <img src="/images/heart.svg" alt="" />
+                      <span>75</span>
                     </button>
-                    <button>
-                      <img src="/images/comment.svg" alt="" />
-                      <span>Comment</span>
-                    </button>
-                    <button>
-                      <img src="/images/share.svg" alt="" />
-                      <span>Share</span>
-                    </button>
-                    <button>
-                      <img src="/images/send.svg" alt="" />
-                      <span>Send</span>
-                    </button>
-                  </SocialActions>
-                </Article>
-              ))}
-          </Content>
-          <PostModal showModal={showModal} handleClick={handleClick} />
-        </Container>
-      )}
+                  </li>
+                  <li>
+                    <a>{article.comments} comments</a>
+                  </li>
+                </SocialCounts>
+                <SocialActions>
+                  <button>
+                    <img src="/images/like.svg" alt="" />
+                    <span>Like</span>
+                  </button>
+                  <button>
+                    <img src="/images/comment.svg" alt="" />
+                    <span>Comment</span>
+                  </button>
+                  <button>
+                    <img src="/images/share.svg" alt="" />
+                    <span>Share</span>
+                  </button>
+                  <button>
+                    <img src="/images/send.svg" alt="" />
+                    <span>Send</span>
+                  </button>
+                </SocialActions>
+              </Article>
+            ))} */}
+        </Content>
+        <PostModal showModal={showModal} handleClick={handleClick} />
+      </Container>
+      {/* )}  */}
     </>
   );
-};
+}
 
 const Container = styled.div`
   grid-area: main;
@@ -356,16 +439,17 @@ const Content = styled.div`
   }
 `;
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.articleState.loading,
-    user: state.userState.user,
-    articles: state.articleState.articles,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     loading: state.articleState.loading,
+//     user: state.userState.user,
+//     articles: state.articleState.articles,
+//   };
+// };
 
-const mapDispatchToProps = (dispatch) => ({
-  getArticles: () => dispatch(getArticlesAPI()),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   getArticles: () => dispatch(getArticlesAPI()),
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+//export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default Main;

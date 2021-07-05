@@ -4,7 +4,7 @@ import styled from "styled-components";
 function FormConfirm() {
   return (
     <Container>
-      <a href="#">
+      <a>
         <img
           src="/images/linkedin.png"
           style={{ width: "135px", height: "34px" }}
@@ -12,7 +12,9 @@ function FormConfirm() {
         />
       </a>
       <div className="item">
-        <h4 className="confirmation">You are succefully registered</h4>
+        <h4 className="confirmation">
+          Confirmation link has been sent to your email
+        </h4>
       </div>
     </Container>
   );

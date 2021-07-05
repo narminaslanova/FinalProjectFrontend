@@ -1,20 +1,37 @@
 import React from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import validateInfo from "../validateinfo";
 import FormConfirm from "../components/FormConfirm";
+import axios from "axios";
+import { Redirect } from "react-router";
 
 const JoinNow = ({submitForm}) => {
+  const [redirect, setRedirect] = useState(false);
+  const history = useHistory();
   const [isSubmitted, setIsSubmitted] = useState(false);
-  function submitForm() {
-    setIsSubmitted(true);
-  }
+  
   const { handleChange, values, handleSubmit, errors } = useForm(
     submitForm,
     validateInfo
   );
+  function submitForm() {
+    setIsSubmitted(true);
+  }
+  
+   const signUp = async () => {
+     await axios.post("https://localhost:44331/api/Authenticate/register", {
+       ...values,
+     });
+
+     setRedirect(true);
+   };
+
+   if (redirect) {
+     return <Redirect to="/" />;
+   }
 
   return !isSubmitted ? (
     <Container submitForm={submitForm}>
@@ -47,6 +64,15 @@ const JoinNow = ({submitForm}) => {
           />
           {errors.lastName && <p className="error">{errors.lastName}</p>}
           <input
+            id="birthDay"
+            type="date"
+            name="birthDay"
+            placeholder="BirthDay"
+            value={values.birthDay}
+            onChange={handleChange}
+          />
+          {errors.birthDay && <p className="error">{errors.birthDay}</p>}
+          <input
             id="email"
             type="email"
             name="email"
@@ -65,15 +91,17 @@ const JoinNow = ({submitForm}) => {
           />
           {errors.password && <p className="error">{errors.password}</p>}
           <input
-            id="password2"
+            id="confirmPassword"
             type="password"
-            name="password2"
+            name="confirmPassword"
             placeholder="Confirm Password"
-            value={values.passowrd2}
+            value={values.confirmPassword}
             onChange={handleChange}
           />
-          {errors.password2 && <p className="error">{errors.password2}</p>}
-          <button type="submit" className="join-btn">
+          {errors.confirmPassword && (
+            <p className="error">{errors.confirmPassword}</p>
+          )}
+          <button type="submit" className="join-btn" onClick={signUp}>
             Agree & Join
           </button>
           <p>
@@ -91,7 +119,7 @@ const JoinNow = ({submitForm}) => {
       </div>
     </Container>
   ) : (
-     <FormConfirm />
+    <FormConfirm />
   );
 };
 

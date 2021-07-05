@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { changeContactInfo } from "../actions";
+import { connect } from "react-redux";
 
-const ContactInfoModal = (props) => {
+const ContactInfoModal = ({ setOpenModal, props }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [country, setCountry] = useState("");
@@ -14,37 +14,24 @@ const ContactInfoModal = (props) => {
     setLastName("");
     setCountry("");
     setCity("");
-    props.handleClick(e);
-  };
-
-  const changeInfo = (e) => {
-    e.preventDefault();
-    if (e.target !== e.currentTarget) {
-      return;
-    }
-
-    const payload = {
-      firstName: firstName,
-      lastName: lastName,
-      country: country,
-      city: city,
-    };
-    props.changeInfo(payload);
-    reset(e);
   };
 
   return (
     <>
-      {props.showModal === "open" && (
-        <Container>
+      <Container>
           <Content>
             <Header>
               <h2>Edit info</h2>
               <button>
                 <img
-                  onClick={(event) => reset(event)}
+                  // onClick={(event) => reset(event)}
+
                   src="/images/close-icon.svg"
                   alt=""
+                  onClick={(e) => {
+                    setOpenModal(false);
+                    reset(e);
+                  }}
                 />
               </button>
             </Header>
@@ -66,14 +53,27 @@ const ContactInfoModal = (props) => {
                 name="lastName"
               />
               <label htmlFor="country">Country</label>
-              <input type="text" id="country" name="country" />
+              <input
+                type="text"
+                id="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                name="country"
+              />
               <label htmlFor="city">City</label>
-              <input type="text" id="city" name="city" />
+              <input
+                type="text"
+                id="city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                name="city"
+              />
             </EditContent>
-            <SavedButton>Save</SavedButton>
+            <SavedButton>
+              Save
+            </SavedButton>
           </Content>
         </Container>
-      )}
     </>
   );
 };
@@ -155,5 +155,6 @@ const SavedButton = styled.button`
   padding-right: 16px;
   border: none;
 `;
+
 
 export default ContactInfoModal;

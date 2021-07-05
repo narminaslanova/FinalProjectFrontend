@@ -25,7 +25,7 @@ const Rightside = (props) => {
 
         <FeedList>
           <li>
-            <a href="#">
+            <a>
               <Avatar />
             </a>
             <div>
@@ -34,7 +34,7 @@ const Rightside = (props) => {
             </div>
           </li>
           <li>
-            <a href="#">
+            <a>
               <Avatar />
             </a>
             <div>

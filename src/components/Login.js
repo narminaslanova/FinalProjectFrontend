@@ -1,49 +1,94 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { signInAPI } from "../actions";
 import { Redirect } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { userActions } from "../actions/userActions";
 
 const Login = (props) => {
+  const [logged, setLogged] = useState(false);
+  const [values, setValues] = useState({ email: "", password: "" });
+  //let store = JSON.parse(localStorage.getItem("login"));
+  const { email, password } = values;
+  //const loggingIn = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: value,
+    });
+  };
+   useEffect(() => {
+    dispatch(userActions.logout());
+    //console.log(loggingIn);
+  }, []);
+  const submit = (e) => {
+    e.preventDefault();
+    if (email && password) {
+      dispatch(userActions.login(email, password));
+      setLogged(true);
+    }
+  };
+
+  if (logged) {
+    return <Redirect to="/home" />;
+  }
+
   return (
-    <Container>
-      {props.user && <Redirect to="/home" />}
-      <Nav>
-        <a href="/">
-          <img
-            src="/images/linkedin.png"
-            style={{ width: "135px", height: "33.75px" }}
-            alt=""
-          />
-        </a>
-        <div>
-          <Link to="/signup" style={{ textDecoration: "none" }}>
-            <Join>Join now</Join>
-          </Link>
-          <SignIn>Sign in</SignIn>
-        </div>
-      </Nav>
-      <Section>
-        <Hero>
-          <h1>Welcome to your professional community</h1>
-          <img src="/images/login-hero2.svg" alt="" />
-        </Hero>
-        <Form>
-          <LoginForm>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <input type="email"  placeholder="Email" />
-              <input type="password" placeholder="Password" />
-              <button type="submit">Log In</button>
-            </form>
-          </LoginForm>
-          <Google onClick={() => props.signIn()}>
-            <img src="/images/google.svg" alt="" />
-            Sign in with google
-          </Google>
-        </Form>
-      </Section>
-    </Container>
+    <>
+      <Container>
+        <Nav>
+          <a href="/">
+            <img
+              src="/images/linkedin.png"
+              style={{ width: "135px", height: "33.75px" }}
+              alt=""
+            />
+          </a>
+          <div>
+            <Link to="/signup" style={{ textDecoration: "none" }}>
+              <Join>Join now</Join>
+            </Link>
+            <SignIn>Sign in</SignIn>
+          </div>
+        </Nav>
+        <Section>
+          <Hero>
+            <h1>Welcome to your professional community</h1>
+            <img src="/images/login-hero2.svg" alt="" />
+          </Hero>
+          <Form>
+            <LoginForm>
+              <form onSubmit={submit}>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  id="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  id="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                />
+                <LoginButton type="submit">Log In</LoginButton>
+              </form>
+            </LoginForm>
+            <Google onClick={() => props.signIn()}>
+              <img src="/images/google.svg" alt="" />
+              Sign in with google
+            </Google>
+          </Form>
+        </Section>
+      </Container>
+    </>
   );
 };
 
@@ -204,41 +249,29 @@ const LoginForm = styled.div`
     outline: none;
     border-radius: 5px;
   }
-  button {
-    margin: 20px 0px;
-    border: 2px solid #2977c9;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    background-color: #2977c9;
-    align-items: center;
-    height: 56px;
-    width: 100%;
-    border-radius: 28px;
-    vertical-align: middle;
-    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%),
-      inset 0 0 0 2px rgb(0 0 0 / 0%) inset 0 0 0 1px rgb(0 0 0 / 0);
-    z-index: 0;
-    transition-duration: 167ms;
-    font-size: 20px;
-    color: white;
-    &:hover {
-      background-color: white;
-      color: #2977c9;
-    }
+`;
+const LoginButton = styled.button`
+  margin: 20px 0px;
+  border: 2px solid #2977c9;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  background-color: #2977c9;
+  align-items: center;
+  height: 56px;
+  width: 100%;
+  border-radius: 28px;
+  vertical-align: middle;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%),
+    inset 0 0 0 2px rgb(0 0 0 / 0%) inset 0 0 0 1px rgb(0 0 0 / 0);
+  z-index: 0;
+  transition-duration: 167ms;
+  font-size: 20px;
+  color: white;
+  &:hover {
+    background-color: white;
+    color: #2977c9;
   }
 `;
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.userState.user,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    signIn: () => dispatch(signInAPI()),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

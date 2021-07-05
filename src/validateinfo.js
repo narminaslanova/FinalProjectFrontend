@@ -9,6 +9,10 @@ export default function validateInfo(values) {
   if (!values.lastName.trim()) {
     errors.lastName = "Last Name is required";
   }
+  //BirthDay
+  if (!values.birthDay) {
+    errors.birthDay = "Birthday is required";
+  }
   //Email
   if (!values.email) {
     errors.email = "Email is required";
@@ -22,10 +26,10 @@ export default function validateInfo(values) {
     errors.password = "Password should be 6 or more characters";
   }
   //Confirm Password
-  if (!values.password2) {
-    errors.password2 = "Password is required";
-  } else if (values.password2 !== values.password) {
-    errors.password2 = "Passwords do not match";
+  if (!values.confirmPassword) {
+    errors.confirmPassword = "Password is required";
+  } else if (values.confirmPassword !== values.password) {
+    errors.confirmPassword = "Passwords do not match";
   }
 
   return errors;

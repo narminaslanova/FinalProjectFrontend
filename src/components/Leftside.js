@@ -1,37 +1,66 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { Redirect } from "react-router";
 
-
-const Leftside = (props) => {
+const Leftside = () => {
   const communityCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
+  const user = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+  const [profileImg, setProfileImg] = useState("/images/user.svg");
+
+ const imageHandler = (e) => {
+   const reader = new FileReader();
+   reader.onload = () => {
+     if (reader.readyState === 2) {
+       setProfileImg(reader.result);
+     }
+   };
+   reader.readAsDataURL(e.target.files[0]);
+ };
+
   useEffect(() => {
-    const initialTop = communityCard.current.getBoundingClientRect().top;
+    console.log("leftside", user.user.user);
+    //const initialTop = communityCard.current.getBoundingClientRect().top;
     const handleScroll = () => {
       setFixedPosition(window.scrollY > 275);
     };
+    
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   return (
     <Container>
       <ArtCard>
         <UserInfo>
           <CardBackground />
           <Photo>
-            {props.user && props.user.photoURL ? (
-              <img src={props.user.photoURL} />
-            ) : (
-              <img src="/images/user.svg" alt="" />
-            )}
+            <img src={user.user.user.imageUrl} alt="" />
+            {/* {user && user.user.user.ImageUrl ? (
+                <img src={user.user.user.ImageUrl} />
+              ) : ( */}
+
+            {/* )} */}
           </Photo>
-          <a href="/myprofile">
-            {props.user ? props.user.displayName : "Username"}
+          <a>
+            {user
+              ? user.user.user.firstName + " " + user.user.user.lastName
+              : "Username"}
           </a>
+          <input
+            type="file"
+            name="image-upload"
+            id="image-upload"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={imageHandler}
+          />
+          <label htmlFor="image-upload">Add Photo</label>
         </UserInfo>
         <Widget>
           <a>
@@ -49,25 +78,24 @@ const Leftside = (props) => {
           </span>
         </Item>
       </ArtCard>
-      
-        <CommunityCard fixed={fixedPosition} ref={communityCard}>
-          <a>
-            <span>Groups</span>
-          </a>
-          <a>
-            <span>
-              Events
-              <img src="/images/plus-icon.svg" alt="" />
-            </span>
-          </a>
-          <a>
-            <span>Follow Hashtags</span>
-          </a>
-          <a>
-            <span>Discover more</span>
-          </a>
-        </CommunityCard>
-      
+
+      <CommunityCard fixed={fixedPosition} ref={communityCard}>
+        <a>
+          <span>Groups</span>
+        </a>
+        <a>
+          <span>
+            Events
+            <img src="/images/plus-icon.svg" alt="" />
+          </span>
+        </a>
+        <a>
+          <span>Follow Hashtags</span>
+        </a>
+        <a>
+          <span>Discover more</span>
+        </a>
+      </CommunityCard>
     </Container>
   );
 };
@@ -99,6 +127,12 @@ const UserInfo = styled.div`
     &:visited {
       color: black;
     }
+  }
+  label {
+    cursor:pointer;
+    display: block;
+    font-size: 14px;
+    color: blue;
   }
 `;
 
@@ -223,10 +257,11 @@ const CommunityCard = styled(ArtCard)`
     `}
 `;
 
-const mapStatetoProps = (state) => {
-  return {
-    user: state.userState.user,
-  };
-};
+// const mapStatetoProps = (state) => {
+//   return {
+//     user: state.userState.user,
+//   };
+// };
 
-export default connect(mapStatetoProps)(Leftside);
+//export default connect(mapStatetoProps)(Leftside);
+export default Leftside;

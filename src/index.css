@@ -148,3 +148,37 @@ body{
       opacity: 1;
     }
   }
+
+  .main{
+    position: absolute;
+    top: 52px;
+    right: 18%;
+    background: white;
+    border-radius: 0 0 5px 5px;
+    width: 300px;
+    height: 200px;
+    font-size: 16px;
+    transition-duration: 167ms;
+    text-align: center;
+    display: none;
+  /* img {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: left;
+    padding: 5px 10px;
+    border-radius: 50%;
+  } */
+  }
+  .main img{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: left;
+    padding: 5px 10px;
+    border-radius: 50%;
+  }
+
+  .userImage:hover ~ .main {
+    display: block;
+  }

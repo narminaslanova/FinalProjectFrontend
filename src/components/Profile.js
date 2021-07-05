@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 const Profile = (props) => {
   return (
     <Container>
-      {!props.user && <Redirect to="/myprofile" />}
+      {/* {!props.user && <Redirect to="/myprofile" />} */}
       <Layout>
         <LeftPart />
         <RightPart />
@@ -35,10 +35,11 @@ const Layout = styled.div`
   }
 `;
 
-const mapStateToProps = (state) => {
-   console.log(state.userState.user);
-  return {
-    user: state.userState.user,
-  };
-};
-export default connect(mapStateToProps)(Profile);
+// const mapStateToProps = (state) => {
+//    console.log(state.userState.user);
+//   return {
+//     user: state.userState.user,
+//   };
+// };
+//export default connect(mapStateToProps)(Profile);
+export default Profile;

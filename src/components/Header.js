@@ -1,10 +1,24 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { signOutAPI } from "../actions";
+import { useSelector, useDispatch } from "react-redux";
+import { userActions } from "../actions/userActions";
+import {Redirect} from "react-router";
 
 const Header = (props) => {
+  const user = useSelector((state) => state.authentication);
+  const [loggedOut, setLoggedOut] = useState(false);
+  const dispatch = useDispatch();
+
+   
+  const logOut = () => {
+    dispatch(userActions.logout());
+    setLoggedOut(true);
+  };
+  if (loggedOut) {
+    <Redirect to="/"/>
+  }
   return (
     <Container>
       <Content>
@@ -30,74 +44,79 @@ const Header = (props) => {
               </a>
             </NavList>
             <NavList>
-              <a href="#">
+              <a>
                 <img src="/images/nav-network.svg" alt="" />
                 <span>My Network</span>
               </a>
             </NavList>
             <NavList>
-              <a href="#">
+              <a>
                 <img src="/images/nav-jobs.svg" alt="" />
                 <span>Jobs</span>
               </a>
             </NavList>
             <NavList>
-              <a href="#">
+              <a>
                 <img src="/images/nav-messaging.svg" alt="" />
                 <span>Messaging</span>
               </a>
             </NavList>
             <NavList>
-              <a href="#">
+              <a>
                 <img src="/images/nav-notifications.svg" alt="" />
                 <span>Notifications</span>
               </a>
             </NavList>
             <User>
-              <a href="#">
-                {props.user && props.user.photoURL ? (
+              <a>
+                {/* {user && props.user.photoURL ? (
                   <img src={props.user.photoURL} alt="" />
-                ) : (
-                  <img src="/images/user.svg" alt="" />
-                )}
+                ) : ( */}
+                <img className="userImage" src="/images/user.svg" alt="" />
+                {/* )} */}
                 <span>
                   Me
                   <img src="/images/down-icon.svg" alt="" />
                 </span>
               </a>
-              <Card>
+              <div className="main">
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "row",
                   }}
                 >
-                  {props.user && props.user.photoURL ? (
+                  {/* {props.user && props.user.photoURL ? (
                     <img src={props.user.photoURL} alt="" />
-                  ) : (
-                    <img src="/images/user.svg" alt="" />
-                  )}
+                  ) : ( */}
+                  <img src="/images/user.svg" alt="" />
+                  {/* )} */}
                   <h4
                     style={{
                       margin: "30px 0",
                     }}
                   >
-                    Name Surname
+                    {user && user.user.user.firstName ? (
+                    user.user.user.firstName + " "+ user.user.user.lastName 
+                  ) : (
+                    <span>Name Surname</span>)}
                   </h4>
                 </div>
                 <Link to="/myprofile">
                   <Profile>View profile</Profile>
                 </Link>
-                <SignOut onClick={() => props.SignOut()}>
+
+                
+                <SignOut onClick={() => logOut()}>
                   <a href="#" style={{ color: "black" }}>
                     Sign Out
                   </a>
                 </SignOut>
-              </Card>
+              </div>
             </User>
 
             <Work>
-              <a href="#">
+              <a>
                 <img src="/images/nav-work.svg" alt="" />
                 <span>
                   Work
@@ -241,6 +260,9 @@ const NavList = styled.li`
         color: rgba(0, 0, 0, 0.9);
       }
     }
+    .main{
+      display: block;
+    }
   }
 `;
 
@@ -252,27 +274,27 @@ const SignOut = styled.a`
   font-size: 30px;
   font-weight: 400;
 `;
-const Card = styled.div`
-  position: absolute;
-  top: 55px;
-  right: 18%;
-  background: white;
-  border-radius: 0 0 5px 5px;
-  width: 300px;
-  height: 200px;
-  font-size: 16px;
-  transition-duration: 167ms;
-  text-align: center;
-  display: none;
-  img {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: left;
-    padding: 5px 10px;
-    border-radius: 50%;
-  }
-`;
+// const  = styled.div`
+//   position: absolute;
+//   top: 55px;
+//   right: 18%;
+//   background: white;
+//   border-radius: 0 0 5px 5px;
+//   width: 300px;
+//   height: 200px;
+//   font-size: 16px;
+//   transition-duration: 167ms;
+//   text-align: center;
+//   display: block;
+//   img {
+//     width: 50px;
+//     height: 50px;
+//     display: flex;
+//     justify-content: left;
+//     padding: 5px 10px;
+//     border-radius: 50%;
+//   }
+// `;
 
 const Profile = styled.button`
   width: 90%;
@@ -296,6 +318,7 @@ const Profile = styled.button`
 `;
 
 const User = styled(NavList)`
+ 
   a > svg {
     width: 24px;
     border-radius: 50%;
@@ -309,26 +332,22 @@ const User = styled(NavList)`
     display: flex;
     align-items: center;
   }
-  &:hover {
-    ${Card} {
-      display: flex;
-      flex-direction: column;
-    }
-  }
+ 
 `;
 
 const Work = styled(User)`
   border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.userState.user,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     user: state.userState.user,
+//   };
+// };
 
-const mapDispatchToProps = (dispatch) => ({
-  SignOut: () => dispatch(signOutAPI()),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   SignOut: () => dispatch(signOutAPI()),
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+//export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header;

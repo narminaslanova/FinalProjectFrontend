@@ -8,13 +8,14 @@ import JoinNow from "./components/JoinNow";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
-import { getUserAuth } from "./actions";
+//import { getUserAuth } from "./actions";
+import { Redirect } from "react-router";
+
 
 function App(props) {
-
-  useEffect(()=>{
-    props.getUserAuth();
-  }, [])
+  // useEffect(() => {
+  //   props.getUserAuth();
+  // }, []);
 
   return (
     <div className="App">
@@ -31,8 +32,8 @@ function App(props) {
             <Home />
           </Route>
           <Route path="/myprofile">
-             <Header/>
-             <Profile  />
+            <Header />
+            <Profile />
           </Route>
         </Switch>
       </Router>
@@ -40,13 +41,13 @@ function App(props) {
   );
 }
 
-const mapStateToProps = (state)=>{
-  return {};
-}
+// const mapStateToProps = (state)=>{
+//   return {};
+// }
 
-const mapDispatchToProps = (dispatch)=>({
-  getUserAuth: ()=> dispatch(getUserAuth())
-})
+// const mapDispatchToProps = (dispatch)=>({
+//   getUserAuth: ()=> dispatch(getUserAuth())
+// })
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App;
