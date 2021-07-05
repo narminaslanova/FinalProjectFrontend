@@ -182,3 +182,19 @@ body{
   .userImage:hover ~ .main {
     display: block;
   }
+.settings {
+    background-color: white;
+    border: 1px solid rgba(136, 133, 133, 0.295);
+    padding: 5px 5px;
+    cursor: pointer;
+    display: block;
+    border-radius: 5px;
+
+}
+ .ellipsis{
+   cursor: pointer;
+ }
+
+ .ellipsis:hover ~ .settings{
+   display: block;
+ }

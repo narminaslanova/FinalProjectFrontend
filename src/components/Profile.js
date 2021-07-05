@@ -2,8 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import LeftPart from "./LeftPart";
 import RightPart from "./RightPart";
-import { Redirect } from "react-router-dom";
-import { connect } from "react-redux";
 
 const Profile = (props) => {
   return (

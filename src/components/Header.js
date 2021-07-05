@@ -1,24 +1,23 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userActions } from "../actions/userActions";
 import {Redirect} from "react-router";
 
 const Header = (props) => {
+  let history = useHistory();
   const user = useSelector((state) => state.authentication);
-  const [loggedOut, setLoggedOut] = useState(false);
   const dispatch = useDispatch();
 
    
   const logOut = () => {
     dispatch(userActions.logout());
-    setLoggedOut(true);
+    history.push("/");
   };
-  if (loggedOut) {
-    <Redirect to="/"/>
-  }
+
+
   return (
     <Container>
       <Content>
@@ -97,18 +96,18 @@ const Header = (props) => {
                     }}
                   >
                     {user && user.user.user.firstName ? (
-                    user.user.user.firstName + " "+ user.user.user.lastName 
-                  ) : (
-                    <span>Name Surname</span>)}
+                      user.user.user.firstName + " " + user.user.user.lastName
+                    ) : (
+                      <span>Name Surname</span>
+                    )}
                   </h4>
                 </div>
                 <Link to="/myprofile">
                   <Profile>View profile</Profile>
                 </Link>
 
-                
-                <SignOut onClick={() => logOut()}>
-                  <a href="#" style={{ color: "black" }}>
+                <SignOut onClick={()=>logOut()}>
+                  <a style={{ color: "black" }}>
                     Sign Out
                   </a>
                 </SignOut>

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Redirect } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../actions/userActions";
 
+
 const Login = (props) => {
+  let history = useHistory();
   const [logged, setLogged] = useState(false);
   const [values, setValues] = useState({ email: "", password: "" });
-  //let store = JSON.parse(localStorage.getItem("login"));
   const { email, password } = values;
-  //const loggingIn = useSelector((state) => state.authentication);
+  const user = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
@@ -20,10 +21,13 @@ const Login = (props) => {
       [name]: value,
     });
   };
-   useEffect(() => {
-    dispatch(userActions.logout());
-    //console.log(loggingIn);
-  }, []);
+
+  useEffect(() => {
+    if (user.loggedIn) {
+      history.push("/home");
+    }
+  }, [user]);;;
+
   const submit = (e) => {
     e.preventDefault();
     if (email && password) {
@@ -31,10 +35,6 @@ const Login = (props) => {
       setLogged(true);
     }
   };
-
-  if (logged) {
-    return <Redirect to="/home" />;
-  }
 
   return (
     <>

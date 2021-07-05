@@ -2,12 +2,12 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { Redirect } from "react-router";
 
 const Leftside = () => {
   const communityCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
   const user = useSelector((state) => state.authentication);
+  console.log("leftside", user);
   const dispatch = useDispatch();
   const [profileImg, setProfileImg] = useState("/images/user.svg");
 
@@ -22,12 +22,11 @@ const Leftside = () => {
  };
 
   useEffect(() => {
-    console.log("leftside", user.user.user);
     //const initialTop = communityCard.current.getBoundingClientRect().top;
     const handleScroll = () => {
       setFixedPosition(window.scrollY > 275);
     };
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);

@@ -2,8 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostModal from "./PostModal";
-import { connect } from "react-redux";
-//import { getArticlesAPI } from "../actions";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,13 +12,10 @@ const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
 
   const [posts, setPosts] = useState([]);
-  const test = useSelector((state) => state.articleState);
+  const user = useSelector((state) => state.articleState);
   const getData = async () => {
-   // const token = await authService.getAccessToken();
     axios
-      .get("https://localhost:44331/api/Post", {
-        // headers: !token ? {} : { Authorization: `Bearer ${token}` },
-      })
+      .get("https://localhost:44331/api/Post")
       .then((response) => {
         const myPosts = response.data;
         // setPosts({ posts: response.data });
@@ -31,14 +26,13 @@ const Main = (props) => {
       });
   }
 
-  useEffect(() => {
-   getData();
-      //console.log(test)
-  },[]);
+ const deleteArticle = (id) => {
+      axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
+      const newpost = posts.filter((post) => post.id !== id);
+      setPosts(newpost)
+    };
 
-  // useEffect(() => {
-  //   props.getArticles();
-  // }, []);
+  
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -59,6 +53,9 @@ const Main = (props) => {
     }
   };
 
+   useEffect(() => {
+     getData();
+   }, [handleClick]);
   return (
     <>
       {/* {props.articles.length === 0 ? (
@@ -89,14 +86,6 @@ const Main = (props) => {
               <img src="/images/video.svg" alt="" />
               <span>Video</span>
             </button>
-            <button>
-              <img src="/images/event.svg" alt="" />
-              <span>Event</span>
-            </button>
-            <button>
-              <img src="/images/article.svg" alt="" />
-              <span>Write article</span>
-            </button>
           </div>
         </ShareBox>
         <Content>
@@ -104,35 +93,52 @@ const Main = (props) => {
             <Article key={post.id}>
               <SharedActor>
                 <a>
-                  <img src="/images/google.svg" alt="" />
+                  <img src={"/images/google.svg"} alt="" />
+
                   <div>
-                    <span>{post.title}</span>
-                    <span>{post.userId}</span>
+                    <span>{post.userName + " " + post.userSurname}</span>
+                    <span>{post.userOccupation}</span>
                     <span>
-                      {post.id}
+                      Id: {post.id} | shared: {post.sharedDate}
                     </span>
                   </div>
                 </a>
                 <button
-                  onClick={(article) => {
-                    console.log(article.id);
+                  className="ellipsis"
+                  onClick={() => {
+                    console.log(post.id);
                   }}
                 >
                   <img src="/images/ellipsis.svg" alt="" />
                 </button>
+                <div className="settings">
+                  <span onClick={() => deleteArticle(post.id)}>Delete</span>
+                  <span>Update</span>
+                </div>
               </SharedActor>
-              <Description>{post.body}</Description>
+              <Description>
+                {post.content}
+              </Description>
+              <SharedImg>
+                {!post.imageUrl && post.videoUrl ? (
+                  <ReactPlayer width={'100%'} url={post.videoUrl} />
+                ) : (
+                  post.imageUrl && <a>
+                    <img src={`/images/${post.imageUrl}`} alt="" />
+                  </a>
+                )}
+              </SharedImg>
               <SocialCounts>
                 <li>
                   <button>
                     <img src="/images/like1.svg" alt="" />
                     <img src="/images/clap.svg" alt="" />
                     <img src="/images/heart.svg" alt="" />
-                    <span>75</span>
+                    <span>{post.likeCount}</span>
                   </button>
                 </li>
                 <li>
-                  <a> comments</a>
+                  <a>{post.commentCount} comments</a>
                 </li>
               </SocialCounts>
               <SocialActions>
@@ -155,73 +161,6 @@ const Main = (props) => {
               </SocialActions>
             </Article>
           ))}
-
-          {/* {props.loading && <img src="/images/spin-loader.svg" />}
-          {props.articles.length > 0 &&
-            props.articles.map((article, key) => (
-              <Article key={key}>
-                <SharedActor>
-                  <a>
-                    <img src={article.actor.image} alt="" />
-                    <div>
-                      <span>{article.actor.title}</span>
-                      <span>{article.actor.email}</span>
-                      <span>
-                        {article.actor.date.toDate().toLocaleDateString()}
-                      </span>
-                    </div>
-                  </a>
-                  <button
-                    onClick={(article) => {
-                      console.log(article.id);
-                    }}
-                  >
-                    <img src="/images/ellipsis.svg" alt="" />
-                  </button>
-                </SharedActor>
-                <Description>{article.description}</Description>
-                <SharedImg>
-                  <a>
-                    {!article.sharedImg && article.video ? (
-                      <ReactPlayer width={"100%"} url={article.video} />
-                    ) : (
-                      article.sharedImg && <img src={article.sharedImg} />
-                    )}
-                  </a>
-                </SharedImg>
-                <SocialCounts>
-                  <li>
-                    <button>
-                      <img src="/images/like1.svg" alt="" />
-                      <img src="/images/clap.svg" alt="" />
-                      <img src="/images/heart.svg" alt="" />
-                      <span>75</span>
-                    </button>
-                  </li>
-                  <li>
-                    <a>{article.comments} comments</a>
-                  </li>
-                </SocialCounts>
-                <SocialActions>
-                  <button>
-                    <img src="/images/like.svg" alt="" />
-                    <span>Like</span>
-                  </button>
-                  <button>
-                    <img src="/images/comment.svg" alt="" />
-                    <span>Comment</span>
-                  </button>
-                  <button>
-                    <img src="/images/share.svg" alt="" />
-                    <span>Share</span>
-                  </button>
-                  <button>
-                    <img src="/images/send.svg" alt="" />
-                    <span>Send</span>
-                  </button>
-                </SocialActions>
-              </Article>
-            ))} */}
         </Content>
         <PostModal showModal={showModal} handleClick={handleClick} />
       </Container>
@@ -233,7 +172,6 @@ const Main = (props) => {
 const Container = styled.div`
   grid-area: main;
 `;
-
 const CommonCard = styled.div`
   text-align: center;
   overflow: hidden;
@@ -305,7 +243,6 @@ const ShareBox = styled(CommonCard)`
     }
   }
 `;
-
 const Article = styled(CommonCard)`
   padding: 0;
   margin: 0 0 8px;
@@ -318,6 +255,7 @@ const Article = styled(CommonCard)`
 `;
 
 const SharedActor = styled.div`
+  
   padding-right: 40px;
   flex-wrap: nowrap;
   padding: 12px 16px 0;
@@ -335,6 +273,7 @@ const SharedActor = styled.div`
       width: 48px;
       height: 48px;
     }
+
     & > div {
       display: flex;
       flex-direction: column;
@@ -367,6 +306,7 @@ const SharedActor = styled.div`
     outline: none;
   }
 `;
+
 
 const Description = styled.div`
   padding: 0 16px;
