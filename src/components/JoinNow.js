@@ -6,7 +6,6 @@ import useForm from "../hooks/useForm";
 import validateInfo from "../validateinfo";
 import FormConfirm from "../components/FormConfirm";
 import axios from "axios";
-import { Redirect } from "react-router";
 
 const JoinNow = ({submitForm}) => {
   const [redirect, setRedirect] = useState(false);
@@ -30,7 +29,7 @@ const JoinNow = ({submitForm}) => {
    };
 
    if (redirect) {
-     return <Redirect to="/" />;
+     history.push("/");
    }
 
   return !isSubmitted ? (

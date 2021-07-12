@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { connect } from "react-redux";
 
 const ExperienceModal = ({ setExperienceModalOpen, props }) => {
   const [work, setWork] = useState("");

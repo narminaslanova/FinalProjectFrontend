@@ -1,20 +1,18 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
 import ContactInfoModal from "./ContactInfoModal";
 import PostModal from "./PostModal";
 import EducationModal from "./EducationModal";
 import ExperienceModal from "./ExperienceModal";
+import { useSelector } from "react-redux";
 
-const LeftPart = (props) => {
+const LeftPart = () => {
   const [showModal, setShowModal] = useState("close");
   const [modalOpen, setModalOpen] = useState(false);
   const [educationModal, setEducationModal] = useState(false);
   const [experienceModal, setExperienceModal] = useState(false);
-  // useEffect(() => {
-  //   props.getChangedInfo();
-  // }, []);
+  const user = useSelector((state) => state.authentication);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -39,14 +37,19 @@ const LeftPart = (props) => {
       <UserInfo>
         <CardBackground />
         <Photo>
-          {props.user && props.user.photoURL ? (
-            <img src={props.user.photoURL} />
+          {user && user.user.user.imageUrl ? (
+            <img src={user.user.user.imageUrl} />
           ) : (
             <img src="/images/user.svg" alt="" />
           )}
         </Photo>
         <Properties>
-          <h1> {props.user ? props.user.displayName : "Username"}</h1>
+          <h1>
+            {" "}
+            {user
+              ? user.user.user.firstName + " " + user.user.user.lastName
+              : "Username"}
+          </h1>
           <p>Looking for a new job opportunities</p>
           <span>Baku,Azerbaijan</span>
           <button>
@@ -336,15 +339,6 @@ const Education = styled.div`
 
 const Experience = styled(Education)``;
 
-// const mapStatetoProps = (state) => {
-//   return {
-//     user: state.userState.user,
-//     contactinfo: state.userState.contactInfo,
-//   };
-// };
 
-// const mapDispatchToProps = (dispatch) => ({});
-
-//export default connect(mapStatetoProps, mapDispatchToProps)(LeftPart);
 
 export default LeftPart;

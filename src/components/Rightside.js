@@ -6,7 +6,7 @@ const Rightside = (props) => {
   const bannerCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
   useEffect(() => {
-    const initialTop = bannerCard.current.getBoundingClientRect().top;
+   // const initialTop = bannerCard.current.getBoundingClientRect().top;
     const handleScroll = () => {
       setFixedPosition(window.scrollY > 237);
     };
@@ -49,9 +49,40 @@ const Rightside = (props) => {
           <img src="/images/right-icon.svg" alt="" />
         </Recommendation>
       </FollowCard>
-      <BannerCard fixed={fixedPosition} ref={bannerCard}>
-        <img src="/images/dreamjob.png" alt="" />
-      </BannerCard>
+      <ScrolledContainer fixed={fixedPosition} ref={bannerCard}>
+        <BannerCard>
+          <img src="/images/dreamjob.png" alt="" />
+        </BannerCard>
+        <Footer>
+          <ul>
+            <li>
+              <a>About</a>
+            </li>
+            <li>
+              <a>Accessibility</a>
+            </li>
+            <li>
+              <a>Help Center</a>
+            </li>
+            <li>
+              <a>Privacy &amp; Terms</a>
+            </li>
+            <li>
+              <a>Business Services</a>
+            </li>
+            <li>
+              <a>Ad Choices</a>
+            </li>
+            <li>
+              <a>Advertising</a>
+            </li>
+          </ul>
+          <div>
+            <img src="/images/linkedin.png" alt="" />
+            <p>LinkedOut Corporation © 2021</p>
+          </div>
+        </Footer>
+      </ScrolledContainer>
     </Container>
   );
 };
@@ -129,7 +160,64 @@ const Recommendation = styled.a`
   align-items: center;
   font-size: 14px;
 `;
-
+const Footer = styled.div`
+  width: 100%;
+  font-size: 13px;
+  background-color: transparent;
+  border-radius: 5px;
+  position: relative;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  color: rgb(0 0 0 / 60%);
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px 10px 20px;
+  }
+  li {
+    text-decoration: none;
+    list-style-type: none;
+    a {
+      padding-right: 5px;
+    }
+  }
+  div {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 100px;
+      // height: inherit;
+      object-fit: contain;
+    }
+  }
+`;
+const ScrolledContainer = styled.div`
+   width: 406px;
+  ${(props) =>
+    props.fixed &&
+    css`
+      position: fixed;
+      top: 59px;
+      img {
+        width: 381.88px;
+        object-fit: contain;
+      }
+    `}
+  @media only screen and (max-width: 768px) {
+    position: relative !important;
+    top: 0;
+    width: inherit;
+  }
+`;
 const BannerCard = styled(FollowCard)`
   padding-top: 0px;
   padding-bottom: 0px;
@@ -149,20 +237,11 @@ const BannerCard = styled(FollowCard)`
     padding-top: 0px;
     padding-bottom: 0px;
     img {
-    width: 100%;
-    object-fit: contain;
+      width: 100%;
+      object-fit: contain;
     }
   }
-  ${(props) =>
-    props.fixed &&
-  css`
-    position: fixed;
-    top: 59px;
-      img {
-        width: 381.88px;
-        object-fit: contain;
-      } 
-  `}    
+  
 `;
 
 export default Rightside;

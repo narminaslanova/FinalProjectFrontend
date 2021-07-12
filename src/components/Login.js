@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
-import { Redirect } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../actions/userActions";
 
@@ -26,7 +25,7 @@ const Login = (props) => {
     if (user.loggedIn) {
       history.push("/home");
     }
-  }, [user]);;;
+  }, [user]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -206,7 +205,7 @@ const Form = styled.div`
   margin-top: 100px;
   width: 400px;
   @media (max-width: 768px) {
-    margin-top: 20px;
+    margin-top: 70px;
   }
 `;
 

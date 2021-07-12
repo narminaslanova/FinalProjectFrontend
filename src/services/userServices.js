@@ -1,5 +1,4 @@
 import axios from "axios";
-import { authHeader } from "../helpers/authHeader";
 
 export const userService = {
   login,
@@ -7,17 +6,14 @@ export const userService = {
 };
 
 function login(email, password) {
-  return axios
-    .post("https://localhost:44331/api/Authenticate/login", {
-      email,
+  return axios.post("https://localhost:44331/api/Authenticate/login", {
+    email,
 
-      password,
-    })
-    .then((res) => {
-      localStorage.setItem("user", JSON.stringify(res.data));
-    });
- 
-    
+    password,
+  });
+  // .then((res) => {
+  //   localStorage.setItem("user", JSON.stringify(res.data));
+  // });
 }
 
 function logout() {
@@ -101,4 +97,3 @@ function logout() {
 
 //     return data;
 //   });
-

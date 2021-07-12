@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { connect } from "react-redux";
 
 const ContactInfoModal = ({ setOpenModal, props }) => {
   const [firstName, setFirstName] = useState("");

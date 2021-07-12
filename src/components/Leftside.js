@@ -2,24 +2,26 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Leftside = () => {
   const communityCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
   const user = useSelector((state) => state.authentication);
-  console.log("leftside", user);
   const dispatch = useDispatch();
   const [profileImg, setProfileImg] = useState("/images/user.svg");
 
- const imageHandler = (e) => {
-   const reader = new FileReader();
-   reader.onload = () => {
-     if (reader.readyState === 2) {
-       setProfileImg(reader.result);
-     }
-   };
-   reader.readAsDataURL(e.target.files[0]);
- };
+  console.log("leftside", user);
+
+  const imageHandler = (e) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setProfileImg(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
 
   useEffect(() => {
     //const initialTop = communityCard.current.getBoundingClientRect().top;
@@ -34,70 +36,82 @@ const Leftside = () => {
   }, []);
 
   return (
-    <Container>
-      <ArtCard>
-        <UserInfo>
-          <CardBackground />
-          <Photo>
-            <img src={user.user.user.imageUrl} alt="" />
-            {/* {user && user.user.user.ImageUrl ? (
+   
+      <Container>
+        <ArtCard>
+          <UserInfo>
+            <CardBackground />
+            <Photo>
+              <img src={user.user.user.imageUrl} alt="" />
+              {/* {user && user.user.user.ImageUrl ? (
                 <img src={user.user.user.ImageUrl} />
               ) : ( */}
 
-            {/* )} */}
-          </Photo>
-          <a>
-            {user
-              ? user.user.user.firstName + " " + user.user.user.lastName
-              : "Username"}
-          </a>
-          <input
-            type="file"
-            name="image-upload"
-            id="image-upload"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={imageHandler}
-          />
-          <label htmlFor="image-upload">Add Photo</label>
-        </UserInfo>
-        <Widget>
-          <a>
-            <div>
-              <span>Connections</span>
-              <span>Grow your network</span>
-            </div>
-            <img src="/images/widget-icon.svg" alt="" />
-          </a>
-        </Widget>
-        <Item>
-          <span>
-            <img src="/images/item-icon.svg" alt="" />
-            My Items
-          </span>
-        </Item>
-      </ArtCard>
+              {/* )} */}
+            </Photo>
+            <a href="/myprofile">
+              {user
+                ? user.user.user.firstName + " " + user.user.user.lastName
+                : "Username"}
+            </a>
+            <input
+              type="file"
+              name="image-upload"
+              id="image-upload"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={imageHandler}
+            />
+            <label htmlFor="image-upload">Add Photo</label>
+          </UserInfo>
+          <Link
+            to="/connections"
+            style={{
+              fontSize: "12px",
+              lineHeight: "1.333",
+              color: "black",
+              textDecoration: "none",
+            }}
+          >
+            <Widget>
+              <a>
+                <div>
+                  <span>Connections</span>
 
-      <CommunityCard fixed={fixedPosition} ref={communityCard}>
-        <a>
-          <span>Groups</span>
-        </a>
-        <a>
-          <span>
-            Events
-            <img src="/images/plus-icon.svg" alt="" />
-          </span>
-        </a>
-        <a>
-          <span>Follow Hashtags</span>
-        </a>
-        <a>
-          <span>Discover more</span>
-        </a>
-      </CommunityCard>
-    </Container>
+                  <span>Grow your network</span>
+                </div>
+                <img src="/images/widget-icon.svg" alt="" />
+              </a>
+            </Widget>
+          </Link>
+          <Item>
+            <span>
+              <img src="/images/item-icon.svg" alt="" />
+              My Items
+            </span>
+          </Item>
+        </ArtCard>
+
+        <CommunityCard fixed={fixedPosition} ref={communityCard}>
+          <a>
+            <span>Groups</span>
+          </a>
+          <a>
+            <span>
+              Events
+              <img src="/images/plus-icon.svg" alt="" />
+            </span>
+          </a>
+          <a>
+            <span>Follow Hashtags</span>
+          </a>
+          <a>
+            <span>Discover more</span>
+          </a>
+        </CommunityCard>
+      </Container>
   );
-};
+};;
 
 const Container = styled.div`
   grid-area: leftside;
@@ -126,9 +140,12 @@ const UserInfo = styled.div`
     &:visited {
       color: black;
     }
+    &:hover {
+      text-decoration: underline;
+    }
   }
   label {
-    cursor:pointer;
+    cursor: pointer;
     display: block;
     font-size: 14px;
     color: blue;
@@ -254,6 +271,12 @@ const CommunityCard = styled(ArtCard)`
       width: 289.91px;
       height: 113.8px;
     `}
+  @media only screen and (max-width: 768px) {
+    position: relative !important;
+    top: 0;
+    width: 100%;
+    // height: 113.8px;
+  }
 `;
 
 // const mapStatetoProps = (state) => {

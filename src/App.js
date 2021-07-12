@@ -6,11 +6,12 @@ import JoinNow from "./components/JoinNow";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
+import Connections from "./components/Connections";
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router";
 
-function App(props) {
-  // useEffect(() => {
-  //   props.getUserAuth();
-  // }, []);
+function App() {
+  //const user = useSelector((state) => state.authentication);
 
   return (
     <div className="App">
@@ -22,26 +23,24 @@ function App(props) {
           <Route path="/signup">
             <JoinNow />
           </Route>
+
           <Route path="/home">
             <Header />
             <Home />
           </Route>
+
           <Route path="/myprofile">
             <Header />
             <Profile />
+          </Route>
+          <Route path="/connections">
+            <Header />
+            <Connections />
           </Route>
         </Switch>
       </Router>
     </div>
   );
 }
-
-// const mapStateToProps = (state)=>{
-//   return {};
-// }
-
-// const mapDispatchToProps = (dispatch)=>({
-//   getUserAuth: ()=> dispatch(getUserAuth())
-// })
 
 export default App;

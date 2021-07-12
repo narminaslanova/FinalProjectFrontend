@@ -8,26 +8,18 @@ export const userActions = {
 
 function login(email, password) {
   return (dispatch) => {
-    userService
-      .login(email, password).then(
-        () => {
-               dispatch(success());
-          }
-          
-          
-         // console.log("userActions", JSON.parse(localStorage.getItem("user")));
+    //userService.login(email, password).then(() => { dispatch(success());})
+      
+      
+     
+    userService.login(email, password).then(
+      ({   data   }) => {
+        localStorage.setItem("user", JSON.stringify(data));
         
-        //console.log(res)}
-      );
-    // userService.login(email, password).then(
-    //   ({   data   }) => {
-    //     dispatch(success(data)).then();
-       
-    //   },
-    //   (error) => {
-    //     dispatch(failure(error.toString()));
-    //   }
-    // );
+      }).then(()=>{
+        dispatch(success())
+      })
+      
   };
 
   // function request(user) {
@@ -38,9 +30,9 @@ function login(email, password) {
     let user = JSON.parse(localStorage.getItem("user"));
     return { type: userConstants.LOGIN_SUCCESS, user };
   }
-  function failure(error) {
-    return { type: userConstants.LOGIN_FAILURE, error };
-  }
+  // function failure(error) {
+  //   return { type: userConstants.LOGIN_FAILURE, error };
+  // }
 }
 
 function logout() {

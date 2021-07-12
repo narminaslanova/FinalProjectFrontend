@@ -20,7 +20,7 @@ const Container = styled.div`
 `;
 const Layout = styled.div`
   display: grid;
-  grid-template-areas: "leftpart rightpart";
+  grid-template-areas: "leftpart leftpart rightpart";
   grid-template-columns: minmax(0, 12fr) minmax(300px, 5fr);
   column-gap: 25px;
   row-gap: 15px;
@@ -33,11 +33,5 @@ const Layout = styled.div`
   }
 `;
 
-// const mapStateToProps = (state) => {
-//    console.log(state.userState.user);
-//   return {
-//     user: state.userState.user,
-//   };
-// };
-//export default connect(mapStateToProps)(Profile);
+
 export default Profile;

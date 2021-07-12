@@ -2,38 +2,70 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostModal from "./PostModal";
+import UpdateArtcle from "./UpdateArtcle";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-
-
+import jwt_decode from "jwt-decode";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [posts, setPosts] = useState([]);
-  const user = useSelector((state) => state.articleState);
+  const user = useSelector((state) => state.authentication);
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
+  //const [image, setImage] = useState(null);
+
+  //get all posts
   const getData = async () => {
     axios
       .get("https://localhost:44331/api/Post")
       .then((response) => {
         const myPosts = response.data;
-        // setPosts({ posts: response.data });
         setPosts(myPosts);
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  //open and close delete/update div
+  function openSettings(id) {
+    if (
+      document.getElementById(id).nextElementSibling.classList.contains("close")
+    ) {
+      document.getElementById(id).nextElementSibling.classList.remove("close");
+    } else {
+      document.getElementById(id).nextElementSibling.classList.add("close");
+    }
+  }
+  //open and close comment div
+  function displayComment(id) {
+    console.log(document.getElementById(id));
   }
 
- const deleteArticle = (id) => {
-      axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
-      const newpost = posts.filter((post) => post.id !== id);
-      setPosts(newpost)
+  //delete post
+
+  const deleteArticle = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
+    const newpost = posts.filter((post) => post.id !== id);
+    setPosts(newpost);
+  };
+
+  //like post
+  const likePost = (postId) => {
+    const data = {
+      companyName: decoded.id,
+      followerCount: 1,
     };
+    axios
+      .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+  };
 
-  
-
+  //open and close postModal
   const handleClick = (e) => {
     e.preventDefault();
     if (e.target !== e.currentTarget) {
@@ -52,15 +84,12 @@ const Main = (props) => {
         break;
     }
   };
+  useEffect(() => {
+    getData();
+  }, []);
 
-   useEffect(() => {
-     getData();
-   }, [handleClick]);
   return (
     <>
-      {/* {props.articles.length === 0 ? (
-        <p>There are no articles</p>
-      ) : ( */}
       <Container>
         <ShareBox>
           <div>
@@ -104,28 +133,35 @@ const Main = (props) => {
                   </div>
                 </a>
                 <button
-                  className="ellipsis"
+                  className="ellipsis "
+                  id={post.id}
                   onClick={() => {
-                    console.log(post.id);
+                    openSettings(post.id);
                   }}
                 >
                   <img src="/images/ellipsis.svg" alt="" />
                 </button>
-                <div className="settings">
+                <div className="settings close">
                   <span onClick={() => deleteArticle(post.id)}>Delete</span>
-                  <span>Update</span>
+                  <span
+                    onClick={() => {
+                      setModalOpen(true);
+                    }}
+                  >
+                    Update
+                  </span>
                 </div>
               </SharedActor>
-              <Description>
-                {post.content}
-              </Description>
+              <Description>{post.content}</Description>
               <SharedImg>
                 {!post.imageUrl && post.videoUrl ? (
-                  <ReactPlayer width={'100%'} url={post.videoUrl} />
+                  <ReactPlayer width={"100%"} url={post.videoUrl} />
                 ) : (
-                  post.imageUrl && <a>
-                    <img src={`/images/${post.imageUrl}`} alt="" />
-                  </a>
+                  post.imageUrl && (
+                    <a>
+                      <img src={`/images/${post.imageUrl}`} alt="" />
+                    </a>
+                  )
                 )}
               </SharedImg>
               <SocialCounts>
@@ -142,11 +178,20 @@ const Main = (props) => {
                 </li>
               </SocialCounts>
               <SocialActions>
-                <button>
+                <button
+                  onClick={() => {
+                    likePost(post.id);
+                  }}
+                >
                   <img src="/images/like.svg" alt="" />
                   <span>Like</span>
                 </button>
-                <button>
+                <button
+                  id={`c-${post.id}`}
+                  onClick={() => {
+                    displayComment(`c-${post.id}`);
+                  }}
+                >
                   <img src="/images/comment.svg" alt="" />
                   <span>Comment</span>
                 </button>
@@ -159,15 +204,58 @@ const Main = (props) => {
                   <span>Send</span>
                 </button>
               </SocialActions>
+              <div className="commentContainer" id={post.id}>
+                <div className="commentImage">
+                  <img src="/images/user.svg" alt="" />
+                </div>
+                <div className="comment">
+                  <input type="text" />
+                </div>
+                <button className="postComment">Post</button>
+              </div>
+              <div className="allComments">
+                <img src="/images/user.svg" alt="" />
+                <div className="commentContent">
+                  <div className="comment-userInfo">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        fontSize: "13px",
+                        justifyContent: "left",
+                        padding: "10px 10px",
+                      }}
+                    >
+                      <span>Name Surname</span>
+                      <span>Occupation</span>
+                    </div>
+
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        paddingRight: "10px",
+                        paddingTop: "10px",
+                      }}
+                    >
+                      1d
+                    </span>
+                  </div>
+
+                  <p>Text</p>
+                </div>
+              </div>
+              {modalOpen && (
+                <UpdateArtcle setOpenModal={setModalOpen} postId={post.id} />
+              )}
             </Article>
           ))}
         </Content>
+
         <PostModal showModal={showModal} handleClick={handleClick} />
       </Container>
-      {/* )}  */}
     </>
   );
-}
+};
 
 const Container = styled.div`
   grid-area: main;
@@ -200,10 +288,10 @@ const ShareBox = styled(CommonCard)`
       display: flex;
       align-items: center;
       font-weight: 600;
-      &:hover  {
-         background: rgb(235 235 235);
-         border-radius: 8px;
-         cursor: pointer;
+      &:hover {
+        background: rgb(235 235 235);
+        border-radius: 8px;
+        cursor: pointer;
       }
     }
     &:first-child {
@@ -223,7 +311,7 @@ const ShareBox = styled(CommonCard)`
         border: 1px solid rgba(0, 0, 0, 0.15);
         background-color: white;
         text-align: left;
-        &:hover  {
+        &:hover {
           background: rgb(235 235 235);
           cursor: pointer;
         }
@@ -255,7 +343,6 @@ const Article = styled(CommonCard)`
 `;
 
 const SharedActor = styled.div`
-  
   padding-right: 40px;
   flex-wrap: nowrap;
   padding: 12px 16px 0;
@@ -306,7 +393,6 @@ const SharedActor = styled.div`
     outline: none;
   }
 `;
-
 
 const Description = styled.div`
   padding: 0 16px;
@@ -379,17 +465,6 @@ const Content = styled.div`
   }
 `;
 
-// const mapStateToProps = (state) => {
-//   return {
-//     loading: state.articleState.loading,
-//     user: state.userState.user,
-//     articles: state.articleState.articles,
-//   };
-// };
+const Comment = styled.div``;
 
-// const mapDispatchToProps = (dispatch) => ({
-//   getArticles: () => dispatch(getArticlesAPI()),
-// });
-
-//export default connect(mapStateToProps, mapDispatchToProps)(Main);
 export default Main;

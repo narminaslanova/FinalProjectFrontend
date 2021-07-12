@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import ReactPlayer from "react-player";
 import { useSelector, useDispatch } from "react-redux";
@@ -32,6 +32,7 @@ const PostModal = (props) => {
     videoUrl: videoLink,
     description: editorText,
   };
+  //console.log(shareImage);
   const submit = (e) => {
     e.preventDefault();
     if (postData) {
@@ -101,7 +102,7 @@ const PostModal = (props) => {
                       <label htmlFor="file">Select an image to share</label>
                     </p>
                     {shareImage && (
-                      <img src={URL.createObjectURL(shareImage)} />
+                      <img src={URL.createObjectURL(shareImage)} alt="" />
                     )}
                   </UploadImage>
                 ) : (

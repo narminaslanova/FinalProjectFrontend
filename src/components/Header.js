@@ -1,22 +1,22 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userActions } from "../actions/userActions";
-import {Redirect} from "react-router";
 
 const Header = (props) => {
   let history = useHistory();
   const user = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
 
-   
   const logOut = () => {
     dispatch(userActions.logout());
     history.push("/");
   };
-
+  
+  const redirecting=()=>{
+    history.push("/myprofile")
+  }
 
   return (
     <Container>
@@ -43,7 +43,7 @@ const Header = (props) => {
               </a>
             </NavList>
             <NavList>
-              <a>
+              <a href="/connections">
                 <img src="/images/nav-network.svg" alt="" />
                 <span>My Network</span>
               </a>
@@ -102,14 +102,13 @@ const Header = (props) => {
                     )}
                   </h4>
                 </div>
-                <Link to="/myprofile">
-                  <Profile>View profile</Profile>
-                </Link>
+                {/* <Link to="/myprofile" style={{cursor:"pointer"}}>
+                 
+                </Link> */}
 
-                <SignOut onClick={()=>logOut()}>
-                  <a style={{ color: "black" }}>
-                    Sign Out
-                  </a>
+                <Profile onClick={()=>redirecting()}>View profile</Profile>
+                <SignOut onClick={() => logOut()}>
+                  <a style={{ color: "black" }}>Sign Out</a>
                 </SignOut>
               </div>
             </User>
@@ -180,6 +179,15 @@ const Search = styled.div`
       vertical-align: text-top;
     }
   }
+  @media (max-width: 768px) {
+    width: 50px;
+    & > div {
+      width: 50px;
+      input {
+        width: 50px;
+      }
+    }
+  }
 `;
 
 const SearchIcon = styled.div`
@@ -194,6 +202,7 @@ const SearchIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  
 `;
 
 const Nav = styled.nav`
@@ -259,7 +268,7 @@ const NavList = styled.li`
         color: rgba(0, 0, 0, 0.9);
       }
     }
-    .main{
+    .main {
       display: block;
     }
   }
@@ -272,28 +281,12 @@ const SignOut = styled.a`
   text-decoration: none;
   font-size: 30px;
   font-weight: 400;
+  &:hover{
+    cursor:pointer;
+    text-decoration: underline;
+  }
 `;
-// const  = styled.div`
-//   position: absolute;
-//   top: 55px;
-//   right: 18%;
-//   background: white;
-//   border-radius: 0 0 5px 5px;
-//   width: 300px;
-//   height: 200px;
-//   font-size: 16px;
-//   transition-duration: 167ms;
-//   text-align: center;
-//   display: block;
-//   img {
-//     width: 50px;
-//     height: 50px;
-//     display: flex;
-//     justify-content: left;
-//     padding: 5px 10px;
-//     border-radius: 50%;
-//   }
-// `;
+
 
 const Profile = styled.button`
   width: 90%;
@@ -313,11 +306,12 @@ const Profile = styled.button`
   &:hover {
     background-color: #2977c9;
     color: white;
+    cursor: pointer;
   }
 `;
 
+
 const User = styled(NavList)`
- 
   a > svg {
     width: 24px;
     border-radius: 50%;
@@ -331,7 +325,6 @@ const User = styled(NavList)`
     display: flex;
     align-items: center;
   }
- 
 `;
 
 const Work = styled(User)`
