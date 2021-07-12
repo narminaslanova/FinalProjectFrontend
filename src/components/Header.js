@@ -55,7 +55,7 @@ const Header = (props) => {
               </a>
             </NavList>
             <NavList>
-              <a>
+              <a href="/messaging">
                 <img src="/images/nav-messaging.svg" alt="" />
                 <span>Messaging</span>
               </a>
@@ -106,7 +106,7 @@ const Header = (props) => {
                  
                 </Link> */}
 
-                <Profile onClick={()=>redirecting()}>View profile</Profile>
+                <Profile onClick={() => redirecting()}>View profile</Profile>
                 <SignOut onClick={() => logOut()}>
                   <a style={{ color: "black" }}>Sign Out</a>
                 </SignOut>

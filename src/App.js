@@ -7,8 +7,7 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Connections from "./components/Connections";
-import { useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import Messaging from "./components/Messaging";
 
 function App() {
   //const user = useSelector((state) => state.authentication);
@@ -23,12 +22,10 @@ function App() {
           <Route path="/signup">
             <JoinNow />
           </Route>
-
           <Route path="/home">
             <Header />
             <Home />
           </Route>
-
           <Route path="/myprofile">
             <Header />
             <Profile />
@@ -36,6 +33,10 @@ function App() {
           <Route path="/connections">
             <Header />
             <Connections />
+          </Route>
+          <Route path="/messaging">
+            <Header />
+            <Messaging />
           </Route>
         </Switch>
       </Router>

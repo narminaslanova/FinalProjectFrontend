@@ -45,6 +45,7 @@ const PostModal = (props) => {
           console.log(error);
         });
     }
+
     reset(e);
   };
 

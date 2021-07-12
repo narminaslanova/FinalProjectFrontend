@@ -2,23 +2,28 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import PostModal from "./PostModal";
+import LikersModal from "./LikersModal";
 import UpdateArtcle from "./UpdateArtcle";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import jwt_decode from "jwt-decode";
 
-const Main = (props) => {
+const Main = () => {
   const [showModal, setShowModal] = useState("close");
   const [modalOpen, setModalOpen] = useState(false);
+  const [openLikersModal, setOpenLikersModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const user = useSelector((state) => state.authentication);
   const token = user.user.token;
   const decoded = jwt_decode(token);
+  const [comment, setComment] = useState("");
+  const [button, setButton] = useState(false);
+
   //const [image, setImage] = useState(null);
 
   //get all posts
-  const getData = async () => {
+  const getData = () => {
     axios
       .get("https://localhost:44331/api/Post")
       .then((response) => {
@@ -28,6 +33,7 @@ const Main = (props) => {
       .catch((error) => {
         console.log(error);
       });
+
   };
 
   //open and close delete/update div
@@ -42,11 +48,34 @@ const Main = (props) => {
   }
   //open and close comment div
   function displayComment(id) {
-    console.log(document.getElementById(id));
+    if (
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.contains(
+          "closeCommentContainer"
+        )
+    ) {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.remove(
+          "closeCommentContainer"
+        );
+    } else {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.add(
+          "closeCommentContainer"
+        );
+    }
   }
+  const handleComment = (e) => {
+    axios
+      .post("https://localhost:44331/api/Comment", comment)
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
+  };
 
   //delete post
-
   const deleteArticle = (id) => {
     axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
     const newpost = posts.filter((post) => post.id !== id);
@@ -56,14 +85,14 @@ const Main = (props) => {
   //like post
   const likePost = (postId) => {
     const data = {
-      companyName: decoded.id,
-      followerCount: 1,
+      userId: decoded.id,
     };
     axios
       .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
       .then((data) => console.log(data))
       .catch((error) => console.log(error));
   };
+ 
 
   //open and close postModal
   const handleClick = (e) => {
@@ -84,6 +113,7 @@ const Main = (props) => {
         break;
     }
   };
+
   useEffect(() => {
     getData();
   }, []);
@@ -93,14 +123,11 @@ const Main = (props) => {
       <Container>
         <ShareBox>
           <div>
-            {props.user && props.user.photoURL ? (
-              <img src={props.user.photoURL} />
-            ) : (
-              <img src="/images/user.svg" alt="" />
-            )}
+            <img src="/images/user.svg" alt="" />
+
             <button
               onClick={handleClick}
-              disabled={props.loading ? true : false}
+              //disabled={props.loading ? true : false}
             >
               Start a post
             </button>
@@ -168,9 +195,13 @@ const Main = (props) => {
                 <li>
                   <button>
                     <img src="/images/like1.svg" alt="" />
-                    <img src="/images/clap.svg" alt="" />
-                    <img src="/images/heart.svg" alt="" />
-                    <span>{post.likeCount}</span>
+                    <span
+                      onClick={() => {
+                        setOpenLikersModal(true);
+                      }}
+                    >
+                      {post.likeCount}
+                    </span>
                   </button>
                 </li>
                 <li>
@@ -178,14 +209,17 @@ const Main = (props) => {
                 </li>
               </SocialCounts>
               <SocialActions>
-                <button
-                  onClick={() => {
-                    likePost(post.id);
-                  }}
+                <LikeButton
+                  id={`l-${post.id}`}
+                  onClick={()=>{
+                     likePost(post.id);
+                  }
+                  }
                 >
                   <img src="/images/like.svg" alt="" />
                   <span>Like</span>
-                </button>
+                </LikeButton>
+
                 <button
                   id={`c-${post.id}`}
                   onClick={() => {
@@ -209,11 +243,19 @@ const Main = (props) => {
                   <img src="/images/user.svg" alt="" />
                 </div>
                 <div className="comment">
-                  <input type="text" />
+                  <input
+                    type="text"
+                    // id="comment"
+                    //name="comment"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
                 </div>
-                <button className="postComment">Post</button>
+                <button className="postComment" onClick={() => handleComment()}>
+                  Post
+                </button>
               </div>
-              <div className="allComments">
+              {/* <div className="allComments">
                 <img src="/images/user.svg" alt="" />
                 <div className="commentContent">
                   <div className="comment-userInfo">
@@ -243,15 +285,17 @@ const Main = (props) => {
 
                   <p>Text</p>
                 </div>
-              </div>
+              </div> */}
               {modalOpen && (
                 <UpdateArtcle setOpenModal={setModalOpen} postId={post.id} />
               )}
             </Article>
           ))}
         </Content>
-
-        <PostModal showModal={showModal} handleClick={handleClick} />
+        {openLikersModal && (
+          <LikersModal setOpenModalLikers={setOpenLikersModal} />
+        )}
+        <PostModal showModal={showModal} handleClick={handleClick}/>
       </Container>
     </>
   );
@@ -431,6 +475,16 @@ const SocialCounts = styled.ul`
       display: flex;
       border: none;
       background: transparent;
+      span {
+        &:hover {
+          text-decoration: underline !important;
+        }
+      }
+    }
+    a {
+      &:hover {
+        text-decoration: underline !important;
+      }
     }
   }
 `;
@@ -457,6 +511,22 @@ const SocialActions = styled.div`
     }
   }
 `;
+const LikeButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  /* background: ${(props) =>
+    props.liked ? "rgba(0, 0, 0, 0.08)" : "#transparent"}; */
+  &:hover {
+    background: rgb(235 235 235);
+  }
+  span {
+    margin-left: 8px;
+  }
+`;
 
 const Content = styled.div`
   text-align: center;
@@ -465,6 +535,6 @@ const Content = styled.div`
   }
 `;
 
-const Comment = styled.div``;
+//const Comment = styled.div``;
 
 export default Main;

@@ -68,7 +68,7 @@ const LeftPart = () => {
       <Dashboard>
         <h1>Your dashboard</h1>
         <Myboard>
-          <a href="#">
+          <a href="/connections">
             <div>
               <img src="/images/network.svg" alt="" />
               <div>
@@ -77,7 +77,7 @@ const LeftPart = () => {
               </div>
             </div>
           </a>
-          <a href="">
+          <a>
             <div>
               <img src="/images/items.svg" alt="" />
               <div>
