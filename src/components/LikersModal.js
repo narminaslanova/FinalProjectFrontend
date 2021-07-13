@@ -18,15 +18,21 @@ const LikersModal = ({ setOpenModalLikers }) => {
           </button>
         </Header>
         <LikersContent>
-          <UserList>
-            <UserImage>
-              <img src="/images/user.svg" alt="" />
-            </UserImage>
-            <UserInfo>
-              <h4>Name Surname</h4>
-              <span>Occupation</span>
-            </UserInfo>
-          </UserList>
+          {likers.length == 0 ? (
+            <Text>
+              <p>No likes here yet :(</p>
+            </Text>
+          ) : (
+            <UserList>
+              <UserImage>
+                <img src="/images/user.svg" alt="" />
+              </UserImage>
+              <UserInfo>
+                <h4>Name Surname</h4>
+                <span>Occupation</span>
+              </UserInfo>
+            </UserList>
+          )}
           {/* {likers.map((liker) => {
             <UserList key={liker.id}>
               <UserImage>
@@ -133,6 +139,16 @@ const UserInfo = styled.div`
   }
   span {
     font-size: 14px;
+  }
+`;
+
+const Text = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    padding: 10px 10px;
+    color: rgba(0, 0, 0, 0.6);
   }
 `;
 export default LikersModal;

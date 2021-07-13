@@ -274,6 +274,22 @@ body{
   color:rgba(13, 66, 146, 0.842);
   cursor: pointer;
 }
+.connect-btn{
+  border: 2px solid rgba(13, 66, 146, 0.842);
+  background-color: transparent;
+  padding: 10px 10px;
+  margin-right: 10px;
+  border-radius: 20px;
+  color:rgba(13, 66, 146, 0.842);
+  cursor: pointer;
+}
+
+.clicked-btn{
+  
+  background-color: rgba(13, 66, 146, 0.281);
+  
+}
+
 .user-actions img{
   cursor: pointer;
 }

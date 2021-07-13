@@ -18,22 +18,23 @@ const Main = () => {
   const token = user.user.token;
   const decoded = jwt_decode(token);
   const [comment, setComment] = useState("");
-  const [button, setButton] = useState(false);
+  const [like, setLike] = useState();
 
   //const [image, setImage] = useState(null);
 
   //get all posts
   const getData = () => {
     axios
-      .get("https://localhost:44331/api/Post")
+      .get(
+        `https://localhost:44331/api/Post/GetPostsOfFeed/${user.user.user.email}`
+      )
       .then((response) => {
-        const myPosts = response.data;
+        const myPosts = response.data.reverse();
         setPosts(myPosts);
       })
       .catch((error) => {
         console.log(error);
       });
-
   };
 
   //open and close delete/update div
@@ -89,10 +90,9 @@ const Main = () => {
     };
     axios
       .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
-      .then((data) => console.log(data))
+      .then((data) => console.log("like", data))
       .catch((error) => console.log(error));
   };
- 
 
   //open and close postModal
   const handleClick = (e) => {
@@ -201,6 +201,7 @@ const Main = () => {
                       }}
                     >
                       {post.likeCount}
+                      {/* {like} */}
                     </span>
                   </button>
                 </li>
@@ -211,10 +212,10 @@ const Main = () => {
               <SocialActions>
                 <LikeButton
                   id={`l-${post.id}`}
-                  onClick={()=>{
-                     likePost(post.id);
-                  }
-                  }
+                  onClick={() => {
+                    //setRequest(true);
+                    likePost(post.id);
+                  }}
                 >
                   <img src="/images/like.svg" alt="" />
                   <span>Like</span>
@@ -295,7 +296,7 @@ const Main = () => {
         {openLikersModal && (
           <LikersModal setOpenModalLikers={setOpenLikersModal} />
         )}
-        <PostModal showModal={showModal} handleClick={handleClick}/>
+        <PostModal showModal={showModal} handleClick={handleClick} />
       </Container>
     </>
   );

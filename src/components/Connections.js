@@ -7,11 +7,14 @@ import jwt_decode from "jwt-decode";
 
 const Connections = () => {
   const [appliers, setAppliers] = useState([]);
+  const [connections, setConnections] = useState([]);
+  //const [request, setRequest] = useState(false);
 
   const user = useSelector((state) => state.authentication);
   const token = user.user.token;
   const decoded = jwt_decode(token);
 
+  //should change it *see in main.js
   function handleClick() {
     if (document.getElementById("option").classList.contains("options")) {
       document.getElementById("option").classList.remove("options");
@@ -22,18 +25,79 @@ const Connections = () => {
     }
   }
 
+  //get all users
   const getUsers = async () => {
     axios
       .get("https://localhost:44331/api/Authenticate/GetAllUsers")
       .then((response) => {
-        console.log("axios", response.data);
         setAppliers(response.data);
       })
       .catch((error) => console.log(error));
   };
 
+  //sendrequest to connect
+  // useEffect(() => {
+  //   setRequest(JSON.parse(window.localStorage.getItem("request")));
+  // }, []);
+
+  // useEffect(() => {
+  //   window.localStorage.setItem("request", request);
+  // }, [request]);
+
+  const sendConnectionRequest = (email, id) => {
+    const data = {
+      applierEmail: email,
+      senderId: id,
+    };
+    axios
+      .post("https://localhost:44331/api/Linker/AddConnectionRequest", data)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getButton = (id) => {
+    console.log(document.getElementById(id).innerHTML);
+    if (document.getElementById(id).classList.contains("clicked-btn")) {
+      document.getElementById(id).classList.remove("clicked-btn");
+      document.getElementById(id).innerHTML = "Connect";
+    } else {
+      document.getElementById(id).classList.add("clicked-btn");
+      document.getElementById(id).innerHTML = "Pending";
+    }
+  };
+  //get all connections
+  const getConnections = () => {
+    axios
+      .get(
+        `https://localhost:44331/api/Linker/GetConnectionsOfUser/${decoded.id}`
+      )
+      .then((response) => {
+        setConnections(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  //delete connection
+  const deleteConnection = (deletedEmail) => {
+    axios.delete(
+      `https://localhost:44331/api/Linker/DeleteConnection/${decoded.id}`,
+      deletedEmail
+    );
+    const newconnections = connections.filter(
+      (connection) => connection.email !== deletedEmail
+    );
+    setConnections(newconnections);
+  };
+
   useEffect(() => {
     getUsers();
+  }, []);
+
+  useEffect(() => {
+    getConnections();
   }, []);
 
   return (
@@ -42,22 +106,29 @@ const Connections = () => {
         <RightContent>
           <Users>
             {appliers.map(
-              (connection) =>
-                decoded.id !== connection.id && (
-                  <div className="user-container" key={connection.id}>
+              (applier) =>
+                decoded.id !== applier.id && (
+                  <div className="user-container" key={applier.id}>
                     <div className="user-image">
                       <img src="/images/user.svg" alt="" />
                     </div>
                     <div className="user-info">
                       <div>
-                        <h4>
-                          {connection.firstName + " " + connection.lastName}
-                        </h4>
+                        <h4>{applier.firstName + " " + applier.lastName}</h4>
                         <span>Occupation</span>
                       </div>
                       <div className="user-actions">
                         <div>
-                          <button className="message-btn">Connect</button>
+                          <button
+                            id={`ct-${applier.id}`}
+                            className="connect-btn"
+                            onClick={() => {
+                              sendConnectionRequest(applier.email, decoded.id);
+                              getButton(`ct-${applier.id}`);
+                            }}
+                          >
+                            Connect
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -103,32 +174,46 @@ const Connections = () => {
             <div className="connection-header">
               <h1 className="count">0 Connections</h1>
             </div>
-            <div className="user-container">
-              <div className="user-image">
-                <img src="/images/user.svg" alt="" />
-              </div>
-              <div className="user-info">
-                <div>
-                  <h4>Name Surname</h4>
-                  <span>Occupation</span>
-                </div>
-                <div className="user-actions">
-                  <p className="options" id="option">
-                    Remove connection
-                  </p>
-                  <div>
-                    <button className="message-btn">Message</button>
-                    <button
-                      className="test"
-                      id="ellipsis-btn"
-                      onClick={() => handleClick()}
-                    >
-                      <img src="/images/ellipsis.svg" alt="" />
-                    </button>
+            {connections.length == 0 ? (
+              <Text>
+                <p>No connections here yet :(</p>
+              </Text>
+            ) : (
+              connections.map((connection) => (
+                <div className="user-container" key={connection.id}>
+                  <div className="user-image">
+                    <img src="/images/user.svg" alt="" />
+                  </div>
+                  <div className="user-info">
+                    <div>
+                      <h4>
+                        {connection.firstName + " " + connection.lastName}
+                      </h4>
+                      <span>{connection.occupation}</span>
+                    </div>
+                    <div className="user-actions">
+                      <p
+                        className="options"
+                        id="option"
+                        onClick={() => deleteConnection(connection.email)}
+                      >
+                        Remove connection
+                      </p>
+                      <div>
+                        <button className="message-btn">Message</button>
+                        <button
+                          className="test"
+                          id="ellipsis-btn"
+                          onClick={() => handleClick()}
+                        >
+                          <img src="/images/ellipsis.svg" alt="" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              ))
+            )}
           </ConnectionList>
         </LeftContent>
       </Layout>
@@ -245,5 +330,17 @@ const BannerCard = styled(FollowCard)`
     object-fit: contain;
   }
 `;
-
+const Text = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px !important;
+  p {
+    padding: 10px 10px;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 200px !important;
+    font-size: 25px;
+    font-weight: 200;
+  }
+`;
 export default Connections;

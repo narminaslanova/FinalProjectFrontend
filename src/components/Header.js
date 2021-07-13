@@ -61,7 +61,7 @@ const Header = (props) => {
               </a>
             </NavList>
             <NavList>
-              <a>
+              <a href="/notifications">
                 <img src="/images/nav-notifications.svg" alt="" />
                 <span>Notifications</span>
               </a>

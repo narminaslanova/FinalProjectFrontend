@@ -8,6 +8,8 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Connections from "./components/Connections";
 import Messaging from "./components/Messaging";
+import Notifications from "./components/Notifications";
+import About from "./components/About";
 
 function App() {
   //const user = useSelector((state) => state.authentication);
@@ -37,6 +39,13 @@ function App() {
           <Route path="/messaging">
             <Header />
             <Messaging />
+          </Route>
+          <Route path="/notifications">
+            <Header />
+            <Notifications />
+          </Route>
+          <Route path="/about">
+            <About />
           </Route>
         </Switch>
       </Router>

@@ -1,11 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 const Messaging = () => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
+  const user = useSelector((state) => state.authentication);
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
   const getUsers = async () => {
     axios
       .get("https://localhost:44331/api/Authenticate/GetAllUsers")
@@ -59,17 +64,20 @@ const Messaging = () => {
         <LeftContent>
           <ChatList>
             <h1>Messaging</h1>
-            {users.map((item) => (
-              <UserList key={item.id}>
-                <UserImage>
-                  <img src="/images/user.svg" alt="" />
-                </UserImage>
-                <UserInfo>
-                  <h4>{item.firstName + " " + item.lastName}</h4>
-                  <span>last sent message here</span>
-                </UserInfo>
-              </UserList>
-            ))}
+            {users.map(
+              (item) =>
+                decoded.id !== item.id && (
+                  <UserList key={item.id}>
+                    <UserImage>
+                      <img src="/images/user.svg" alt="" />
+                    </UserImage>
+                    <UserInfo>
+                      <h4>{item.firstName + " " + item.lastName}</h4>
+                      <span>last sent message here</span>
+                    </UserInfo>
+                  </UserList>
+                )
+            )}
           </ChatList>
           <Content>
             <ChatBox>
@@ -117,7 +125,7 @@ const Layout = styled.div`
   margin: 25px 0;
   @media (max-width: 768px) {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding: 0 5px;
   }
 `;

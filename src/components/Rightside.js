@@ -6,7 +6,7 @@ const Rightside = (props) => {
   const bannerCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
   useEffect(() => {
-   // const initialTop = bannerCard.current.getBoundingClientRect().top;
+    // const initialTop = bannerCard.current.getBoundingClientRect().top;
     const handleScroll = () => {
       setFixedPosition(window.scrollY > 237);
     };
@@ -56,7 +56,7 @@ const Rightside = (props) => {
         <Footer>
           <ul>
             <li>
-              <a>About</a>
+              <a href="/about">About</a>
             </li>
             <li>
               <a>Accessibility</a>
@@ -184,6 +184,11 @@ const Footer = styled.div`
     list-style-type: none;
     a {
       padding-right: 5px;
+      &:hover {
+        text-decoration: underline;
+        color: blue;
+        cursor: pointer;
+      }
     }
   }
   div {
