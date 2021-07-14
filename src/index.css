@@ -287,8 +287,14 @@ body{
     z-index: 1;
 
 }
+.remove-button span{
+  color: black;
+}
 .open-button{
-  display: block;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  
 }
 .user-actions .message-btn{
   border: 2px solid rgba(13, 66, 146, 0.842);

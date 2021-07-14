@@ -108,10 +108,11 @@ const Connections = () => {
       deletedEmail: email,
     };
     axios.delete("https://localhost:44331/api/Linker/DeleteConnection", data);
-    const newconnections = connections.filter(
-      (connection) => connection.email !== data.email
-    );
-    setConnections(newconnections);
+
+    // const newconnections = connections.filter(
+    //   (connection) => connection.email !== data.email
+    // );
+    // setConnections(newconnections);
   };
 
   useEffect(() => {
@@ -230,7 +231,8 @@ const Connections = () => {
                             deleteConnection(decoded.id, connection.email)
                           }
                         >
-                          <BackspaceIcon /> Remove connection
+                          <BackspaceIcon fontSize="small" />
+                          <span>Remove connection</span>
                         </button>
                       </div>
                     </div>
