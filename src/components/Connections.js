@@ -4,6 +4,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import jwt_decode from "jwt-decode";
+import BackspaceIcon from "@material-ui/icons/Backspace";
 
 const Connections = () => {
   const [appliers, setAppliers] = useState([]);
@@ -14,28 +15,42 @@ const Connections = () => {
   const token = user.user.token;
   const decoded = jwt_decode(token);
 
-  //should change it *see in main.js
-  function handleClick() {
-    if (document.getElementById("option").classList.contains("options")) {
-      document.getElementById("option").classList.remove("options");
-      document.getElementById("option").classList.add("active-btn");
+  //open and close remove button
+  function openDiv(id) {
+    if (
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.contains("open-button")
+    ) {
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.remove("open-button");
     } else {
-      document.getElementById("option").classList.remove("active-btn");
-      document.getElementById("option").classList.add("options");
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.add("open-button");
     }
   }
 
-  //get all users
+  //get all users without connected ones
   const getUsers = async () => {
+    // axios
+    //   .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
+    //   .then((response) => {
+    //     console.log("connections-appliers", response.data);
+    //     setAppliers(response.data);
+    //   })
+    //   .catch((error) => console.log(error));
+
     axios
-      .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
+      .get("https://localhost:44331/api/Authenticate/GetAllUsers")
       .then((response) => {
+        // console.log("connections-appliers", response.data);
         setAppliers(response.data);
       })
       .catch((error) => console.log(error));
   };
 
-  //sendrequest to connect
   // useEffect(() => {
   //   setRequest(JSON.parse(window.localStorage.getItem("request")));
   // }, []);
@@ -44,6 +59,7 @@ const Connections = () => {
   //   window.localStorage.setItem("request", request);
   // }, [request]);
 
+  //sendrequest to connect
   const sendConnectionRequest = (email, id) => {
     const data = {
       applierEmail: email,
@@ -58,6 +74,8 @@ const Connections = () => {
         console.log(error);
       });
   };
+
+  //change connect to pending
   const getButton = (id) => {
     console.log(document.getElementById(id).innerHTML);
     if (document.getElementById(id).classList.contains("clicked-btn")) {
@@ -68,6 +86,7 @@ const Connections = () => {
       document.getElementById(id).innerHTML = "Pending";
     }
   };
+
   //get all connections
   const getConnections = () => {
     axios
@@ -75,19 +94,22 @@ const Connections = () => {
         `https://localhost:44331/api/Linker/GetConnectionsOfUser/${decoded.id}`
       )
       .then((response) => {
+        console.log(response.data);
         setConnections(response.data);
       })
       .catch((error) => console.log(error));
   };
 
   //delete connection
-  const deleteConnection = (deletedEmail) => {
-    axios.delete(
-      `https://localhost:44331/api/Linker/DeleteConnection/${decoded.id}`,
-      deletedEmail
-    );
+  const deleteConnection = (id, email) => {
+    console.log(id, email);
+    const data = {
+      deleterId: id,
+      deletedEmail: email,
+    };
+    axios.delete("https://localhost:44331/api/Linker/DeleteConnection", data);
     const newconnections = connections.filter(
-      (connection) => connection.email !== deletedEmail
+      (connection) => connection.email !== data.email
     );
     setConnections(newconnections);
   };
@@ -172,7 +194,7 @@ const Connections = () => {
         <LeftContent>
           <ConnectionList>
             <div className="connection-header">
-              <h1 className="count">0 Connections</h1>
+              <h1 className="count">{connections.length} Connections</h1>
             </div>
             {connections.length == 0 ? (
               <Text>
@@ -192,21 +214,23 @@ const Connections = () => {
                       <span>{connection.occupation}</span>
                     </div>
                     <div className="user-actions">
-                      <p
-                        className="options"
-                        id="option"
-                        onClick={() => deleteConnection(connection.email)}
-                      >
-                        Remove connection
-                      </p>
                       <div>
                         <button className="message-btn">Message</button>
                         <button
                           className="test"
-                          id="ellipsis-btn"
-                          onClick={() => handleClick()}
+                          id={connection.id}
+                          onClick={() => openDiv(connection.id)}
                         >
                           <img src="/images/ellipsis.svg" alt="" />
+                        </button>
+                        <button
+                          className="remove-button"
+                          id={`r-${connection.id}`}
+                          onClick={() =>
+                            deleteConnection(decoded.id, connection.email)
+                          }
+                        >
+                          <BackspaceIcon /> Remove connection
                         </button>
                       </div>
                     </div>

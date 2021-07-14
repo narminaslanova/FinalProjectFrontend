@@ -24,6 +24,7 @@ const Notifications = () => {
   }
 
   const acceptRequest = (id, email) => {
+    console.log(id, email);
     const data = {
       senderId: id,
       applierEmail: email,
@@ -40,14 +41,19 @@ const Notifications = () => {
 
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [acceptRequest]);
   return (
     <Container>
       <Layout>
         <LeftPart>leftPart</LeftPart>
         <Main>
-          <NotificationsList>
-            {notifications.map((notification) => (
+          {/* <NotificationsList> */}
+          {notifications.length == 0 ? (
+            <Textt>
+              <p>No notifications yet :(</p>
+            </Textt>
+          ) : (
+            notifications.map((notification) => (
               <Content key={notification.id}>
                 <UserList>
                   <UserImage>
@@ -75,8 +81,9 @@ const Notifications = () => {
                   </DeclineButton>
                 </Buttons>
               </Content>
-            ))}
-          </NotificationsList>
+            ))
+          )}
+          {/* </NotificationsList> */}
         </Main>
         <RightPart>
           <BannerCard>
@@ -182,6 +189,20 @@ const BannerCard = styled(FollowCard)`
   img {
     width: 100%;
     object-fit: contain;
+  }
+`;
+
+const Textt = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px !important;
+  p {
+    padding: 10px 10px;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 200px !important;
+    font-size: 25px;
+    font-weight: 200;
   }
 `;
 

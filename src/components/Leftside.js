@@ -89,7 +89,7 @@ const Leftside = () => {
         </Item>
       </ArtCard>
 
-      <CommunityCard fixed={fixedPosition} ref={communityCard}>
+      {/* <CommunityCard fixed={fixedPosition} ref={communityCard}>
         <a>
           <span>Groups</span>
         </a>
@@ -105,10 +105,10 @@ const Leftside = () => {
         <a>
           <span>Discover more</span>
         </a>
-      </CommunityCard>
+      </CommunityCard> */}
     </Container>
   );
-};;
+};
 
 const Container = styled.div`
   grid-area: leftside;
@@ -170,8 +170,6 @@ const Photo = styled.div`
     border-radius: 50%;
   }
 `;
-
-
 
 const Widget = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -276,11 +274,4 @@ const CommunityCard = styled(ArtCard)`
   }
 `;
 
-// const mapStatetoProps = (state) => {
-//   return {
-//     user: state.userState.user,
-//   };
-// };
-
-//export default connect(mapStatetoProps)(Leftside);
 export default Leftside;

@@ -3,21 +3,42 @@ import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { userActions } from "../actions/userActions";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 const Header = (props) => {
   let history = useHistory();
   const user = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
-
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
   const logOut = () => {
     dispatch(userActions.logout());
     history.push("/");
   };
-  
-  const redirecting=()=>{
-    history.push("/myprofile")
-  }
 
+  const redirecting = () => {
+    history.push("/myprofile");
+  };
+
+  const [notifications, setNotifications] = useState([]);
+  function getNotifications() {
+    axios
+      .get(
+        `https://localhost:44331/api/Linker/GetConnectionRequestsOfUser/${decoded.id}`
+      )
+      .then((response) => {
+        console.log(response.data);
+        setNotifications(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  useEffect(() => {
+    getNotifications();
+  }, []);
   return (
     <Container>
       <Content>
@@ -49,12 +70,6 @@ const Header = (props) => {
               </a>
             </NavList>
             <NavList>
-              <a>
-                <img src="/images/nav-jobs.svg" alt="" />
-                <span>Jobs</span>
-              </a>
-            </NavList>
-            <NavList>
               <a href="/messaging">
                 <img src="/images/nav-messaging.svg" alt="" />
                 <span>Messaging</span>
@@ -63,7 +78,12 @@ const Header = (props) => {
             <NavList>
               <a href="/notifications">
                 <img src="/images/nav-notifications.svg" alt="" />
-                <span>Notifications</span>
+                <span>
+                  Notifications
+                  {notifications.length !== 0 && (
+                    <sup>{notifications.length}</sup>
+                  )}
+                </span>
               </a>
             </NavList>
             <User>
@@ -202,7 +222,6 @@ const SearchIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  
 `;
 
 const Nav = styled.nav`
@@ -256,6 +275,21 @@ const NavList = styled.li`
       color: rgba(0, 0, 0, 0.6);
       display: flex;
       align-items: center;
+      position: relative;
+      sup {
+        background-color: red;
+        color: white;
+        padding-left: 8px;
+        padding-right: 2px;
+        padding-top: 4px;
+        padding-bottom: 6px;
+        position: absolute;
+        border-radius: 50%;
+        width: 12px;
+        height: 10px;
+        top: -20px;
+        right: 5px;
+      }
     }
     @media (max-width: 768px) {
       min-width: 70px;

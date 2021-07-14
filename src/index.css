@@ -264,6 +264,31 @@ body{
 .user-actions{
   display: flex;
   padding-right: 20px;
+  
+}
+.test{
+  position: relative;
+ 
+}
+.remove-button{
+  display: none;
+  position: absolute;
+   right: 1%;
+   /* top: 30px; */
+    background-color: white;
+    border: 1px solid rgba(136, 133, 133, 0.295);
+    padding: 15px 15px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    /* display: flex; */
+    flex-direction: column;
+    border-radius: 15px;
+    z-index: 1;
+
+}
+.open-button{
+  display: block;
 }
 .user-actions .message-btn{
   border: 2px solid rgba(13, 66, 146, 0.842);
@@ -419,4 +444,3 @@ body{
     font-size: 13px;
 
   }
-/* .commentContainer  */

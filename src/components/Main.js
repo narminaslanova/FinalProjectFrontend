@@ -8,10 +8,12 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import jwt_decode from "jwt-decode";
+import DeleteIcon from "@material-ui/icons/Delete";
+import UpdateIcon from "@material-ui/icons/Update";
 
 const Main = () => {
   const [showModal, setShowModal] = useState("close");
-  const [modalOpen, setModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [openLikersModal, setOpenLikersModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const user = useSelector((state) => state.authentication);
@@ -24,10 +26,19 @@ const Main = () => {
 
   //get all posts
   const getData = () => {
+    // axios
+    //   .get(
+    //     `https://localhost:44331/api/Post/GetPostsOfFeed/${user.user.user.email}`
+    //   )
+    //   .then((response) => {
+    //     const myPosts = response.data.reverse();
+    //     setPosts(myPosts);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
     axios
-      .get(
-        `https://localhost:44331/api/Post/GetPostsOfFeed/${user.user.user.email}`
-      )
+      .get("https://localhost:44331/api/Post/Get")
       .then((response) => {
         const myPosts = response.data.reverse();
         setPosts(myPosts);
@@ -169,16 +180,34 @@ const Main = () => {
                   <img src="/images/ellipsis.svg" alt="" />
                 </button>
                 <div className="settings close">
-                  <span onClick={() => deleteArticle(post.id)}>Delete</span>
-                  <span
-                    onClick={() => {
-                      setModalOpen(true);
-                    }}
-                  >
-                    Update
-                  </span>
+                  <DeleteButton>
+                    <span onClick={() => deleteArticle(post.id)}>
+                      <DeleteIcon
+                        fontSize="small"
+                        style={{ paddingRight: "2px" }}
+                      />
+                      Delete
+                    </span>
+                  </DeleteButton>
+                  <UpdateButton>
+                    <span
+                      onClick={() => {
+                        setOpen(true);
+                      }}
+                    >
+                      <UpdateIcon
+                        fontSize="small"
+                        style={{ paddingRight: "3px" }}
+                      />
+                      Update
+                    </span>
+                  </UpdateButton>
+                  {open && (
+                    <UpdateArtcle setOpenModal={setOpen} postId={post.id} />
+                  )}
                 </div>
               </SharedActor>
+
               <Description>{post.content}</Description>
               <SharedImg>
                 {!post.imageUrl && post.videoUrl ? (
@@ -287,15 +316,13 @@ const Main = () => {
                   <p>Text</p>
                 </div>
               </div> */}
-              {modalOpen && (
-                <UpdateArtcle setOpenModal={setModalOpen} postId={post.id} />
-              )}
             </Article>
           ))}
         </Content>
         {openLikersModal && (
           <LikersModal setOpenModalLikers={setOpenLikersModal} />
         )}
+
         <PostModal showModal={showModal} handleClick={handleClick} />
       </Container>
     </>
@@ -536,6 +563,18 @@ const Content = styled.div`
   }
 `;
 
+const DeleteButton = styled.div`
+  span {
+    display: flex;
+    align-items: center;
+  }
+`;
+const UpdateButton = styled.div`
+  span {
+    display: flex;
+    align-items: center;
+  }
+`;
 //const Comment = styled.div``;
 
 export default Main;

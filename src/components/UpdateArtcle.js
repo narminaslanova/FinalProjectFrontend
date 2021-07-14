@@ -172,7 +172,7 @@ const Content = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  top: 32px;
+  top: 100px;
   margin: 0 auto;
 `;
 
