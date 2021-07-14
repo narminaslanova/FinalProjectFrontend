@@ -1,78 +1,86 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const ContactInfoModal = ({ setOpenModal, props }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  //const [firstName, setFirstName] = useState("");
+  //const [lastName, setLastName] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [location, setLocation] = useState("");
+  const user = useSelector((state) => state.authentication);
 
-  const reset = (e) => {
-    setFirstName("");
-    setLastName("");
-    setCountry("");
-    setCity("");
+  const reset = () => {
+    setOccupation("");
+    setLocation("");
   };
+
+  function updateContactInfo(occupation, location) {
+    const data = {
+      occupation: occupation,
+      location: location,
+    };
+    axios
+      .put(
+        `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
+        data
+      )
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+
+    setOpenModal(false);
+    reset();
+  }
 
   return (
     <>
       <Container>
-          <Content>
-            <Header>
-              <h2>Edit info</h2>
-              <button>
-                <img
-                  // onClick={(event) => reset(event)}
+        <Content>
+          <Header>
+            <h2>Edit info</h2>
+            <button>
+              <img
+                // onClick={(event) => reset(event)}
 
-                  src="/images/close-icon.svg"
-                  alt=""
-                  onClick={(e) => {
-                    setOpenModal(false);
-                    reset(e);
-                  }}
-                />
-              </button>
-            </Header>
-            <EditContent>
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                name="firstName"
+                src="/images/close-icon.svg"
+                alt=""
+                onClick={(e) => {
+                  setOpenModal(false);
+                  reset(e);
+                }}
               />
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                name="lastName"
-              />
-              <label htmlFor="country">Country</label>
-              <input
-                type="text"
-                id="country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                name="country"
-              />
-              <label htmlFor="city">City</label>
-              <input
-                type="text"
-                id="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                name="city"
-              />
-            </EditContent>
-            <SavedButton>
-              Save
+            </button>
+          </Header>
+          <EditContent>
+            <label htmlFor="occupation">Occupation</label>
+            <input
+              type="text"
+              id="occupation"
+              value={occupation}
+              onChange={(e) => setOccupation(e.target.value)}
+              name="occupation"
+            />
+            <label htmlFor="location">Country/City</label>
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              name="location"
+            />
+          </EditContent>
+          <BtnDiv>
+            <SavedButton
+              onClick={() => {
+                updateContactInfo();
+              }}
+            >
+              <span>Save</span>
             </SavedButton>
-          </Content>
-        </Container>
+          </BtnDiv>
+        </Content>
+      </Container>
     </>
   );
 };
@@ -143,16 +151,32 @@ const EditContent = styled.div`
     margin-top: 15px;
   }
   input {
-    padding-top: 10px;
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    padding: 12px 20px;
+    margin: 8px 0px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    transition: 0.5s;
+    outline: none;
+    border-radius: 5px;
   }
 `;
-
+const BtnDiv = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+`;
 const SavedButton = styled.button`
-  min-width: 60px;
+  width: 50px;
   border-radius: 20px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 10px;
+  margin-bottom: 10px;
   border: none;
+  background: #0a66c2;
+  color: #fff;
 `;
 
 

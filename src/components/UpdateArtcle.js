@@ -142,7 +142,7 @@ const UpdateArtcle = ({ setOpenModal, postId }) => {
               disabled={!editorText ? true : false}
               onClick={(event) => submit(event)}
             >
-              Post
+              Update
             </PostButton>
           </ShareCreation>
         </Content>

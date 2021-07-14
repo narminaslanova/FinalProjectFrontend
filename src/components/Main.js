@@ -26,17 +26,6 @@ const Main = () => {
 
   //get all posts
   const getData = () => {
-    // axios
-    //   .get(
-    //     `https://localhost:44331/api/Post/GetPostsOfFeed/${user.user.user.email}`
-    //   )
-    //   .then((response) => {
-    //     const myPosts = response.data.reverse();
-    //     setPosts(myPosts);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
     axios
       .get("https://localhost:44331/api/Post/Get")
       .then((response) => {

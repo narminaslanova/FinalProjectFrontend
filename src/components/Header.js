@@ -39,6 +39,21 @@ const Header = (props) => {
   useEffect(() => {
     getNotifications();
   }, []);
+
+  function displayDiv(id) {
+    if (
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.contains("displayed")
+    ) {
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.remove("displayed");
+    } else {
+      document.getElementById(id).nextElementSibling.classList.add("displayed");
+    }
+  }
+
   return (
     <Container>
       <Content>
@@ -87,17 +102,14 @@ const Header = (props) => {
               </a>
             </NavList>
             <User>
-              <a>
-                {/* {user && props.user.photoURL ? (
-                  <img src={props.user.photoURL} alt="" />
-                ) : ( */}
+              <a id="test" onClick={() => displayDiv("test")}>
                 <img className="userImage" src="/images/user.svg" alt="" />
-                {/* )} */}
                 <span>
                   Me
                   <img src="/images/down-icon.svg" alt="" />
                 </span>
               </a>
+
               <div className="main">
                 <div
                   style={{
@@ -105,11 +117,7 @@ const Header = (props) => {
                     flexDirection: "row",
                   }}
                 >
-                  {/* {props.user && props.user.photoURL ? (
-                    <img src={props.user.photoURL} alt="" />
-                  ) : ( */}
                   <img src="/images/user.svg" alt="" />
-                  {/* )} */}
                   <h4
                     style={{
                       margin: "30px 0",
@@ -122,10 +130,6 @@ const Header = (props) => {
                     )}
                   </h4>
                 </div>
-                {/* <Link to="/myprofile" style={{cursor:"pointer"}}>
-                 
-                </Link> */}
-
                 <Profile onClick={() => redirecting()}>View profile</Profile>
                 <SignOut onClick={() => logOut()}>
                   <a style={{ color: "black" }}>Sign Out</a>
@@ -302,9 +306,9 @@ const NavList = styled.li`
         color: rgba(0, 0, 0, 0.9);
       }
     }
-    .main {
+    /* .main {
       display: block;
-    }
+    } */
   }
 `;
 
@@ -315,12 +319,11 @@ const SignOut = styled.a`
   text-decoration: none;
   font-size: 30px;
   font-weight: 400;
-  &:hover{
-    cursor:pointer;
+  &:hover {
+    cursor: pointer;
     text-decoration: underline;
   }
 `;
-
 
 const Profile = styled.button`
   width: 90%;
@@ -344,7 +347,6 @@ const Profile = styled.button`
   }
 `;
 
-
 const User = styled(NavList)`
   a > svg {
     width: 24px;
@@ -365,15 +367,4 @@ const Work = styled(User)`
   border-left: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-// const mapStateToProps = (state) => {
-//   return {
-//     user: state.userState.user,
-//   };
-// };
-
-// const mapDispatchToProps = (dispatch) => ({
-//   SignOut: () => dispatch(signOutAPI()),
-// });
-
-//export default connect(mapStateToProps, mapDispatchToProps)(Header);
 export default Header;

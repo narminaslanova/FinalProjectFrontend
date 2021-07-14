@@ -34,22 +34,21 @@ const Connections = () => {
 
   //get all users without connected ones
   const getUsers = async () => {
-    // axios
-    //   .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
-    //   .then((response) => {
-    //     console.log("connections-appliers", response.data);
-    //     setAppliers(response.data);
-    //   })
-    //   .catch((error) => console.log(error));
-
     axios
-      .get("https://localhost:44331/api/Authenticate/GetAllUsers")
+      .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
       .then((response) => {
-        // console.log("connections-appliers", response.data);
+        console.log("connections-appliers", response.data);
         setAppliers(response.data);
       })
       .catch((error) => console.log(error));
-  };
+
+    // axios
+    //   .get("https://localhost:44331/api/Authenticate/GetAllUsers")
+    //   .then((response) => {
+    //     setAppliers(response.data);
+    //   })
+    //   .catch((error) => console.log(error));
+  };;
 
   // useEffect(() => {
   //   setRequest(JSON.parse(window.localStorage.getItem("request")));

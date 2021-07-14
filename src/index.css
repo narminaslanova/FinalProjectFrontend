@@ -152,15 +152,16 @@ body{
   /* Header */
   .main{
     position: absolute;
-    top: 52px;
-    right: 18%;
+    top: 60px;
+    right: 17%;
     background: white;
-    border-radius: 0 0 5px 5px;
+    border-radius: 5px;
     width: 300px;
     height: 200px;
     font-size: 16px;
     transition-duration: 167ms;
     text-align: center;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 /20%);
     display: none;
   }
   .main img{
@@ -172,7 +173,7 @@ body{
     border-radius: 50%;
   }
 
-  .userImage:hover ~ .main {
+  .displayed{
     display: block;
   }
 

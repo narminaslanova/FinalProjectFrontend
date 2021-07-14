@@ -6,6 +6,7 @@ import PostModal from "./PostModal";
 import EducationModal from "./EducationModal";
 import ExperienceModal from "./ExperienceModal";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const LeftPart = () => {
   const [showModal, setShowModal] = useState("close");
@@ -32,6 +33,25 @@ const LeftPart = () => {
         break;
     }
   };
+
+  const [headerInfo, setHeaderInfo] = useState([]);
+  //get info for header
+  const getInfo = () => {
+    axios
+      .get(
+        `https://localhost:44331/api/MyProfile/GetUserHeader/${user.user.user.email}`
+      )
+      .then((response) => {
+        setHeaderInfo(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getInfo();
+  });
   return (
     <Container>
       <UserInfo>
@@ -47,11 +67,17 @@ const LeftPart = () => {
           <h1>
             {" "}
             {user
-              ? user.user.user.firstName + " " + user.user.user.lastName
+              ? headerInfo.firstName + " " + headerInfo.lastName
               : "Username"}
           </h1>
-          <p>Looking for a new job opportunities</p>
-          <span>Baku,Azerbaijan</span>
+          <p>
+            {headerInfo.occupation
+              ? headerInfo.occupation
+              : "Add occupation here"}
+          </p>
+          <span>
+            {headerInfo.location ? headerInfo.location : "Add location"}
+          </span>
           <button>
             <img
               src="/images/edit-info.svg"
@@ -61,7 +87,11 @@ const LeftPart = () => {
             />
           </button>
         </Properties>
-        <a href="#">31 connections</a>
+        <a href="/connections">
+          {headerInfo.connectionsCount
+            ? headerInfo.connectionsCount
+            : "You have no connections yet"}
+        </a>
       </UserInfo>
       {modalOpen && <ContactInfoModal setOpenModal={setModalOpen} />}
 

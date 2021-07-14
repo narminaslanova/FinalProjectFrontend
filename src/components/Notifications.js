@@ -39,6 +39,21 @@ const Notifications = () => {
       });
   };
 
+  const declineRequest = (id, email) => {
+    const data = {
+      declierId: id,
+      declinedEmail: email,
+    };
+    axios
+      .post("https://localhost:44331/api/Linker/DeclineRequest", data)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getNotifications();
   }, [acceptRequest]);
@@ -76,7 +91,11 @@ const Notifications = () => {
                   >
                     <span>Accept</span>
                   </AcceptButton>
-                  <DeclineButton>
+                  <DeclineButton
+                    onClick={() =>
+                      declineRequest(decoded.id, notification.email)
+                    }
+                  >
                     <span>Decline</span>
                   </DeclineButton>
                 </Buttons>
