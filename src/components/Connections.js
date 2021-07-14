@@ -28,7 +28,7 @@ const Connections = () => {
   //get all users
   const getUsers = async () => {
     axios
-      .get("https://localhost:44331/api/Authenticate/GetAllUsers")
+      .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
       .then((response) => {
         setAppliers(response.data);
       })

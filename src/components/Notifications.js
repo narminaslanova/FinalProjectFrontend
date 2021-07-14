@@ -1,13 +1,20 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
+import { useSelector } from "react-redux";
 
 const Notifications = () => {
+  const user = useSelector((state) => state.authentication);
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
   const [notifications, setNotifications] = useState([]);
   function getNotifications() {
     axios
-      .get("")
+      .get(
+        `https://localhost:44331/api/Linker/GetConnectionRequestsOfUser/${decoded.id}`
+      )
       .then((response) => {
         setNotifications(response.data);
       })
@@ -15,12 +22,61 @@ const Notifications = () => {
         console.log(error);
       });
   }
+
+  const acceptRequest = (id, email) => {
+    const data = {
+      senderId: id,
+      applierEmail: email,
+    };
+    axios
+      .post("https://localhost:44331/api/Linker/AddConnection", data)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getNotifications();
+  }, []);
   return (
     <Container>
       <Layout>
         <LeftPart>leftPart</LeftPart>
         <Main>
-          <NotificationsList></NotificationsList>
+          <NotificationsList>
+            {notifications.map((notification) => (
+              <Content key={notification.id}>
+                <UserList>
+                  <UserImage>
+                    <img src="/images/user.svg" alt="" />
+                  </UserImage>
+                  <UserInfo>
+                    <h4>
+                      {notification.firstName + " " + notification.lastName}
+                    </h4>
+                  </UserInfo>
+                  <Text>
+                    <p>Whants to connect.</p>
+                  </Text>
+                </UserList>
+                <Buttons>
+                  <AcceptButton
+                    onClick={() =>
+                      acceptRequest(notification.id, user.user.user.email)
+                    }
+                  >
+                    <span>Accept</span>
+                  </AcceptButton>
+                  <DeclineButton>
+                    <span>Decline</span>
+                  </DeclineButton>
+                </Buttons>
+              </Content>
+            ))}
+          </NotificationsList>
         </Main>
         <RightPart>
           <BannerCard>
@@ -170,6 +226,87 @@ const Footer = styled.div`
   }
 `;
 
-const NotificationsList = styled.div``;
+const NotificationsList = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const Content = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const UserList = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-top: 20px;
+`;
+const UserImage = styled.div`
+  padding-left: 15px;
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+`;
+const UserInfo = styled.div`
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  font-family: "Montserrat", sans-serif;
+  h4 {
+    font-weight: 200;
+    //color: gray;
+  }
+  span {
+    font-size: 14px;
+  }
+`;
+
+const Text = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+`;
+const Buttons = styled.div`
+  padding-top: 20px;
+  padding-right: 20px;
+`;
+const AcceptButton = styled.button`
+  /* border: 1px solid green;
+  border-radius: 10px;
+  padding: 5px 5px;
+  cursor: pointer;
+  background: rgba(0, 128, 0, 0.418);
+  span {
+    color: white;
+  } */
+  border: 2px solid rgba(13, 66, 146, 0.842);
+  background-color: transparent;
+  padding: 5px 5px;
+  margin-right: 10px;
+  border-radius: 20px;
+  color: rgba(13, 66, 146, 0.842);
+  cursor: pointer;
+`;
+const DeclineButton = styled.button`
+  /* border: 1px solid red;
+  margin-left: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 5px;
+  background: rgba(255, 0, 0, 0.507);
+  span {
+    color: white;
+  } */
+  border: 2px solid rgba(13, 66, 146, 0.842);
+  background-color: rgba(13, 66, 146, 0.281);
+  padding: 5px 5px;
+  margin-right: 10px;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+`;
 
 export default Notifications;

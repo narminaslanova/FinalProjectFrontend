@@ -276,7 +276,7 @@ body{
 }
 .connect-btn{
   border: 2px solid rgba(13, 66, 146, 0.842);
-  background-color: transparent;
+  background-color: transparent ;
   padding: 10px 10px;
   margin-right: 10px;
   border-radius: 20px;
