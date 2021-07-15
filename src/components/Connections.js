@@ -215,7 +215,9 @@ const Connections = () => {
                     </div>
                     <div className="user-actions">
                       <div>
-                        <button className="message-btn">Message</button>
+                        <a href="/messaging" className="message-btn">
+                          Message
+                        </a>
                         <button
                           className="test"
                           id={connection.id}

@@ -290,6 +290,7 @@ body{
 }
 .remove-button span{
   color: black;
+  padding-left: 5px;
 }
 .open-button{
   display: flex;
@@ -305,6 +306,7 @@ body{
   border-radius: 20px;
   color:rgba(13, 66, 146, 0.842);
   cursor: pointer;
+  text-decoration: none;
 }
 .connect-btn{
   border: 2px solid rgba(13, 66, 146, 0.842);

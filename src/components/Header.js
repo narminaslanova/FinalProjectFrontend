@@ -18,8 +18,17 @@ const Header = (props) => {
     history.push("/");
   };
 
-  const redirecting = () => {
+  const redirecting = (id) => {
     history.push("/myprofile");
+    if (
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.contains("displayed")
+    ) {
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.remove("displayed");
+    }
   };
 
   const [notifications, setNotifications] = useState([]);
@@ -130,7 +139,9 @@ const Header = (props) => {
                     )}
                   </h4>
                 </div>
-                <Profile onClick={() => redirecting()}>View profile</Profile>
+                <Profile onClick={() => redirecting("test")}>
+                  View profile
+                </Profile>
                 <SignOut onClick={() => logOut()}>
                   <a style={{ color: "black" }}>Sign Out</a>
                 </SignOut>
