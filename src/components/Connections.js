@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import jwt_decode from "jwt-decode";
 import BackspaceIcon from "@material-ui/icons/Backspace";
+import Talk from "talkjs";
 
 const Connections = () => {
   const [appliers, setAppliers] = useState([]);
@@ -48,7 +49,7 @@ const Connections = () => {
     //     setAppliers(response.data);
     //   })
     //   .catch((error) => console.log(error));
-  };;
+  };
 
   // useEffect(() => {
   //   setRequest(JSON.parse(window.localStorage.getItem("request")));
@@ -106,7 +107,9 @@ const Connections = () => {
       deleterId: id,
       deletedEmail: email,
     };
-    axios.delete("https://localhost:44331/api/Linker/DeleteConnection", data);
+    axios.delete("https://localhost:44331/api/Linker/DeleteConnection", {
+      data,
+    });
 
     // const newconnections = connections.filter(
     //   (connection) => connection.email !== data.email
@@ -215,7 +218,7 @@ const Connections = () => {
                     </div>
                     <div className="user-actions">
                       <div>
-                        <a href="/messaging" className="message-btn">
+                        <a href="#" className="message-btn">
                           Message
                         </a>
                         <button
@@ -370,4 +373,7 @@ const Text = styled.div`
     font-weight: 200;
   }
 `;
+
+const Testing = styled.div``;
+
 export default Connections;

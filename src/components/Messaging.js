@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import Talk from "talkjs";
 
 const Messaging = () => {
   const [users, setUsers] = useState([]);
@@ -24,6 +25,7 @@ const Messaging = () => {
   useEffect(() => {
     getUsers();
   }, []);
+
   return (
     <Container>
       <Layout>

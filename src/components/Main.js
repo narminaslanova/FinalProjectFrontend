@@ -22,15 +22,18 @@ const Main = () => {
   const [comment, setComment] = useState("");
   const [like, setLike] = useState();
 
+  const [postId, setPostId] = useState();
+
   //const [image, setImage] = useState(null);
 
   //get all posts
   const getData = () => {
     axios
-      .get("https://localhost:44331/api/Post/Get")
+      .get("https://localhost:44331/api/Post")
       .then((response) => {
         const myPosts = response.data.reverse();
         setPosts(myPosts);
+        console.log(myPosts);
       })
       .catch((error) => {
         console.log(error);
@@ -152,10 +155,10 @@ const Main = () => {
                   <img src={"/images/google.svg"} alt="" />
 
                   <div>
-                    <span>{post.userName + " " + post.userSurname}</span>
-                    <span>{post.userOccupation}</span>
+                    <span>{post.firstname + " " + post.lastname}</span>
+                    <span>{post.userOccupation} occupation</span>
                     <span>
-                      Id: {post.id} | shared: {post.sharedDate}
+                      Id: {post.id} | shared: {post.postAge}
                     </span>
                   </div>
                 </a>
@@ -197,7 +200,7 @@ const Main = () => {
                 </div>
               </SharedActor>
 
-              <Description>{post.content}</Description>
+              <Description>{post.description}</Description>
               <SharedImg>
                 {!post.imageUrl && post.videoUrl ? (
                   <ReactPlayer width={"100%"} url={post.videoUrl} />
@@ -215,11 +218,11 @@ const Main = () => {
                     <img src="/images/like1.svg" alt="" />
                     <span
                       onClick={() => {
+                        setPostId(post.id);
                         setOpenLikersModal(true);
                       }}
                     >
                       {post.likeCount}
-                      {/* {like} */}
                     </span>
                   </button>
                 </li>
@@ -309,9 +312,11 @@ const Main = () => {
           ))}
         </Content>
         {openLikersModal && (
-          <LikersModal setOpenModalLikers={setOpenLikersModal} />
+          <LikersModal
+            setOpenModalLikers={setOpenLikersModal}
+            postId={postId}
+          />
         )}
-
         <PostModal showModal={showModal} handleClick={handleClick} />
       </Container>
     </>

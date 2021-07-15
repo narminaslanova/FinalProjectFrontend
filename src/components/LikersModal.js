@@ -1,9 +1,22 @@
 import React from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const LikersModal = ({ setOpenModalLikers }) => {
+const LikersModal = ({ setOpenModalLikers, postId }) => {
   const [likers, setLikers] = useState([]);
+
+  function getLikersOfPost() {
+    axios
+      .get(`https://localhost:44331/api/Post/GetLikersOfPost/${postId}`)
+      .then((response) => {
+        setLikers(response.data);
+      })
+      .catch((error) => console.log(error));
+  }
+  useEffect(() => {
+    getLikersOfPost();
+  }, []);
   return (
     <Container>
       <Content>
@@ -23,15 +36,17 @@ const LikersModal = ({ setOpenModalLikers }) => {
               <p>No likes here yet :(</p>
             </Text>
           ) : (
-            <UserList>
-              <UserImage>
-                <img src="/images/user.svg" alt="" />
-              </UserImage>
-              <UserInfo>
-                <h4>Name Surname</h4>
-                <span>Occupation</span>
-              </UserInfo>
-            </UserList>
+            likers.map((liker) => {
+              <UserList>
+                <UserImage>
+                  <img src="/images/user.svg" alt="" />
+                </UserImage>
+                <UserInfo>
+                  <h4>{liker.firstName + " " + liker.lastName}</h4>
+                  <span>{liker.occupation}</span>
+                </UserInfo>
+              </UserList>;
+            })
           )}
           {/* {likers.map((liker) => {
             <UserList key={liker.id}>

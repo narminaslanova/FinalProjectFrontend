@@ -3,6 +3,7 @@ import styled from "styled-components";
 import LeftPart from "./LeftPart";
 import RightPart from "./RightPart";
 
+
 const Profile = (props) => {
   return (
     <Container>
