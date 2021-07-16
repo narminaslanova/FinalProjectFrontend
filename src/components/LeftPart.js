@@ -10,7 +10,10 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UpdateIcon from "@material-ui/icons/Update";
+import LikersModal from "./LikersModal";
+import UpdateArtcle from "./UpdateArtcle";
 import ReactPlayer from "react-player";
+import jwt_decode from "jwt-decode";
 
 const LeftPart = () => {
   let history = useHistory();
@@ -22,6 +25,12 @@ const LeftPart = () => {
   const [headerInfo, setHeaderInfo] = useState([]);
   const [profilePosts, setProfilePosts] = useState([]);
   const [comment, setComment] = useState("");
+  const [open, setOpen] = useState(false);
+  const [openLikersModal, setOpenLikersModal] = useState(false);
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
+  const [postId, setPostId] = useState();
+  const [postedComments, setPostedComments] = useState([]);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -41,7 +50,20 @@ const LeftPart = () => {
         break;
     }
   };
-
+  function openSettings(id) {
+    if (
+      document.getElementById(id).nextElementSibling.classList.contains("close")
+    ) {
+      document.getElementById(id).nextElementSibling.classList.remove("close");
+    } else {
+      document.getElementById(id).nextElementSibling.classList.add("close");
+    }
+  }
+  const deleteArticle = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
+    const newpost = profilePosts.filter((post) => post.id !== id);
+    setProfilePosts(newpost);
+  };
   //get info for header
   const getInfo = () => {
     axios
@@ -50,13 +72,23 @@ const LeftPart = () => {
       )
       .then((response) => {
         setHeaderInfo(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  //get my posts
+
+  //like post
+  const likePost = (postId) => {
+    const data = {
+      userId: decoded.id,
+    };
+    axios
+      .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
+      .then((data) => console.log("like", data))
+      .catch((error) => console.log(error));
+  };
 
   const getPosts = () => {
     axios
@@ -66,6 +98,7 @@ const LeftPart = () => {
       .then((response) => {
         const posts = response.data;
         setProfilePosts(posts);
+        //console.log("post", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -74,11 +107,78 @@ const LeftPart = () => {
   useEffect(() => {
     getInfo();
     getPosts();
-    console.log(profilePosts);
+    //console.log(profilePosts);
   }, []);
-  // useEffect(() => {
 
-  // }, []);
+  const handleComment = (id) => {
+    const commentData = {
+      userId: decoded.id,
+      content: comment,
+      isReply: false,
+    };
+    axios
+      .post(
+        `https://localhost:44331/api/Post/AddCommentPost/${id}`,
+        commentData
+      )
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
+
+    setComment("");
+  };
+
+  //get comments
+  const getComments = (id) => {
+    //console.log(id);
+    axios
+      .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
+      .then((response) => {
+        setPostedComments(response.data);
+        //console.log(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  //delete comment
+  const deleteComment = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/DeleteComment/${id}`);
+    const newComments = postedComments.filter((c) => c.id !== id);
+    setPostedComments(newComments);
+  };
+
+  function displayComment(id) {
+    const test = document.querySelectorAll(".closeCommentContainer");
+
+    test.forEach((element) => {
+      console.log(element.getAttribute("id") !== id);
+      if (element.getAttribute("id") !== id) {
+        element.classList.remove("closeCommentContainer");
+      }
+    });
+
+    //console.log(test);
+    // console.log(document.getElementById(id).parentElement.nextElementSibling);
+    if (
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.contains(
+          "closeCommentContainer"
+        )
+    ) {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.remove(
+          "closeCommentContainer"
+        );
+    } else {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.add(
+          "closeCommentContainer"
+        );
+    }
+  }
+
   return (
     <>
       <Container>
@@ -154,58 +254,220 @@ const LeftPart = () => {
             </a>
           </Myboard>
         </Dashboard>
+        <Activity>
+          <div>
+            <h2>Your posts will be displayed here</h2>
+            <img
+              src="/images/add.svg"
+              alt=""
+              onClick={() => {
+                setExperienceModal(true);
+              }}
+            />
+          </div>
+        </Activity>
         <MyPosts>
-          <Article>
-            <SharedActor>
-              <a>
-                <img src={"/images/google.svg"} alt="" />
+          {profilePosts.map((p) => (
+            <Article key={p.id}>
+              <SharedActor>
+                <a>
+                  <img src={"/images/google.svg"} alt="" />
 
-                <div>
-                  <span>Name Surname</span>
-                  <span>Occupation</span>
-                  <span>Id: | shared:</span>
+                  <div>
+                    <span>{p.firstName + " " + p.lastName}</span>
+                    <span>{p.occupation}</span>
+                    <span>Id: {p.id} | shared: </span>
+                  </div>
+                </a>
+                <button
+                  className="ellipsis "
+                  id={p.id}
+                  onClick={() => {
+                    openSettings(p.id);
+                  }}
+                >
+                  <img src="/images/ellipsis.svg" alt="" />
+                </button>
+                <div className="settings close">
+                  <DeleteButton>
+                    <span onClick={() => deleteArticle(p.id)}>
+                      <DeleteIcon
+                        fontSize="small"
+                        style={{ paddingRight: "2px" }}
+                      />
+                      Delete
+                    </span>
+                  </DeleteButton>
+                  <UpdateButton>
+                    <span
+                      onClick={() => {
+                        setOpen(true);
+                      }}
+                    >
+                      <UpdateIcon
+                        fontSize="small"
+                        style={{ paddingRight: "3px" }}
+                      />
+                      Update
+                    </span>
+                  </UpdateButton>
+                  {open && (
+                    <UpdateArtcle setOpenModal={setOpen} postId={p.id} />
+                  )}
                 </div>
-              </a>
-              <button
-                className="ellipsis "
-                // id={post.id}
-                // onClick={() => {
-                //   openSettings(post.id);
-                // }}
-              >
-                <img src="/images/ellipsis.svg" alt="" />
-              </button>
-              <div className="settings close">
-                <DeleteButton>
-                  <span
-                  // onClick={() => deleteArticle(post.id)}
-                  >
-                    <DeleteIcon
-                      fontSize="small"
-                      style={{ paddingRight: "2px" }}
+              </SharedActor>
+              <Description>{p.content}</Description>
+              <SharedImg>
+                {!p.imageUrl && p.videoUrl ? (
+                  <ReactPlayer width={"100%"} url={p.videoUrl} />
+                ) : (
+                  p.imageUrl && (
+                    <a>
+                      <img src={`/images/${p.imageUrl}`} alt="" />
+                    </a>
+                  )
+                )}
+              </SharedImg>
+              <SocialCounts>
+                <li>
+                  <button>
+                    <img src="/images/like1.svg" alt="" />
+                    <span
+                      id={p.id}
+                      onClick={() => {
+                        setPostId(p.id);
+                        setOpenLikersModal(true);
+                      }}
+                    >
+                      {p.likeCount + " likes"}
+                    </span>
+                  </button>
+                </li>
+                <li>
+                  <a>
+                    {p.commentCount}
+                    comments
+                  </a>
+                </li>
+              </SocialCounts>
+              <SocialActions>
+                <LikeButton
+                  id={`l-${p.id}`}
+                  onClick={() => {
+                    // setPostId(post.id);
+                    likePost(p.id);
+                  }}
+                >
+                  <img src="/images/like.svg" alt="" />
+                  <span>Like</span>
+                </LikeButton>
+
+                <button
+                  id={`c-${p.id}`}
+                  onClick={() => {
+                    displayComment(`c-${p.id}`);
+                    getComments(p.id);
+                  }}
+                >
+                  <img src="/images/comment.svg" alt="" />
+                  <span>Comment</span>
+                </button>
+                <button>
+                  <img src="/images/share.svg" alt="" />
+                  <span>Share</span>
+                </button>
+                <button>
+                  <img src="/images/send.svg" alt="" />
+                  <span>Send</span>
+                </button>
+              </SocialActions>
+              <div className="commentContainer" id={p.id}>
+                <div className="postComment">
+                  <div className="commentImage">
+                    <img src="/images/user.svg" alt="" />
+                  </div>
+                  <div className="comment">
+                    <input
+                      type="text"
+                      // id="comment"
+                      //name="comment"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
                     />
-                    Delete
-                  </span>
-                </DeleteButton>
-                <UpdateButton>
-                  <span
-                  // onClick={() => {
-                  //   setOpen(true);
-                  // }}
+                  </div>
+                  <button
+                    className="postComment"
+                    onClick={() => {
+                      handleComment(p.id);
+                    }}
                   >
-                    <UpdateIcon
-                      fontSize="small"
-                      style={{ paddingRight: "3px" }}
-                    />
-                    Update
-                  </span>
-                </UpdateButton>
-                {/* {open && (
-                  <UpdateArtcle setOpenModal={setOpen} postId={post.id} />
-                )} */}
+                    Post
+                  </button>
+                </div>
+                <AllComments id={p.id}>
+                  {postedComments.map((postedComment) => (
+                    <div
+                      key={postedComment.id}
+                      className="allComments"
+                      id={`allComments-${p.id}`}
+                    >
+                      <img src="/images/user.svg" alt="" />
+                      <div className="commentContent">
+                        <div className="comment-userInfo">
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              fontSize: "13px",
+                              justifyContent: "left",
+                              padding: "10px 10px",
+                            }}
+                          >
+                            <span>
+                              {postedComment.firstName +
+                                " " +
+                                postedComment.lastName}
+                            </span>
+                            <span>{postedComment.occupation}</span>
+                          </div>
+
+                          <div className="smallContainer">
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                paddingRight: "10px",
+                                paddingTop: "10px",
+                              }}
+                            >
+                              {postedComment.age}d
+                            </span>
+                            {/* <img src="/images/ellipsis.svg" alt="" /> */}
+                            <DeleteIcon
+                              fontSize="small"
+                              style={{
+                                paddingRight: "2px",
+                                paddingTop: "5px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => deleteComment(postedComment.id)}
+                            />
+                          </div>
+                        </div>
+
+                        <p>{postedComment.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                </AllComments>
               </div>
-            </SharedActor>
-          </Article>
+            </Article>
+          ))}
+          {openLikersModal && (
+            <LikersModal
+              setOpenModalLikers={setOpenLikersModal}
+              postId={postId}
+            />
+          )}
         </MyPosts>
 
         <PostModal showModal={showModal} handleClick={handleClick} />
@@ -288,7 +550,26 @@ const CommonCard = styled.div`
 const MyPosts = styled.div`
   margin-top: 10px;
 `;
-
+const Activity = styled.div`
+  overflow: hidden;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  background-color: #fff;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  border: none;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 /20%);
+  div {
+    width: 100%;
+  }
+  h2 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 300;
+    padding: 10px;
+  }
+`;
 const CardBackground = styled.div`
   background: url("/images/card-bg.svg");
   background-position: center;
@@ -436,10 +717,12 @@ const Education = styled.div`
 
 const Experience = styled(Education)``;
 
+const AllComments = styled.div``;
+
 const Article = styled.div`
-  /* text-align: center;
+  text-align: center;
   overflow: hidden;
-  //margin-bottom: 8px;
+  margin-bottom: 8px;
   background-color: #fff;
   border-radius: 5px;
   position: relative;
@@ -447,12 +730,12 @@ const Article = styled.div`
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 /20%);
   padding: 0;
   margin: 0 0 8px;
-  //overflow: visible;
+  overflow: visible;
   button {
     &:hover {
       cursor: pointer;
     }
-  } */
+  }
 `;
 const SharedActor = styled.div`
   padding-right: 40px;
@@ -585,8 +868,6 @@ const LikeButton = styled.button`
   border: none;
   border-radius: 5px;
   background: transparent;
-  /* background: ${(props) =>
-    props.liked ? "rgba(0, 0, 0, 0.08)" : "#transparent"}; */
   &:hover {
     background: rgb(235 235 235);
   }
