@@ -34,7 +34,11 @@ const JoinNow = ({submitForm}) => {
 
   return !isSubmitted ? (
     <Container submitForm={submitForm}>
-      <a href="/">
+      <a
+        onClick={() => {
+          history.push("/");
+        }}
+      >
         <img
           src="/images/linkedin.png"
           style={{ width: "135px", height: "34px" }}

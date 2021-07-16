@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useHistory } from "react-router";
 import styled from "styled-components";
 import ContactInfoModal from "./ContactInfoModal";
 import PostModal from "./PostModal";
@@ -12,6 +13,7 @@ import UpdateIcon from "@material-ui/icons/Update";
 import ReactPlayer from "react-player";
 
 const LeftPart = () => {
+  let history = useHistory();
   const [showModal, setShowModal] = useState("close");
   const [modalOpen, setModalOpen] = useState(false);
   const [educationModal, setEducationModal] = useState(false);
@@ -48,7 +50,7 @@ const LeftPart = () => {
       )
       .then((response) => {
         setHeaderInfo(response.data);
-        console.log(response.data)
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -113,7 +115,11 @@ const LeftPart = () => {
               />
             </button>
           </Properties>
-          <a href="/connections">
+          <a
+            onClick={() => {
+              history.push("/connections");
+            }}
+          >
             {headerInfo.connectionCount
               ? headerInfo.connectionCount + " " + "connections"
               : "You have no connections yet"}
@@ -124,7 +130,11 @@ const LeftPart = () => {
         <Dashboard>
           <h1>Your dashboard</h1>
           <Myboard>
-            <a href="/connections">
+            <a
+              onClick={() => {
+                history.push("/connections");
+              }}
+            >
               <div>
                 <img src="/images/network.svg" alt="" />
                 <div>

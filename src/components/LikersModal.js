@@ -31,12 +31,8 @@ const LikersModal = ({ setOpenModalLikers, postId }) => {
           </button>
         </Header>
         <LikersContent>
-          {likers.length == 0 ? (
-            <Text>
-              <p>No likes here yet :(</p>
-            </Text>
-          ) : (
-            likers.map((liker) => {
+          {likers.length > 0 &&
+            likers.map((liker) => (
               <UserList>
                 <UserImage>
                   <img src="/images/user.svg" alt="" />
@@ -45,20 +41,8 @@ const LikersModal = ({ setOpenModalLikers, postId }) => {
                   <h4>{liker.firstName + " " + liker.lastName}</h4>
                   <span>{liker.occupation}</span>
                 </UserInfo>
-              </UserList>;
-            })
-          )}
-          {/* {likers.map((liker) => {
-            <UserList key={liker.id}>
-              <UserImage>
-                <img src="/images/user.svg" alt="" />
-              </UserImage>
-              <UserInfo>
-                <h4>{liker.firstName + " " + liker.lastName}</h4>
-                <span>{liker.occupation}</span>
-              </UserInfo>
-            </UserList>;
-          })} */}
+              </UserList>
+            ))}
         </LikersContent>
       </Content>
     </Container>

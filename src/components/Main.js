@@ -20,11 +20,11 @@ const Main = () => {
   const token = user.user.token;
   const decoded = jwt_decode(token);
   const [comment, setComment] = useState("");
-  const [like, setLike] = useState();
-
   const [postId, setPostId] = useState();
-
-  //const [image, setImage] = useState(null);
+  const [postedComments, setPostedComments] = useState([]);
+  const [test, setTest] = useState(false);
+  //const [isCalledOnce, setIsCalledOnce] = useState(false);
+  //const [postedData, setPostedData] = useState(false);
 
   //get all posts
   const getData = () => {
@@ -33,12 +33,14 @@ const Main = () => {
       .then((response) => {
         const myPosts = response.data.reverse();
         setPosts(myPosts);
-        console.log(myPosts);
+
+        //console.log(myPosts);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  const getPostforFeed = () => {};
 
   //open and close delete/update div
   function openSettings(id) {
@@ -52,6 +54,17 @@ const Main = () => {
   }
   //open and close comment div
   function displayComment(id) {
+    const test = document.querySelectorAll(".closeCommentContainer");
+
+    test.forEach((element) => {
+      console.log(element.getAttribute("id") !== id);
+      if (element.getAttribute("id") !== id) {
+        element.classList.remove("closeCommentContainer");
+      }
+    });
+
+    //console.log(test);
+    // console.log(document.getElementById(id).parentElement.nextElementSibling);
     if (
       document
         .getElementById(id)
@@ -72,11 +85,42 @@ const Main = () => {
         );
     }
   }
-  const handleComment = (e) => {
+
+  //post comment
+  const handleComment = (id) => {
+    const commentData = {
+      userId: decoded.id,
+      content: comment,
+      isReply: false,
+    };
     axios
-      .post("https://localhost:44331/api/Comment", comment)
+      .post(
+        `https://localhost:44331/api/Post/AddCommentPost/${id}`,
+        commentData
+      )
       .then((res) => console.log(res))
       .catch((error) => console.log(error));
+
+    setComment("");
+  };
+
+  //get comments
+  const getComments = (id) => {
+    //console.log(id);
+    axios
+      .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
+      .then((response) => {
+        setPostedComments(response.data);
+        //console.log(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  //delete comment
+  const deleteComment = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/DeleteComment/${id}`);
+    const newComments = postedComments.filter((c) => c.id !== id);
+    setPostedComments(newComments);
   };
 
   //delete post
@@ -96,6 +140,23 @@ const Main = () => {
       .then((data) => console.log("like", data))
       .catch((error) => console.log(error));
   };
+
+  // const likeAgain = (id) => {
+  //   setIsCalledOnce(true);
+  //   if (isCalledOnce) {
+  //     setTest(test - 1);
+  //     document.getElementById(id).innerHTML = test;
+
+  //     setIsCalledOnce(false);
+  //   } else {
+  //     setTest(test + 1);
+  //     document.getElementById(id).innerHTML = test;
+  //   }
+  //   console.log(document.getElementById(id));
+  //   // if (document.getElementById(id).parentElement.parentElement) {
+  //   //setTest(test + 1);
+  //   // }
+  // };
 
   //open and close postModal
   const handleClick = (e) => {
@@ -119,7 +180,7 @@ const Main = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [showModal]);
 
   return (
     <>
@@ -149,7 +210,7 @@ const Main = () => {
         </ShareBox>
         <Content>
           {posts.map((post) => (
-            <Article key={post.id}>
+            <Article key={post.id} id={post.id}>
               <SharedActor>
                 <a>
                   <img src={"/images/google.svg"} alt="" />
@@ -164,9 +225,9 @@ const Main = () => {
                 </a>
                 <button
                   className="ellipsis "
-                  id={post.id}
+                  id={`e-${post.id}`}
                   onClick={() => {
-                    openSettings(post.id);
+                    openSettings(`e-${post.id}`);
                   }}
                 >
                   <img src="/images/ellipsis.svg" alt="" />
@@ -217,6 +278,7 @@ const Main = () => {
                   <button>
                     <img src="/images/like1.svg" alt="" />
                     <span
+                      id={post.id}
                       onClick={() => {
                         setPostId(post.id);
                         setOpenLikersModal(true);
@@ -234,7 +296,7 @@ const Main = () => {
                 <LikeButton
                   id={`l-${post.id}`}
                   onClick={() => {
-                    //setRequest(true);
+                    // setPostId(post.id);
                     likePost(post.id);
                   }}
                 >
@@ -246,6 +308,7 @@ const Main = () => {
                   id={`c-${post.id}`}
                   onClick={() => {
                     displayComment(`c-${post.id}`);
+                    getComments(post.id);
                   }}
                 >
                   <img src="/images/comment.svg" alt="" />
@@ -261,53 +324,84 @@ const Main = () => {
                 </button>
               </SocialActions>
               <div className="commentContainer" id={post.id}>
-                <div className="commentImage">
-                  <img src="/images/user.svg" alt="" />
-                </div>
-                <div className="comment">
-                  <input
-                    type="text"
-                    // id="comment"
-                    //name="comment"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  />
-                </div>
-                <button className="postComment" onClick={() => handleComment()}>
-                  Post
-                </button>
-              </div>
-              {/* <div className="allComments">
-                <img src="/images/user.svg" alt="" />
-                <div className="commentContent">
-                  <div className="comment-userInfo">
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        fontSize: "13px",
-                        justifyContent: "left",
-                        padding: "10px 10px",
-                      }}
-                    >
-                      <span>Name Surname</span>
-                      <span>Occupation</span>
-                    </div>
-
-                    <span
-                      style={{
-                        fontSize: "13px",
-                        paddingRight: "10px",
-                        paddingTop: "10px",
-                      }}
-                    >
-                      1d
-                    </span>
+                <div className="postComment">
+                  <div className="commentImage">
+                    <img src="/images/user.svg" alt="" />
                   </div>
-
-                  <p>Text</p>
+                  <div className="comment">
+                    <input
+                      type="text"
+                      // id="comment"
+                      //name="comment"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    className="postComment"
+                    onClick={() => {
+                      handleComment(post.id);
+                    }}
+                  >
+                    Post
+                  </button>
                 </div>
-              </div> */}
+                <AllComments id={post.id}>
+                  {postedComments.map((postedComment) => (
+                    <div
+                      key={postedComment.id}
+                      className="allComments"
+                      id={`allComments-${post.id}`}
+                    >
+                      <img src="/images/user.svg" alt="" />
+                      <div className="commentContent">
+                        <div className="comment-userInfo">
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              fontSize: "13px",
+                              justifyContent: "left",
+                              padding: "10px 10px",
+                            }}
+                          >
+                            <span>
+                              {postedComment.firstName +
+                                " " +
+                                postedComment.lastName}
+                            </span>
+                            <span>{postedComment.occupation}</span>
+                          </div>
+
+                          <div className="smallContainer">
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                paddingRight: "10px",
+                                paddingTop: "10px",
+                              }}
+                            >
+                              {postedComment.age}d
+                            </span>
+                            {/* <img src="/images/ellipsis.svg" alt="" /> */}
+                            <DeleteIcon
+                              fontSize="small"
+                              style={{
+                                paddingRight: "2px",
+                                paddingTop: "5px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => deleteComment(postedComment.id)}
+                            />
+                          </div>
+                        </div>
+
+                        <p>{postedComment.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                </AllComments>
+              </div>
             </Article>
           ))}
         </Content>
@@ -323,6 +417,7 @@ const Main = () => {
   );
 };
 
+const AllComments = styled.div``;
 const Container = styled.div`
   grid-area: main;
 `;

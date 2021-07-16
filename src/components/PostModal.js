@@ -45,7 +45,6 @@ const PostModal = (props) => {
           console.log(error);
         });
     }
-
     reset(e);
   };
 
@@ -147,7 +146,9 @@ const PostModal = (props) => {
               </ShareComment>
               <PostButton
                 disabled={!editorText ? true : false}
-                onClick={(event) => submit(event)}
+                onClick={(event) => {
+                  submit(event);
+                }}
               >
                 Post
               </PostButton>

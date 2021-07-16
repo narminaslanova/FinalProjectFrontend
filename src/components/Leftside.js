@@ -2,9 +2,10 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const Leftside = () => {
+  let history = useHistory();
   const communityCard = useRef();
   const [fixedPosition, setFixedPosition] = useState(false);
   const user = useSelector((state) => state.authentication);
@@ -46,7 +47,11 @@ const Leftside = () => {
 
             {/* )} */}
           </Photo>
-          <a href="/myprofile">
+          <a
+            onClick={() => {
+              history.push("/myprofile");
+            }}
+          >
             {user
               ? user.user.user.firstName + " " + user.user.user.lastName
               : "Username"}

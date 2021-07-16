@@ -1,13 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 
 const About = () => {
+  let history = useHistory();
   return (
     <Container>
       <Content>
         <Header>
           <Logo>
-            <a href="/home">
+            <a
+              onClick={() => {
+                history.push("/home");
+              }}
+            >
               <img src="/images/linkedin.png" alt="" />
             </a>
           </Logo>

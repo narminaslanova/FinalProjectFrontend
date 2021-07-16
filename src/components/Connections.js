@@ -5,9 +5,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import jwt_decode from "jwt-decode";
 import BackspaceIcon from "@material-ui/icons/Backspace";
-import Talk from "talkjs";
+import { useHistory } from "react-router";
 
 const Connections = () => {
+  let history = useHistory();
   const [appliers, setAppliers] = useState([]);
   const [connections, setConnections] = useState([]);
   //const [request, setRequest] = useState(false);
@@ -218,7 +219,12 @@ const Connections = () => {
                     </div>
                     <div className="user-actions">
                       <div>
-                        <a href="#" className="message-btn">
+                        <a
+                          onClick={() => {
+                            history.push("/messaging");
+                          }}
+                          className="message-btn"
+                        >
                           Message
                         </a>
                         <button

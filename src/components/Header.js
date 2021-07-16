@@ -67,7 +67,11 @@ const Header = (props) => {
     <Container>
       <Content>
         <Logo>
-          <a href="/home">
+          <a
+            onClick={() => {
+              history.push("/home");
+            }}
+          >
             <img src="/images/linkedinIcon.png" alt="" />
           </a>
         </Logo>
@@ -82,25 +86,41 @@ const Header = (props) => {
         <Nav>
           <NavListWrap>
             <NavList className="active">
-              <a href="/home">
+              <a
+                onClick={() => {
+                  history.push("/home");
+                }}
+              >
                 <img src="/images/nav-home.svg" alt="" />
                 <span>Home</span>
               </a>
             </NavList>
             <NavList>
-              <a href="/connections">
+              <a
+                onClick={() => {
+                  history.push("/connections");
+                }}
+              >
                 <img src="/images/nav-network.svg" alt="" />
                 <span>My Network</span>
               </a>
             </NavList>
             <NavList>
-              <a href="/messaging">
+              <a
+                onClick={() => {
+                  history.push("/messaging");
+                }}
+              >
                 <img src="/images/nav-messaging.svg" alt="" />
                 <span>Messaging</span>
               </a>
             </NavList>
             <NavList>
-              <a href="/notifications">
+              <a
+                onClick={() => {
+                  history.push("/notifications");
+                }}
+              >
                 <img src="/images/nav-notifications.svg" alt="" />
                 <span>
                   Notifications
@@ -186,6 +206,7 @@ const Content = styled.div`
 const Logo = styled.span`
   margin-right: 8px;
   font-size: 0px;
+  cursor: pointer;
   img {
     width: 34px;
     height: 34px;
@@ -291,6 +312,7 @@ const NavList = styled.li`
       display: flex;
       align-items: center;
       position: relative;
+      cursor: pointer;
       sup {
         background-color: red;
         color: white;

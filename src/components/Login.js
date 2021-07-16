@@ -39,7 +39,11 @@ const Login = (props) => {
     <>
       <Container>
         <Nav>
-          <a href="/">
+          <a
+            onClick={() => {
+              history.push("/");
+            }}
+          >
             <img
               src="/images/linkedin.png"
               style={{ width: "135px", height: "33.75px" }}
