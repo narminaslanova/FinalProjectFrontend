@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 
-const EditExperience = ({ setExperienceModalOpen, props }) => {
+const EditExperience = ({ setEditExperiencelOpen, props }) => {
   const [work, setWork] = useState("");
   const [employer, setEmployer] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -58,7 +58,7 @@ const EditExperience = ({ setExperienceModalOpen, props }) => {
                 src="/images/close-icon.svg"
                 alt=""
                 onClick={(e) => {
-                  setExperienceModalOpen(false);
+                  setEditExperiencelOpen(false);
                   reset(e);
                 }}
               />

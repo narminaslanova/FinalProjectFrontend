@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
-const EditEducation = ({ setEditEducationOpen }) => {
+const EditEducation = ({ setEditEducationOpen, educationId }) => {
   const [schoolName, setSchoolName] = useState("");
   const [faculty, setFaculty] = useState("");
   const [startYear, setStartYear] = useState();
@@ -17,6 +18,27 @@ const EditEducation = ({ setEditEducationOpen }) => {
     setStartYear();
     setEndYear();
     setDescription("");
+  };
+
+  const data = {
+    schoolName: schoolName,
+    faculity: faculty,
+    startDate: startYear,
+    endTime: endYear,
+    description: description,
+  };
+  const submit = (e) => {
+    e.preventDefault();
+    axios
+      .put(
+        `https://localhost:44331/api/MyProfile/PutUserEducation/${educationId}`,
+        data
+      )
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+
+    setEditEducationOpen(false);
+    reset(e);
   };
   return (
     <>
@@ -86,9 +108,10 @@ const EditEducation = ({ setEditEducationOpen }) => {
             />
           </EditContent>
           <BtnDiv>
-            <SavedButton
-            //  onClick={(event) => submit(event)}
-            >
+            <DeleteBtn>
+              <span>Delete Education</span>
+            </DeleteBtn>
+            <SavedButton onClick={(event) => submit(event)}>
               <span>Save</span>
             </SavedButton>
           </BtnDiv>
@@ -194,9 +217,10 @@ const EditContent = styled.div`
 `;
 const BtnDiv = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding-right: 10px;
+  padding-left: 10px;
   /* border-top: 2px solid #ccc;*/
   padding-top: 10px;
 `;
@@ -210,5 +234,20 @@ const SavedButton = styled.button`
   color: #fff;
   cursor: pointer;
 `;
-
+const DeleteBtn = styled.button`
+  width: 150px;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgb(0 0 0 / 60%);
+  background: #fff;
+  color: rgb(0 0 0 / 60%);
+  cursor: pointer;
+  &:hover {
+    background-color: rgb(235 235 235);
+    color: black;
+    border: 1px solid black;
+  }
+  //box-shadow: rgb(0 0 0 / 60%);
+`;
 export default EditEducation;

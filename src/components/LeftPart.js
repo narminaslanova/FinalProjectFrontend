@@ -34,6 +34,7 @@ const LeftPart = () => {
   const decoded = jwt_decode(token);
   const [postId, setPostId] = useState();
   const [postedComments, setPostedComments] = useState([]);
+  const [educationId, setEducationId] = useState();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -62,6 +63,20 @@ const LeftPart = () => {
       document.getElementById(id).nextElementSibling.classList.add("close");
     }
   }
+  function openEdSettings(id) {
+    console.log(document.getElementById(id).nextElementSibling);
+    if (
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.contains("closeEd")
+    ) {
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.remove("closeEd");
+    } else {
+      document.getElementById(id).nextElementSibling.classList.add("closeEd");
+    }
+  }
   const deleteArticle = (id) => {
     axios.delete(`https://localhost:44331/api/Post/Delete/${id}`);
     const newpost = profilePosts.filter((post) => post.id !== id);
@@ -75,7 +90,6 @@ const LeftPart = () => {
       )
       .then((response) => {
         setHeaderInfo(response.data);
-        //console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -101,7 +115,6 @@ const LeftPart = () => {
       .then((response) => {
         const posts = response.data;
         setProfilePosts(posts);
-        console.log("post", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -110,7 +123,6 @@ const LeftPart = () => {
   useEffect(() => {
     getInfo();
     getPosts();
-    //console.log(profilePosts);
   }, []);
 
   const handleComment = (id) => {
@@ -159,8 +171,6 @@ const LeftPart = () => {
       }
     });
 
-    //console.log(test);
-    // console.log(document.getElementById(id).parentElement.nextElementSibling);
     if (
       document
         .getElementById(id)
@@ -191,14 +201,36 @@ const LeftPart = () => {
         `https://localhost:44331/api/MyProfile/GetAllUserEducations/${user.user.user.email}`
       )
       .then((response) => {
-        console.log(response.data);
+        console.log("educations", response.data);
         setEducations(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  //delete education
+  const deleteEducation = (id) => {
+    axios.delete(`https://localhost:44331/api/MyProfile/DeleteEducation/${id}`);
+    const newEducation = educations.filter((ed) => ed.id !== id);
+    setEducations(newEducation);
+  };
+
+  //get experience
+  const [experiences, setExperiences] = useState([]);
+  const getExperience = () => {
+    axios
+      .get(
+        `https://localhost:44331/api/MyProfile/GetUserExperiances/${user.user.user.email}`
+      )
+      .then((response) => {
+        setExperiences(response.data);
+        console.log("exp", response.data);
       })
       .catch((error) => console.log(error));
   };
 
   useEffect(() => {
     getEducation();
+    getExperience();
   }, []);
   return (
     <>
@@ -290,9 +322,11 @@ const LeftPart = () => {
                   <img src={"/images/google.svg"} alt="" />
 
                   <div>
-                    <span>{p.firstName + " " + p.lastName}</span>
-                    <span>{p.occupation}</span>
-                    <span>Id: {p.id} | shared: </span>
+                    <span>{p.firstname + " " + p.lastname}</span>
+                    <span>{p.userOccupation}</span>
+                    <span>
+                      Id: {p.id} | shared: {p.postAge}{" "}
+                    </span>
                   </div>
                 </a>
                 <button
@@ -332,7 +366,7 @@ const LeftPart = () => {
                   )}
                 </div>
               </SharedActor>
-              <Description>{p.content}</Description>
+              <Description>{p.description}</Description>
               <SharedImg>
                 {!p.imageUrl && p.videoUrl ? (
                   <ReactPlayer width={"100%"} url={p.videoUrl} />
@@ -355,7 +389,7 @@ const LeftPart = () => {
                         setOpenLikersModal(true);
                       }}
                     >
-                      {p.likeCount + " likes"}
+                      {p.likeCount}
                     </span>
                   </button>
                 </li>
@@ -499,31 +533,84 @@ const LeftPart = () => {
                 }}
               />
             </div>
-            {educations.map((education) => (
-              <div className="education">
-                <img className="uni-image" src="/images/google.svg" alt="" />
-                <div className="ed-info">
-                  <h4>{education.educatorName}</h4>
-                  <p>Faculty</p>
-                  <span>year</span>
-                </div>
-                <img
-                  src="/images/edit-info.svg"
-                  alt=""
+            {educations.length == 0 ? (
+              <div
+                className="text"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <p
                   onClick={() => {
-                    setOpenEditEducation(true);
+                    setEducationModal(true);
                   }}
-                  style={{ cursor: "pointer" }}
-                />
+                >
+                  Add Education here
+                </p>
               </div>
-            ))}
+            ) : (
+              educations.map((education) => (
+                <div className="education">
+                  <img className="uni-image" src="/images/google.svg" alt="" />
+                  <div className="ed-info">
+                    <h4>{education.schoolName}</h4>
+                    <p>{education.faculty}</p>
+                    <span>{education.startDate + "-" + education.endDate}</span>
+                    <p>{education.description}</p>
+                  </div>
+                  <div>
+                    <button
+                      className="ellipsisEd "
+                      id={education.id}
+                      onClick={() => {
+                        openEdSettings(education.id);
+                      }}
+                    >
+                      <img src="/images/ellipsis.svg" alt="" />
+                    </button>
+                    <div className="settingsEd">
+                      <DeleteButton>
+                        <span onClick={() => deleteEducation(education.id)}>
+                          <DeleteIcon
+                            fontSize="small"
+                            style={{ paddingRight: "2px" }}
+                          />
+                          Delete
+                        </span>
+                      </DeleteButton>
+                      <UpdateButton>
+                        <span
+                          onClick={() => {
+                            setEducationId(education.id);
+                            setOpenEditEducation(true);
+                          }}
+                        >
+                          <UpdateIcon
+                            fontSize="small"
+                            style={{ paddingRight: "3px" }}
+                          />
+                          Update
+                        </span>
+                      </UpdateButton>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </Education>
           {educationModal && (
             <EducationModal setEducationModalOpen={setEducationModal} />
           )}
           {openEditEducation && (
-            <EditEducation setEditEducationOpen={setOpenEditEducation} />
+            <EditEducation
+              setEditEducationOpen={setOpenEditEducation}
+              educationId={educationId}
+            />
           )}
+        </Section>
+        <Section>
           <Experience>
             <div className="heading">
               <h2>Experience</h2>
@@ -535,16 +622,37 @@ const LeftPart = () => {
                 }}
               />
             </div>
-            <div className="education">
-              <img className="uni-image" src="/images/google.svg" alt="" />
-              <div className="ed-info">
-                <h4>Work or volunteering place</h4>
-                <p>Employer</p>
-                <span>year</span>
-                <p>Description</p>
+            {experiences.length == 0 ? (
+              <div
+                className="text"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <p
+                  onClick={() => {
+                    setExperienceModal(true);
+                  }}
+                >
+                  Add Experience here
+                </p>
               </div>
-              <img src="/images/edit-info.svg" alt="" />
-            </div>
+            ) : (
+              experiences.map((experience) => (
+                <div className="education">
+                  <img className="uni-image" src="/images/google.svg" alt="" />
+                  <div className="ed-info">
+                    <h4>Work or volunteering place</h4>
+                    <p>Employer</p>
+                    <span>year</span>
+                    <p>Description</p>
+                  </div>
+                  <img src="/images/edit-info.svg" alt="" />
+                </div>
+              ))
+            )}
           </Experience>
           {experienceModal && (
             <ExperienceModal setExperienceModalOpen={setExperienceModal} />
@@ -719,11 +827,20 @@ const Section = styled(CommonCard)`
 `;
 
 const Education = styled.div`
+  padding-bottom: 20px;
+
   .heading {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    h2 {
+      padding-bottom: 5px;
+    }
     img {
       cursor: pointer;
+      width: 20px;
+      height: 20px;
     }
   }
   .education {

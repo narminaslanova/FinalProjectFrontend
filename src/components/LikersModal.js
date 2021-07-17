@@ -133,11 +133,10 @@ const UserInfo = styled.div`
   font-family: "Montserrat", sans-serif;
   h4 {
     font-weight: 200;
-
-    color: gray;
   }
   span {
     font-size: 14px;
+    color: gray;
   }
 `;
 

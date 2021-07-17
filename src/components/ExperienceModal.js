@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const ExperienceModal = ({ setExperienceModalOpen, props }) => {
   const [work, setWork] = useState("");
@@ -9,6 +10,13 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
   const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [jobType, setJobType] = useState("");
+  // const [jobType1, setJobType1] = useState("");
+  // const [jobType2, setJobType2] = useState("");
+  // const [jobType3, setJobType3] = useState("");
+
+  const user = useSelector((state) => state.authentication);
 
   const reset = (e) => {
     setWork("");
@@ -16,34 +24,37 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
     setStartYear("");
     setEndYear("");
     setDescription("");
+    setLocation("");
   };
 
-  //   const changeInfo = (e) => {
-  //     e.preventDefault();
-  //     if (e.target !== e.currentTarget) {
-  //       return;
-  //     }
-
-  //     const payload = {
-  //       schoolName: schoolName,
-  //       faculty: faculty,
-  //       year: year,
-  //     };
-  //     props.changeInfo(payload);
-  //     reset(e);
-  //   };
+  // if (jobType == "Fulltime") {
+  //   setJobType(1);
+  // } else if (jobType == "PartTime") {
+  //   setJobType(2);
+  // } else {
+  //   setJobType(3);
+  // }
+  const data = {
+    workName: work,
+    employer: employer,
+    startYear: startYear,
+    endYear: endYear,
+    description: description,
+    location: location,
+    jobType: jobType,
+  };
 
   const submit = (e) => {
     e.preventDefault();
-    // axios
-    //   .put(
-    //     `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
-    //     data
-    //   )
-    //   .then((data) => console.log(data))
-    //   .catch((error) => console.log(error));
+    axios
+      .post(
+        `https://localhost:44331/api/MyProfile/PostUserExperiance/${user.user.user.email}`,
+        data
+      )
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
 
-    // setOpenModal(false);
+    setExperienceModalOpen(false);
     reset(e);
   };
 
@@ -81,6 +92,17 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
               onChange={(e) => setEmployer(e.target.value)}
               name="employer"
             />
+            <label for="jobType">Choose type of Job:</label>
+            <select
+              name="jobType"
+              id="jobType"
+              defaultValue={jobType}
+              onChange={(e) => setJobType(e.target.value)}
+            >
+              <option value="1">FullTime</option>
+              <option value="2">PartTime</option>
+              <option value="3">Freelancer</option>
+            </select>
             <label htmlFor="startYear">Start Year</label>
             <input
               type="date"
@@ -101,6 +123,14 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
               onChange={(e) => setEndYear(e.target.value)}
               name="endYear"
               style={{ padding: "20px" }}
+            />
+            <label htmlFor="location">Location</label>
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              name="location"
             />
             <label htmlFor="description">Description</label>
             <textarea

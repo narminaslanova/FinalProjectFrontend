@@ -22,8 +22,8 @@ const EducationModal = ({ setEducationModalOpen, props }) => {
 
   const data = {
     schoolName: schoolName,
-    faculty: faculty,
-    starDate: startYear,
+    faculity: faculty,
+    startDate: startYear,
     endTime: endYear,
     description: description,
   };
@@ -40,6 +40,7 @@ const EducationModal = ({ setEducationModalOpen, props }) => {
 
     setEducationModalOpen(false);
     reset(e);
+    //window.location.reload(false);
   };
   return (
     <>

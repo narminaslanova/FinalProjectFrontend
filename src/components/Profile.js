@@ -21,8 +21,8 @@ const Container = styled.div`
 `;
 const Layout = styled.div`
   display: grid;
-  grid-template-areas: "leftpart leftpart rightpart";
-  grid-template-columns: minmax(0, 12fr) minmax(300px, 5fr);
+  grid-template-areas: "leftpart rightpart test";
+  grid-template-columns: minmax(0, 12fr) minmax(0, 5fr) minmax(0, 1fr);
   column-gap: 25px;
   row-gap: 15px;
   grid-template-rows: auto;
