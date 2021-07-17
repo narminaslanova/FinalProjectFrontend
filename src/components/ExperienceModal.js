@@ -12,9 +12,6 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [jobType, setJobType] = useState("");
-  // const [jobType1, setJobType1] = useState("");
-  // const [jobType2, setJobType2] = useState("");
-  // const [jobType3, setJobType3] = useState("");
 
   const user = useSelector((state) => state.authentication);
 
@@ -27,13 +24,6 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
     setLocation("");
   };
 
-  // if (jobType == "Fulltime") {
-  //   setJobType(1);
-  // } else if (jobType == "PartTime") {
-  //   setJobType(2);
-  // } else {
-  //   setJobType(3);
-  // }
   const data = {
     workName: work,
     employer: employer,
@@ -220,7 +210,8 @@ const EditContent = styled.div`
   label {
     margin-top: 15px;
   }
-  input {
+  input,
+  select {
     height: 100%;
     width: 100%;
     border-radius: 3px;

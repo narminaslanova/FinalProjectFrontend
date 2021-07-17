@@ -22,7 +22,7 @@ const Main = () => {
   const [comment, setComment] = useState("");
   const [postId, setPostId] = useState();
   const [postedComments, setPostedComments] = useState([]);
-  const [test, setTest] = useState(false);
+  const [reply, setReply] = useState("");
   //const [isCalledOnce, setIsCalledOnce] = useState(false);
   //const [postedData, setPostedData] = useState(false);
 
@@ -40,7 +40,6 @@ const Main = () => {
         console.log(error);
       });
   };
-  const getPostforFeed = () => {};
 
   //open and close delete/update div
   function openSettings(id) {
@@ -51,6 +50,19 @@ const Main = () => {
     } else {
       document.getElementById(id).nextElementSibling.classList.add("close");
     }
+  }
+  function openReply(id) {
+    let element =
+      document.getElementById(id).parentElement.parentElement.nextElementSibling
+        .nextElementSibling;
+    console.log(element);
+
+    if (element.classList.contains("closePost")) {
+      element.classList.remove("closePost");
+    }
+    // } else {
+    //   element.classList.add("closePost");
+    // }
   }
   //open and close comment div
   function displayComment(id) {
@@ -141,23 +153,6 @@ const Main = () => {
       .catch((error) => console.log(error));
   };
 
-  // const likeAgain = (id) => {
-  //   setIsCalledOnce(true);
-  //   if (isCalledOnce) {
-  //     setTest(test - 1);
-  //     document.getElementById(id).innerHTML = test;
-
-  //     setIsCalledOnce(false);
-  //   } else {
-  //     setTest(test + 1);
-  //     document.getElementById(id).innerHTML = test;
-  //   }
-  //   console.log(document.getElementById(id));
-  //   // if (document.getElementById(id).parentElement.parentElement) {
-  //   //setTest(test + 1);
-  //   // }
-  // };
-
   //open and close postModal
   const handleClick = (e) => {
     e.preventDefault();
@@ -177,7 +172,7 @@ const Main = () => {
         break;
     }
   };
-
+  const handleReply = () => {};
   useEffect(() => {
     getData();
   }, [showModal]);
@@ -348,55 +343,154 @@ const Main = () => {
                 </div>
                 <AllComments id={post.id}>
                   {postedComments.map((postedComment) => (
-                    <div
-                      key={postedComment.id}
-                      className="allComments"
-                      id={`allComments-${post.id}`}
-                    >
-                      <img src="/images/user.svg" alt="" />
-                      <div className="commentContent">
-                        <div className="comment-userInfo">
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              fontSize: "13px",
-                              justifyContent: "left",
-                              padding: "10px 10px",
-                            }}
-                          >
-                            <span>
-                              {postedComment.firstName +
-                                " " +
-                                postedComment.lastName}
-                            </span>
-                            <span>{postedComment.occupation}</span>
-                          </div>
-
-                          <div className="smallContainer">
-                            <span
+                    <div>
+                      <div
+                        key={postedComment.id}
+                        className="allComments"
+                        style={{ position: "relative" }}
+                        id={`allComments-${post.id}`}
+                      >
+                        <img src="/images/user.svg" alt="" />
+                        <div className="commentContent">
+                          <div className="comment-userInfo">
+                            <div
                               style={{
+                                display: "flex",
+                                flexDirection: "column",
                                 fontSize: "13px",
-                                paddingRight: "10px",
-                                paddingTop: "10px",
+                                justifyContent: "left",
+                                padding: "10px 10px",
                               }}
                             >
-                              {postedComment.age}d
-                            </span>
-                            {/* <img src="/images/ellipsis.svg" alt="" /> */}
-                            <DeleteIcon
-                              fontSize="small"
-                              style={{
-                                paddingRight: "2px",
-                                paddingTop: "5px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => deleteComment(postedComment.id)}
-                            />
+                              <span>
+                                {postedComment.firstName +
+                                  " " +
+                                  postedComment.lastName +
+                                  "id:" +
+                                  postedComment.id}
+                              </span>
+                              <span>{postedComment.occupation}</span>
+                            </div>
+
+                            <div className="smallContainer">
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  paddingRight: "10px",
+                                  paddingTop: "10px",
+                                }}
+                              >
+                                {postedComment.age}d
+                              </span>
+                              {/* <img src="/images/ellipsis.svg" alt="" /> */}
+                              <DeleteIcon
+                                fontSize="small"
+                                style={{
+                                  paddingRight: "2px",
+                                  paddingTop: "5px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => deleteComment(postedComment.id)}
+                              />
+                            </div>
+                          </div>
+                          <p>{postedComment.content}</p>
+                          <span
+                            className="reply-btn"
+                            id={`r-${postedComment.id}`}
+                            onClick={() => {
+                              openReply(`r-${postedComment.id}`);
+                            }}
+                            style={{
+                              display: "flex",
+                              flexDirections: "row",
+                              justifyContent: "flex-start",
+                              fontSize: "12px",
+                              paddingLeft: "10px",
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            reply
+                          </span>
+                        </div>
+                      </div>
+                      <Replies>
+                        <div
+                          className="allreplies"
+                          style={{
+                            position: "relative",
+                            display: "flex",
+                            paddingBottom: "10px",
+                            paddingLeft: "100px",
+                          }}
+                          id={`replies-${post.id}`}
+                        >
+                          <img src="/images/user.svg" alt="" />
+                          <div className="replyContent">
+                            <div className="comment-userInfo">
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  fontSize: "13px",
+                                  justifyContent: "left",
+                                  padding: "10px 10px",
+                                }}
+                              >
+                                <span>Name Surname</span>
+                                <span>occupation</span>
+                              </div>
+
+                              <div className="smallContainer">
+                                <span
+                                  style={{
+                                    fontSize: "13px",
+                                    paddingRight: "10px",
+                                    paddingTop: "10px",
+                                  }}
+                                >
+                                  1d
+                                </span>
+                                {/* <img src="/images/ellipsis.svg" alt="" /> */}
+                                <DeleteIcon
+                                  fontSize="small"
+                                  style={{
+                                    paddingRight: "2px",
+                                    paddingTop: "5px",
+                                    cursor: "pointer",
+                                  }}
+                                  // onClick={() => deleteComment(postedComment.id)}
+                                />
+                              </div>
+                            </div>
+                            <p>content</p>
                           </div>
                         </div>
-
-                        <p>{postedComment.content}</p>
+                      </Replies>
+                      <div
+                        id={`reply-${postedComment.id}`}
+                        className="postReply closePost"
+                      >
+                        <div className="commentImage">
+                          <img src="/images/user.svg" alt="" />
+                        </div>
+                        <div className="comment">
+                          <input
+                            type="text"
+                            // id="comment"
+                            //name="comment"
+                            value={reply}
+                            onChange={(e) => setReply(e.target.value)}
+                          />
+                        </div>
+                        <button
+                          className="postComment"
+                          onClick={() => {
+                            handleReply(postedComment.id);
+                          }}
+                        >
+                          Reply
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -418,6 +512,19 @@ const Main = () => {
 };
 
 const AllComments = styled.div``;
+const Replies = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: left;
+    margin-left: 10px;
+  }
+`;
 const Container = styled.div`
   grid-area: main;
 `;

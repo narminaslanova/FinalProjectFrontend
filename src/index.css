@@ -246,6 +246,31 @@ body{
     .text p:hover{
       text-decoration: underline;
     }
+
+    .ellipsisEx{
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.settingsEx {
+      position: absolute;
+      right: 1%;
+      top: 40%;
+      background-color: white;
+      border: 1px solid rgba(136, 133, 133, 0.295);
+      padding: 15px 15px;
+      cursor: pointer;
+      justify-content: center;
+      align-items: center;
+      display: none;
+      flex-direction: column;
+      border-radius: 15px;
+      z-index: 1;
+      /* margin-top: 5px; */
+    }
+    .closeEx {
+      display: flex;
+    }
 /*Connection list css*/
  .user-container{
    display: flex;
@@ -301,6 +326,14 @@ body{
 .test{
   position: relative;
  
+}
+.reply-btn:hover{
+text-decoration: underline;
+cursor: pointer;
+}
+.see-reply-btn:hover{
+text-decoration: underline;
+cursor: pointer;
 }
 .remove-button{
   display: none;
@@ -420,6 +453,15 @@ body{
   justify-content:space-evenly;
   align-items: center;
 }
+.postReply{
+  display: flex;
+  flex-direction: row;
+  justify-content:space-evenly;
+  align-items: center;
+}
+.closePost{
+display: none !important;
+}
 .commentImage img{
   width:50px;
   height: 50px;
@@ -498,6 +540,13 @@ body{
     margin-left: 20px;
     margin-right: 10px;
   }
+  .replyContent{
+    background: rgba(219, 210, 210, 0.445);
+    width: 400px;
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 10px;
+  }
   .commentContent p{
     display: flex;
     align-items: flex-start;
@@ -505,4 +554,11 @@ body{
     padding-bottom: 10px;
     font-size: 13px;
 
+  }
+  .replyContent p{
+    display: flex;
+    align-items: flex-start;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    font-size: 13px;
   }

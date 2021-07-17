@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 
-const EditExperience = ({ setEditExperiencelOpen, props }) => {
+const EditExperience = ({ setEditExperienceOpen, experienceId }) => {
   const [work, setWork] = useState("");
   const [employer, setEmployer] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -18,32 +18,24 @@ const EditExperience = ({ setEditExperiencelOpen, props }) => {
     setDescription("");
   };
 
-  //   const changeInfo = (e) => {
-  //     e.preventDefault();
-  //     if (e.target !== e.currentTarget) {
-  //       return;
-  //     }
-
-  //     const payload = {
-  //       schoolName: schoolName,
-  //       faculty: faculty,
-  //       year: year,
-  //     };
-  //     props.changeInfo(payload);
-  //     reset(e);
-  //   };
-
+  const data = {
+    workName: work,
+    employer: employer,
+    startYear: startYear,
+    endYear: endYear,
+    description: description,
+  };
   const submit = (e) => {
     e.preventDefault();
-    // axios
-    //   .put(
-    //     `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
-    //     data
-    //   )
-    //   .then((data) => console.log(data))
-    //   .catch((error) => console.log(error));
+    axios
+      .put(
+        `https://localhost:44331/api/MyProfile/PutUserExperiance/${experienceId}`,
+        data
+      )
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
 
-    // setOpenModal(false);
+    setEditExperienceOpen(false);
     reset(e);
   };
 
@@ -58,7 +50,7 @@ const EditExperience = ({ setEditExperiencelOpen, props }) => {
                 src="/images/close-icon.svg"
                 alt=""
                 onClick={(e) => {
-                  setEditExperiencelOpen(false);
+                  setEditExperienceOpen(false);
                   reset(e);
                 }}
               />
@@ -83,26 +75,24 @@ const EditExperience = ({ setEditExperiencelOpen, props }) => {
             />
             <label htmlFor="startYear">Start Year</label>
             <input
-              type="number"
+              type="date"
               placeholder="YYYY"
-              min="1990"
-              max="2021"
               id="startYear"
               value={startYear}
               onChange={(e) => setStartYear(e.target.value)}
               name="startYear"
+              style={{ padding: "20px" }}
             />
 
             <label htmlFor="endYear">End Year</label>
             <input
-              type="number"
+              type="date"
               placeholder="YYYY"
-              min="1990"
-              max="2021"
               id="endYear"
               value={endYear}
               onChange={(e) => setEndYear(e.target.value)}
               name="endYear"
+              style={{ padding: "20px" }}
             />
             <label htmlFor="description">Description</label>
             <textarea
@@ -142,7 +132,7 @@ const Content = styled.div`
   width: 100%;
   max-width: 552px;
   background-color: white;
-  max-height: 90%;
+  max-height: 70%;
   overflow: initial;
   border-radius: 5px;
   position: relative;

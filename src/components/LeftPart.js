@@ -14,6 +14,7 @@ import LikersModal from "./LikersModal";
 import UpdateArtcle from "./UpdateArtcle";
 import ReactPlayer from "react-player";
 import EditEducation from "./EditEducation";
+import EditExperience from "./EditExperience";
 import jwt_decode from "jwt-decode";
 
 const LeftPart = () => {
@@ -35,6 +36,7 @@ const LeftPart = () => {
   const [postId, setPostId] = useState();
   const [postedComments, setPostedComments] = useState([]);
   const [educationId, setEducationId] = useState();
+  const [experienceId, setExperienceId] = useState();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -75,6 +77,19 @@ const LeftPart = () => {
         .nextElementSibling.classList.remove("closeEd");
     } else {
       document.getElementById(id).nextElementSibling.classList.add("closeEd");
+    }
+  }
+  function openExSettings(id) {
+    if (
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.contains("closeEx")
+    ) {
+      document
+        .getElementById(id)
+        .nextElementSibling.classList.remove("closeEx");
+    } else {
+      document.getElementById(id).nextElementSibling.classList.add("closeEx");
     }
   }
   const deleteArticle = (id) => {
@@ -214,6 +229,14 @@ const LeftPart = () => {
     setEducations(newEducation);
   };
 
+  const deleteExperience = (id) => {
+    axios.delete(
+      `https://localhost:44331/api/MyProfile/DeleteExperience/${id}`
+    );
+    const newExperience = experiences.filter((ex) => ex.id !== id);
+    setExperiences(newExperience);
+  };
+
   //get experience
   const [experiences, setExperiences] = useState([]);
   const getExperience = () => {
@@ -289,7 +312,7 @@ const LeftPart = () => {
                 history.push("/connections");
               }}
             >
-              <div>
+              <div style={{ cursor: "pointer" }}>
                 <img src="/images/network.svg" alt="" />
                 <div>
                   <span>My network</span>
@@ -558,7 +581,9 @@ const LeftPart = () => {
                     <h4>{education.schoolName}</h4>
                     <p>{education.faculty}</p>
                     <span>{education.startDate + "-" + education.endDate}</span>
-                    <p>{education.description}</p>
+                    <p style={{ padding: "10px 0px" }}>
+                      {education.description}
+                    </p>
                   </div>
                   <div>
                     <button
@@ -644,18 +669,66 @@ const LeftPart = () => {
                 <div className="education">
                   <img className="uni-image" src="/images/google.svg" alt="" />
                   <div className="ed-info">
-                    <h4>Work or volunteering place</h4>
-                    <p>Employer</p>
-                    <span>year</span>
-                    <p>Description</p>
+                    <h4>{experience.workName}</h4>
+                    <p>{experience.employer}</p>
+                    <span style={{ fontSize: "10px", color: "black" }}>
+                      {experience.jobType}
+                    </span>
+                    <span>
+                      {experience.startYear + "-" + experience.endYear}
+                    </span>
+                    <p style={{ padding: "10px 0px" }}>
+                      {experience.description}
+                    </p>
                   </div>
-                  <img src="/images/edit-info.svg" alt="" />
+                  <div>
+                    <button
+                      className="ellipsisEx "
+                      id={experience.id}
+                      onClick={() => {
+                        openExSettings(experience.id);
+                      }}
+                    >
+                      <img src="/images/ellipsis.svg" alt="" />
+                    </button>
+                    <div className="settingsEx">
+                      <DeleteButton>
+                        <span onClick={() => deleteExperience(experience.id)}>
+                          <DeleteIcon
+                            fontSize="small"
+                            style={{ paddingRight: "2px" }}
+                          />
+                          Delete
+                        </span>
+                      </DeleteButton>
+                      <UpdateButton>
+                        <span
+                          onClick={() => {
+                            setExperienceId(experience.id);
+                            setOpenEditExperience(true);
+                          }}
+                        >
+                          <UpdateIcon
+                            fontSize="small"
+                            style={{ paddingRight: "3px" }}
+                          />
+                          Update
+                        </span>
+                      </UpdateButton>
+                    </div>
+                  </div>
                 </div>
               ))
             )}
           </Experience>
           {experienceModal && (
             <ExperienceModal setExperienceModalOpen={setExperienceModal} />
+          )}
+          {openEditExperience && (
+            <EditExperience
+              experienceId={experienceId}
+              setEditExperienceOpen={setOpenEditExperience}
+            />
           )}
         </Section>
       </Container>
@@ -848,11 +921,8 @@ const Education = styled.div`
     display: flex;
     flex-direction: row;
 
-    h4 {
-      font-family: "Montserrat", sans-serif;
-    }
     span {
-      font-size: 15px;
+      font-size: 14px;
       color: rgba(0, 0, 0, 0.6);
     }
     .uni-image {
@@ -863,6 +933,12 @@ const Education = styled.div`
     .ed-info {
       width: 100%;
       border-bottom: 1px solid grey;
+      display: flex;
+      flex-direction: column;
+      h4 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 20px;
+      }
     }
   }
 `;

@@ -10,7 +10,6 @@ const EditEducation = ({ setEditEducationOpen, educationId }) => {
   const [startYear, setStartYear] = useState();
   const [endYear, setEndYear] = useState();
   const [description, setDescription] = useState("");
-  const user = useSelector((state) => state.authentication);
 
   const reset = (e) => {
     setSchoolName("");
