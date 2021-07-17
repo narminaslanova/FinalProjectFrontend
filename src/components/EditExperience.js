@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 
-const ExperienceModal = ({ setExperienceModalOpen, props }) => {
+const EditExperience = ({ setExperienceModalOpen, props }) => {
   const [work, setWork] = useState("");
   const [employer, setEmployer] = useState("");
   const [startYear, setStartYear] = useState("");
@@ -83,24 +83,26 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
             />
             <label htmlFor="startYear">Start Year</label>
             <input
-              type="date"
+              type="number"
               placeholder="YYYY"
+              min="1990"
+              max="2021"
               id="startYear"
               value={startYear}
               onChange={(e) => setStartYear(e.target.value)}
               name="startYear"
-              style={{ padding: "20px" }}
             />
 
             <label htmlFor="endYear">End Year</label>
             <input
-              type="date"
+              type="number"
               placeholder="YYYY"
+              min="1990"
+              max="2021"
               id="endYear"
               value={endYear}
               onChange={(e) => setEndYear(e.target.value)}
               name="endYear"
-              style={{ padding: "20px" }}
             />
             <label htmlFor="description">Description</label>
             <textarea
@@ -140,7 +142,7 @@ const Content = styled.div`
   width: 100%;
   max-width: 552px;
   background-color: white;
-  max-height: 70%;
+  max-height: 90%;
   overflow: initial;
   border-radius: 5px;
   position: relative;
@@ -237,5 +239,4 @@ const SavedButton = styled.button`
   cursor: pointer;
 `;
 
-
-export default ExperienceModal;
+export default EditExperience;

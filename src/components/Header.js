@@ -38,7 +38,6 @@ const Header = (props) => {
         `https://localhost:44331/api/Linker/GetConnectionRequestsOfUser/${decoded.id}`
       )
       .then((response) => {
-        console.log(response.data);
         setNotifications(response.data);
       })
       .catch((error) => {

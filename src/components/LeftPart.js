@@ -13,6 +13,7 @@ import UpdateIcon from "@material-ui/icons/Update";
 import LikersModal from "./LikersModal";
 import UpdateArtcle from "./UpdateArtcle";
 import ReactPlayer from "react-player";
+import EditEducation from "./EditEducation";
 import jwt_decode from "jwt-decode";
 
 const LeftPart = () => {
@@ -21,6 +22,8 @@ const LeftPart = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [educationModal, setEducationModal] = useState(false);
   const [experienceModal, setExperienceModal] = useState(false);
+  const [openEditEducation, setOpenEditEducation] = useState(false);
+  const [openEditExperience, setOpenEditExperience] = useState(false);
   const user = useSelector((state) => state.authentication);
   const [headerInfo, setHeaderInfo] = useState([]);
   const [profilePosts, setProfilePosts] = useState([]);
@@ -98,7 +101,7 @@ const LeftPart = () => {
       .then((response) => {
         const posts = response.data;
         setProfilePosts(posts);
-        //console.log("post", posts);
+        console.log("post", posts);
       })
       .catch((error) => {
         console.log(error);
@@ -179,6 +182,24 @@ const LeftPart = () => {
     }
   }
 
+  const [educations, setEducations] = useState([]);
+
+  //get education
+  const getEducation = () => {
+    axios
+      .get(
+        `https://localhost:44331/api/MyProfile/GetAllUserEducations/${user.user.user.email}`
+      )
+      .then((response) => {
+        console.log(response.data);
+        setEducations(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  useEffect(() => {
+    getEducation();
+  }, []);
   return (
     <>
       <Container>
@@ -219,6 +240,7 @@ const LeftPart = () => {
             onClick={() => {
               history.push("/connections");
             }}
+            style={{ cursor: "pointer" }}
           >
             {headerInfo.connectionCount
               ? headerInfo.connectionCount + " " + "connections"
@@ -257,13 +279,7 @@ const LeftPart = () => {
         <Activity>
           <div>
             <h2>Your posts will be displayed here</h2>
-            <img
-              src="/images/add.svg"
-              alt=""
-              onClick={() => {
-                setExperienceModal(true);
-              }}
-            />
+            <img src="/images/add.svg" alt="" onClick={handleClick} />
           </div>
         </Activity>
         <MyPosts>
@@ -483,18 +499,30 @@ const LeftPart = () => {
                 }}
               />
             </div>
-            <div className="education">
-              <img className="uni-image" src="/images/google.svg" alt="" />
-              <div className="ed-info">
-                <h4>University name</h4>
-                <p>Faculty</p>
-                <span>year</span>
+            {educations.map((education) => (
+              <div className="education">
+                <img className="uni-image" src="/images/google.svg" alt="" />
+                <div className="ed-info">
+                  <h4>{education.educatorName}</h4>
+                  <p>Faculty</p>
+                  <span>year</span>
+                </div>
+                <img
+                  src="/images/edit-info.svg"
+                  alt=""
+                  onClick={() => {
+                    setOpenEditEducation(true);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
               </div>
-              <img src="/images/edit-info.svg" alt="" />
-            </div>
+            ))}
           </Education>
           {educationModal && (
             <EducationModal setEducationModalOpen={setEducationModal} />
+          )}
+          {openEditEducation && (
+            <EditEducation setEditEducationOpen={setOpenEditEducation} />
           )}
           <Experience>
             <div className="heading">
@@ -563,6 +591,13 @@ const Activity = styled.div`
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 /20%);
   div {
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    img {
+      padding-right: 10px;
+      cursor: pointer;
+    }
   }
   h2 {
     font-family: "Montserrat", sans-serif;

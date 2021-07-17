@@ -1,85 +1,56 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import axios from "axios";
+import { useSelector } from "react-redux";
 
-const ExperienceModal = ({ setExperienceModalOpen, props }) => {
-  const [work, setWork] = useState("");
-  const [employer, setEmployer] = useState("");
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+const EditEducation = ({ setEditEducationOpen }) => {
+  const [schoolName, setSchoolName] = useState("");
+  const [faculty, setFaculty] = useState("");
+  const [startYear, setStartYear] = useState();
+  const [endYear, setEndYear] = useState();
   const [description, setDescription] = useState("");
+  const user = useSelector((state) => state.authentication);
 
   const reset = (e) => {
-    setWork("");
-    setEmployer("");
-    setStartYear("");
-    setEndYear("");
+    setSchoolName("");
+    setFaculty("");
+    setStartYear();
+    setEndYear();
     setDescription("");
   };
-
-  //   const changeInfo = (e) => {
-  //     e.preventDefault();
-  //     if (e.target !== e.currentTarget) {
-  //       return;
-  //     }
-
-  //     const payload = {
-  //       schoolName: schoolName,
-  //       faculty: faculty,
-  //       year: year,
-  //     };
-  //     props.changeInfo(payload);
-  //     reset(e);
-  //   };
-
-  const submit = (e) => {
-    e.preventDefault();
-    // axios
-    //   .put(
-    //     `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
-    //     data
-    //   )
-    //   .then((data) => console.log(data))
-    //   .catch((error) => console.log(error));
-
-    // setOpenModal(false);
-    reset(e);
-  };
-
   return (
     <>
       <Container>
         <Content>
           <Header>
-            <h2>Add experience</h2>
+            <h2>Edit education</h2>
             <button>
               <img
-                src="/images/close-icon.svg"
-                alt=""
                 onClick={(e) => {
-                  setExperienceModalOpen(false);
+                  setEditEducationOpen(false);
                   reset(e);
                 }}
+                src="/images/close-icon.svg"
+                alt=""
               />
             </button>
           </Header>
           <EditContent>
-            <label htmlFor="work">Work</label>
+            <label htmlFor="schoolName">School</label>
             <input
               type="text"
-              id="work"
-              value={work}
-              onChange={(e) => setWork(e.target.value)}
-              name="work"
+              id="schoolName"
+              value={schoolName}
+              onChange={(e) => setSchoolName(e.target.value)}
+              name="schoolName"
             />
-            <label htmlFor="employer">Employer</label>
+            <label htmlFor="faculty">Faculty</label>
             <input
               type="text"
-              id="employer"
-              value={employer}
-              onChange={(e) => setEmployer(e.target.value)}
-              name="employer"
+              id="faculty"
+              value={faculty}
+              onChange={(e) => setFaculty(e.target.value)}
+              name="faculty"
             />
             <label htmlFor="startYear">Start Year</label>
             <input
@@ -115,7 +86,9 @@ const ExperienceModal = ({ setExperienceModalOpen, props }) => {
             />
           </EditContent>
           <BtnDiv>
-            <SavedButton onClick={(event) => submit(event)}>
+            <SavedButton
+            //  onClick={(event) => submit(event)}
+            >
               <span>Save</span>
             </SavedButton>
           </BtnDiv>
@@ -141,7 +114,7 @@ const Content = styled.div`
   max-width: 552px;
   background-color: white;
   max-height: 70%;
-  overflow: initial;
+  overflow: auto;
   border-radius: 5px;
   position: relative;
   display: flex;
@@ -224,6 +197,7 @@ const BtnDiv = styled.div`
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
+  /* border-top: 2px solid #ccc;*/
   padding-top: 10px;
 `;
 const SavedButton = styled.button`
@@ -237,5 +211,4 @@ const SavedButton = styled.button`
   cursor: pointer;
 `;
 
-
-export default ExperienceModal;
+export default EditEducation;

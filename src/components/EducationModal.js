@@ -1,37 +1,46 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const EducationModal = ({ setEducationModalOpen, props }) => {
   const [schoolName, setSchoolName] = useState("");
   const [faculty, setFaculty] = useState("");
-  const [startYear, setStartYear] = useState(0);
-  const [endYear, setEndYear] = useState(0);
+  const [startYear, setStartYear] = useState();
+  const [endYear, setEndYear] = useState();
   const [description, setDescription] = useState("");
+  const user = useSelector((state) => state.authentication);
 
   const reset = (e) => {
     setSchoolName("");
     setFaculty("");
-    setStartYear(0);
-    setEndYear(0);
+    setStartYear();
+    setEndYear();
     setDescription("");
   };
 
-  //   const changeInfo = (e) => {
-  //     e.preventDefault();
-  //     if (e.target !== e.currentTarget) {
-  //       return;
-  //     }
+  const data = {
+    schoolName: schoolName,
+    faculty: faculty,
+    starDate: startYear,
+    endTime: endYear,
+    description: description,
+  };
 
-  //     const payload = {
-  //       schoolName: schoolName,
-  //       faculty: faculty,
-  //       year: year,
-  //     };
-  //     props.changeInfo(payload);
-  //     reset(e);
-  //   };
+  const submit = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        `https://localhost:44331/api/MyProfile/PostUserEducation/${user.user.user.email}`,
+        data
+      )
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
 
+    setEducationModalOpen(false);
+    reset(e);
+  };
   return (
     <>
       <Container>
@@ -68,26 +77,24 @@ const EducationModal = ({ setEducationModalOpen, props }) => {
             />
             <label htmlFor="startYear">Start Year</label>
             <input
-              type="number"
+              type="date"
               placeholder="YYYY"
-              min="1990"
-              max="2021"
               id="startYear"
               value={startYear}
               onChange={(e) => setStartYear(e.target.value)}
               name="startYear"
+              style={{ padding: "20px" }}
             />
 
             <label htmlFor="endYear">End Year</label>
             <input
-              type="number"
+              type="date"
               placeholder="YYYY"
-              min="1990"
-              max="2021"
               id="endYear"
               value={endYear}
               onChange={(e) => setEndYear(e.target.value)}
               name="endYear"
+              style={{ padding: "20px" }}
             />
             <label htmlFor="description">Description</label>
             <textarea
@@ -101,7 +108,11 @@ const EducationModal = ({ setEducationModalOpen, props }) => {
               autoFocus={true}
             />
           </EditContent>
-          <SavedButton>Save</SavedButton>
+          <BtnDiv>
+            <SavedButton onClick={(event) => submit(event)}>
+              <span>Save</span>
+            </SavedButton>
+          </BtnDiv>
         </Content>
       </Container>
     </>
@@ -123,7 +134,7 @@ const Content = styled.div`
   width: 100%;
   max-width: 552px;
   background-color: white;
-  max-height: 90%;
+  max-height: 70%;
   overflow: initial;
   border-radius: 5px;
   position: relative;
@@ -166,7 +177,7 @@ const EditContent = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: auto;
+  overflow-y: auto;
   vertical-align: baseline;
   background: transparent;
   padding: 8px 12px;
@@ -174,12 +185,24 @@ const EditContent = styled.div`
     margin-top: 15px;
   }
   input {
-    padding-top: 10px;
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    padding: 12px 20px;
+    margin: 8px 0px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    transition: 0.5s;
+    outline: none;
+    border-radius: 5px;
   }
   textarea {
     min-height: 100px;
     resize: none;
     font-family: "Montserrat", sans-serif;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    margin: 8px 0px;
     &::placeholder {
       font-size: 16px;
       font-weight: 300;
@@ -190,13 +213,24 @@ const EditContent = styled.div`
     }
   }
 `;
-
-const SavedButton = styled.button`
-  min-width: 60px;
-  border-radius: 20px;
-  padding-left: 16px;
-  padding-right: 16px;
-  border: none;
+const BtnDiv = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+  /* border-top: 2px solid #ccc;*/
+  padding-top: 10px;
 `;
+const SavedButton = styled.button`
+  width: 50px;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background: #0a66c2;
+  color: #fff;
+  cursor: pointer;
+`;
+
 
 export default EducationModal;
