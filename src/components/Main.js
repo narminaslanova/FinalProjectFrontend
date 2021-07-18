@@ -23,6 +23,7 @@ const Main = () => {
   const [postId, setPostId] = useState();
   const [postedComments, setPostedComments] = useState([]);
   const [reply, setReply] = useState("");
+  const [updateId, setUpdateId] = useState();
   //const [isCalledOnce, setIsCalledOnce] = useState(false);
   //const [postedData, setPostedData] = useState(false);
 
@@ -49,52 +50,6 @@ const Main = () => {
       document.getElementById(id).nextElementSibling.classList.remove("close");
     } else {
       document.getElementById(id).nextElementSibling.classList.add("close");
-    }
-  }
-  function openReply(id) {
-    let element =
-      document.getElementById(id).parentElement.parentElement.nextElementSibling
-        .nextElementSibling;
-    console.log(element);
-
-    if (element.classList.contains("closePost")) {
-      element.classList.remove("closePost");
-    }
-    // } else {
-    //   element.classList.add("closePost");
-    // }
-  }
-  //open and close comment div
-  function displayComment(id) {
-    const test = document.querySelectorAll(".closeCommentContainer");
-
-    test.forEach((element) => {
-      console.log(element.getAttribute("id") !== id);
-      if (element.getAttribute("id") !== id) {
-        element.classList.remove("closeCommentContainer");
-      }
-    });
-
-    //console.log(test);
-    // console.log(document.getElementById(id).parentElement.nextElementSibling);
-    if (
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.contains(
-          "closeCommentContainer"
-        )
-    ) {
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.remove(
-          "closeCommentContainer"
-        );
-    } else {
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.add(
-          "closeCommentContainer"
-        );
     }
   }
 
@@ -173,9 +128,60 @@ const Main = () => {
     }
   };
   const handleReply = () => {};
+
   useEffect(() => {
     getData();
   }, [showModal]);
+
+  //open and close comment div
+  function displayComment(id) {
+    const test = document.querySelectorAll(".commentContainer");
+    //console.log(test);
+    //const test = document.querySelectorAll(".closeCommentContainer");
+
+    test.forEach((element) => {
+      //console.log(element.getAttribute("id") !== id);
+      if (element.getAttribute("id") !== id) {
+        element.classList.add("closeCommentContainer");
+      }
+    });
+
+    //console.log(test);
+    //console.log(document.getElementById(id).parentElement.nextElementSibling);
+
+    if (
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.contains(
+          "closeCommentContainer"
+        )
+    ) {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.remove(
+          "closeCommentContainer"
+        );
+    } else {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.add(
+          "closeCommentContainer"
+        );
+    }
+  }
+
+  function openReply(id) {
+    let element =
+      document.getElementById(id).parentElement.parentElement.nextElementSibling
+    console.log(element);
+
+    // if (element.classList.contains("closePost")) {
+    //   element.classList.remove("closePost");
+    // }
+    // } else {
+    //   element.classList.add("closePost");
+    // }
+  }
 
   return (
     <>
@@ -183,15 +189,8 @@ const Main = () => {
         <ShareBox>
           <div>
             <img src="/images/user.svg" alt="" />
-
-            <button
-              onClick={handleClick}
-              //disabled={props.loading ? true : false}
-            >
-              Start a post
-            </button>
+            <button onClick={handleClick}>Start a post</button>
           </div>
-
           <div>
             <button onClick={handleClick}>
               <img src="/images/photo1.svg" alt="" />
@@ -205,14 +204,15 @@ const Main = () => {
         </ShareBox>
         <Content>
           {posts.map((post) => (
-            <Article key={post.id} id={post.id}>
+            <Article key={post.id}>
               <SharedActor>
                 <a>
                   <img src={"/images/google.svg"} alt="" />
-
                   <div>
                     <span>{post.firstname + " " + post.lastname}</span>
-                    <span>{post.userOccupation} occupation</span>
+                    <span>
+                      {post.userOccupation ? post.userOccupation : "---"}
+                    </span>
                     <span>
                       Id: {post.id} | shared: {post.postAge}
                     </span>
@@ -241,6 +241,7 @@ const Main = () => {
                     <span
                       onClick={() => {
                         setOpen(true);
+                        setUpdateId(post.id);
                       }}
                     >
                       <UpdateIcon
@@ -251,11 +252,10 @@ const Main = () => {
                     </span>
                   </UpdateButton>
                   {open && (
-                    <UpdateArtcle setOpenModal={setOpen} postId={post.id} />
+                    <UpdateArtcle setOpenModal={setOpen} updateId={updateId} />
                   )}
                 </div>
               </SharedActor>
-
               <Description>{post.description}</Description>
               <SharedImg>
                 {!post.imageUrl && post.videoUrl ? (
@@ -273,7 +273,7 @@ const Main = () => {
                   <button>
                     <img src="/images/like1.svg" alt="" />
                     <span
-                      id={post.id}
+                      id={`like-${post.id}`}
                       onClick={() => {
                         setPostId(post.id);
                         setOpenLikersModal(true);
@@ -291,14 +291,13 @@ const Main = () => {
                 <LikeButton
                   id={`l-${post.id}`}
                   onClick={() => {
-                    // setPostId(post.id);
+                    //setPostId(post.id);
                     likePost(post.id);
                   }}
                 >
                   <img src="/images/like.svg" alt="" />
                   <span>Like</span>
                 </LikeButton>
-
                 <button
                   id={`c-${post.id}`}
                   onClick={() => {
@@ -318,7 +317,10 @@ const Main = () => {
                   <span>Send</span>
                 </button>
               </SocialActions>
-              <div className="commentContainer" id={post.id}>
+              <div
+                className="commentContainer closeCommentContainer"
+                id={`commentContainer-${post.id}`}
+              >
                 <div className="postComment">
                   <div className="commentImage">
                     <img src="/images/user.svg" alt="" />
@@ -341,13 +343,12 @@ const Main = () => {
                     Post
                   </button>
                 </div>
-                <AllComments id={post.id}>
+                <AllComments>
                   {postedComments.map((postedComment) => (
                     <div>
                       <div
                         key={postedComment.id}
                         className="allComments"
-                        style={{ position: "relative" }}
                         id={`allComments-${post.id}`}
                       >
                         <img src="/images/user.svg" alt="" />
@@ -382,7 +383,6 @@ const Main = () => {
                               >
                                 {postedComment.age}d
                               </span>
-                              {/* <img src="/images/ellipsis.svg" alt="" /> */}
                               <DeleteIcon
                                 fontSize="small"
                                 style={{
@@ -414,60 +414,9 @@ const Main = () => {
                           </span>
                         </div>
                       </div>
-                      <Replies>
-                        <div
-                          className="allreplies"
-                          style={{
-                            position: "relative",
-                            display: "flex",
-                            paddingBottom: "10px",
-                            paddingLeft: "100px",
-                          }}
-                          id={`replies-${post.id}`}
-                        >
-                          <img src="/images/user.svg" alt="" />
-                          <div className="replyContent">
-                            <div className="comment-userInfo">
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  fontSize: "13px",
-                                  justifyContent: "left",
-                                  padding: "10px 10px",
-                                }}
-                              >
-                                <span>Name Surname</span>
-                                <span>occupation</span>
-                              </div>
-
-                              <div className="smallContainer">
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    paddingRight: "10px",
-                                    paddingTop: "10px",
-                                  }}
-                                >
-                                  1d
-                                </span>
-                                {/* <img src="/images/ellipsis.svg" alt="" /> */}
-                                <DeleteIcon
-                                  fontSize="small"
-                                  style={{
-                                    paddingRight: "2px",
-                                    paddingTop: "5px",
-                                    cursor: "pointer",
-                                  }}
-                                  // onClick={() => deleteComment(postedComment.id)}
-                                />
-                              </div>
-                            </div>
-                            <p>content</p>
-                          </div>
-                        </div>
-                      </Replies>
+                      {/* replies here */}
                       <div
+                        key={postedComment.id}
                         id={`reply-${postedComment.id}`}
                         className="postReply closePost"
                       >

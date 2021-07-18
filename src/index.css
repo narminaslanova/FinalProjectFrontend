@@ -198,7 +198,6 @@ body{
     flex-direction: column;
     border-radius: 15px;
     z-index: 1;
-   /* margin-top: 5px; */
  
 }
 .settings span{
@@ -233,7 +232,6 @@ body{
       flex-direction: column;
       border-radius: 15px;
       z-index: 1;
-      /* margin-top: 5px; */
     }
     .closeEd {
       display: flex;
@@ -266,11 +264,11 @@ body{
       flex-direction: column;
       border-radius: 15px;
       z-index: 1;
-      /* margin-top: 5px; */
     }
     .closeEx {
       display: flex;
     }
+
 /*Connection list css*/
  .user-container{
    display: flex;
@@ -327,26 +325,22 @@ body{
   position: relative;
  
 }
+
 .reply-btn:hover{
 text-decoration: underline;
 cursor: pointer;
 }
-.see-reply-btn:hover{
-text-decoration: underline;
-cursor: pointer;
-}
+
 .remove-button{
   display: none;
   position: absolute;
    right: 1%;
-   /* top: 30px; */
     background-color: white;
     border: 1px solid rgba(136, 133, 133, 0.295);
     padding: 15px 15px;
     cursor: pointer;
     justify-content: center;
     align-items: center;
-    /* display: flex; */
     flex-direction: column;
     border-radius: 15px;
     z-index: 1;
@@ -435,16 +429,14 @@ cursor: pointer;
 
 /*Comment section*/
 .commentContainer{
-  /* display: none;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: row; */
+  width: 100%;
   justify-content:space-evenly;
-  align-items: center; */
-  display: none;
+  align-items: center;
 }
-
 .closeCommentContainer{
-  display: flex;
-  flex-direction: column;
+  display: none;
 }
 
 .postComment{
@@ -452,6 +444,9 @@ cursor: pointer;
   flex-direction: row;
   justify-content:space-evenly;
   align-items: center;
+  background: transparent;
+  border:none;
+  padding: 10px 10px;
 }
 .postReply{
   display: flex;
@@ -462,18 +457,21 @@ cursor: pointer;
 .closePost{
 display: none !important;
 }
+.commentImage{
+   padding-right: 10px;
+}
 .commentImage img{
   width:50px;
   height: 50px;
   border-radius: 50%;
+ 
 }
 .commentContainer .comment{
-  width: 80%;
+  width: 100%;
 }
 
 
 .comment input {
-    display: flex;
     height: 100%;
     width: 100%;
     border-radius: 3px;
@@ -487,17 +485,12 @@ display: none !important;
     border-radius: 20px;
   }
 
-  .commentContainer .postComment{
-    background: transparent;
-    border:none;
-    padding: 10px 10px;
-    
-  }
 
   .allComments{
     padding-top: 20px;
     padding-bottom: 10px;
     display: flex;
+    position: relative;
     /* justify-content: space-evenly; */
 
   }

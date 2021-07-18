@@ -5,7 +5,7 @@ import ReactPlayer from "react-player";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-const UpdateArtcle = ({ setOpenModal, postId }) => {
+const UpdateArtcle = ({ setOpenModal, updateId }) => {
   const [editorText, setEditorText] = useState("");
   const [shareImage, setShareImage] = useState("");
   const [videoLink, setVideoLink] = useState("");
@@ -39,7 +39,7 @@ const UpdateArtcle = ({ setOpenModal, postId }) => {
   const submit = (e) => {
     e.preventDefault();
     axios
-      .put(`https://localhost:44331/api/Post/${postId}`, data)
+      .put(`https://localhost:44331/api/Post/${updateId}`, data)
       .then((data) => console.log(data))
       .catch((error) => console.log(error));
 
