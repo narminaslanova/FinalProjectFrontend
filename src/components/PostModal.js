@@ -321,14 +321,4 @@ const UploadImage = styled.div`
   }
 `;
 
-// const mapStateToProps = (state)=>{
-//   return {
-//     user: state.userState.user
-//   }
-// }
-// const mapDispatchToProps = (dispatch)=>({
-//   postArticle: (payload) => dispatch(postArticleAPI(payload))
-// })
-
-// export default connect(mapStateToProps, mapDispatchToProps)(PostModal);
 export default PostModal;

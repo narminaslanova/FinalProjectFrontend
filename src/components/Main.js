@@ -16,6 +16,7 @@ const Main = () => {
   const [open, setOpen] = useState(false);
   const [openLikersModal, setOpenLikersModal] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [visible, setVisible] = useState(5);
   const user = useSelector((state) => state.authentication);
   const token = user.user.token;
   const decoded = jwt_decode(token);
@@ -26,9 +27,8 @@ const Main = () => {
   const [replies, setReplies] = useState([]);
   const [updateId, setUpdateId] = useState();
   const [commentId, setCommentId] = useState();
-  //const [isCalledOnce, setIsCalledOnce] = useState(false);
-  //const [postedData, setPostedData] = useState(false);
 
+  const [check, setCheck] = useState(false);
   //get all posts
   const getData = () => {
     axios
@@ -37,12 +37,16 @@ const Main = () => {
         const myPosts = response.data.reverse();
         setPosts(myPosts);
 
-        //console.log(myPosts);
+        console.log("posts", myPosts);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  function showMoreItems() {
+    setVisible((prev) => prev + 5);
+  }
 
   //open and close delete/update div
   function openSettings(id) {
@@ -55,6 +59,7 @@ const Main = () => {
     }
   }
 
+  const [t, setT] = useState(false);
   //post comment
   const handleComment = (id) => {
     const commentData = {
@@ -71,16 +76,23 @@ const Main = () => {
       .catch((error) => console.log(error));
 
     setComment("");
+    
   };
 
   //get comments
   const getComments = (id) => {
-    //console.log(id);
+    if(t){
+       axios
+         .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
+         .then((response) => {
+           setPostedComments(response.data);
+         })
+         .catch((error) => console.log(error));
+    }
     axios
       .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
       .then((response) => {
         setPostedComments(response.data);
-        //console.log(response.data);
       })
       .catch((error) => console.log(error));
   };
@@ -92,14 +104,17 @@ const Main = () => {
     setPostedComments(newComments);
   };
 
+  const deleteReply = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/DeleteComment/${id}`);
+    const newReplies = replies.filter((r) => r.id != id);
+    setReplies(newReplies);
+  };
   //get replies of comment
   const getReplies = (id) => {
-    console.log(id);
     axios
-      .get(`http://localhost:44331/api/Post/GetRepliesOfComment/${id}`)
+      .get(`https://localhost:44331/api/Post/GetRepliesOfComment/${id}`)
       .then((response) => {
         setReplies(response.data);
-        console.log("replies", response.data);
       })
       .catch((error) => console.log(error));
   };
@@ -111,6 +126,7 @@ const Main = () => {
     setPosts(newpost);
   };
 
+  
   //like post
   const likePost = (postId) => {
     const data = {
@@ -132,6 +148,7 @@ const Main = () => {
     switch (showModal) {
       case "open":
         setShowModal("close");
+        setCheck(true);
         break;
       case "close":
         setShowModal("open");
@@ -159,23 +176,22 @@ const Main = () => {
 
   useEffect(() => {
     getData();
-  }, [showModal]);
+    if (check) {
+      getData();
+    }
+
+    //console.log(check);
+  }, [check]);
 
   //open and close comment div
   function displayComment(id) {
     const test = document.querySelectorAll(".commentContainer");
-    //console.log(test);
-    //const test = document.querySelectorAll(".closeCommentContainer");
 
     test.forEach((element) => {
-      //console.log(element.getAttribute("id") !== id);
       if (element.getAttribute("id") !== id) {
         element.classList.add("closeCommentContainer");
       }
     });
-
-    //console.log(test);
-    //console.log(document.getElementById(id).parentElement.nextElementSibling);
 
     if (
       document
@@ -213,12 +229,6 @@ const Main = () => {
         element.classList.remove("closePost");
       }
     });
-
-    // if (element.classList.contains("closePost")) {
-    //   element.classList.remove("closePost");
-    // } else {
-    //   element.classList.add("closePost");
-    // }
   }
 
   return (
@@ -241,11 +251,11 @@ const Main = () => {
           </div>
         </ShareBox>
         <Content>
-          {posts.map((post) => (
+          {posts.slice(0, visible).map((post) => (
             <Article key={post.id}>
               <SharedActor>
                 <a>
-                  <img src={"/images/google.svg"} alt="" />
+                  <img src={"images/user.svg"} alt="" />
                   <div>
                     <span>{post.firstname + " " + post.lastname}</span>
                     <span>
@@ -256,15 +266,19 @@ const Main = () => {
                     </span>
                   </div>
                 </a>
-                <button
-                  className="ellipsis "
-                  id={`e-${post.id}`}
-                  onClick={() => {
-                    openSettings(`e-${post.id}`);
-                  }}
-                >
-                  <img src="/images/ellipsis.svg" alt="" />
-                </button>
+
+                {post.firstname == user.user.user.firstName && (
+                  <button
+                    className="ellipsis "
+                    id={`e-${post.id}`}
+                    onClick={() => {
+                      openSettings(`e-${post.id}`);
+                    }}
+                  >
+                    <img src="/images/ellipsis.svg" alt="" />
+                  </button>
+                )}
+
                 <div className="settings close">
                   <DeleteButton>
                     <span onClick={() => deleteArticle(post.id)}>
@@ -331,6 +345,8 @@ const Main = () => {
                   onClick={() => {
                     //setPostId(post.id);
                     likePost(post.id);
+                    // setCheckLike(true);
+                    // setLikeId(post.id);
                   }}
                 >
                   <img src="/images/like.svg" alt="" />
@@ -339,6 +355,7 @@ const Main = () => {
                 <button
                   id={`c-${post.id}`}
                   onClick={() => {
+                    setReplies([]);
                     displayComment(`c-${post.id}`);
                     getComments(post.id);
                   }}
@@ -375,6 +392,7 @@ const Main = () => {
                   <button
                     className="postComment"
                     onClick={() => {
+                      setT(true);
                       handleComment(post.id);
                     }}
                   >
@@ -404,9 +422,7 @@ const Main = () => {
                               <span>
                                 {postedComment.firstName +
                                   " " +
-                                  postedComment.lastName +
-                                  "id:" +
-                                  postedComment.id}
+                                  postedComment.lastName}
                               </span>
                               <span>{postedComment.occupation}</span>
                             </div>
@@ -421,15 +437,20 @@ const Main = () => {
                               >
                                 {postedComment.age}d
                               </span>
-                              <DeleteIcon
-                                fontSize="small"
-                                style={{
-                                  paddingRight: "2px",
-                                  paddingTop: "5px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => deleteComment(postedComment.id)}
-                              />
+                              {postedComment.firstName ==
+                                user.user.user.firstName && (
+                                <DeleteIcon
+                                  fontSize="small"
+                                  style={{
+                                    paddingRight: "2px",
+                                    paddingTop: "5px",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    deleteComment(postedComment.id)
+                                  }
+                                />
+                              )}
                             </div>
                           </div>
                           <p>{postedComment.content}</p>
@@ -467,62 +488,65 @@ const Main = () => {
                         </div>
                       </div>
                       <Replies>
-                        {replies.map((item) => (
-                          <div
-                            key={item.id}
-                            className="allreplies"
-                            style={{
-                              position: "relative",
-                              display: "flex",
-                              paddingBottom: "10px",
-                              paddingLeft: "100px",
-                            }}
-                            id={`replies-${post.id}`}
-                          >
-                            <img src="/images/user.svg" alt="" />
-                            <div className="replyContent">
-                              <div className="comment-userInfo">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    fontSize: "13px",
-                                    justifyContent: "left",
-                                    padding: "10px 10px",
-                                  }}
-                                >
-                                  <span>
-                                    {item.firstName + " " + item.lastName}
-                                  </span>
-                                  <span>{item.occupation}</span>
-                                </div>
-
-                                <div className="smallContainer">
-                                  <span
+                        {replies &&
+                          replies.map((item) => (
+                            <div
+                              key={item.id}
+                              className="allreplies"
+                              style={{
+                                position: "relative",
+                                display: "flex",
+                                paddingBottom: "10px",
+                                paddingLeft: "100px",
+                              }}
+                              id={`replies-${post.id}`}
+                            >
+                              <img src="/images/user.svg" alt="" />
+                              <div className="replyContent">
+                                <div className="comment-userInfo">
+                                  <div
                                     style={{
+                                      display: "flex",
+                                      flexDirection: "column",
                                       fontSize: "13px",
-                                      paddingRight: "10px",
-                                      paddingTop: "10px",
+                                      justifyContent: "left",
+                                      padding: "10px 10px",
                                     }}
                                   >
-                                    1d
-                                  </span>
-                                  {/* <img src="/images/ellipsis.svg" alt="" /> */}
-                                  <DeleteIcon
-                                    fontSize="small"
-                                    style={{
-                                      paddingRight: "2px",
-                                      paddingTop: "5px",
-                                      cursor: "pointer",
-                                    }}
-                                    // onClick={() => deleteComment(postedComment.id)}
-                                  />
+                                    <span>
+                                      {item.firstName + " " + item.lastName}
+                                    </span>
+                                    <span>{item.occupation}</span>
+                                  </div>
+
+                                  <div className="smallContainer">
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        paddingRight: "10px",
+                                        paddingTop: "10px",
+                                      }}
+                                    >
+                                      1d
+                                    </span>
+                                    {item.firstName ==
+                                      user.user.user.firstName && (
+                                      <DeleteIcon
+                                        fontSize="small"
+                                        style={{
+                                          paddingRight: "2px",
+                                          paddingTop: "5px",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() => deleteReply(item.id)}
+                                      />
+                                    )}
+                                  </div>
                                 </div>
+                                <p>{item.content}</p>
                               </div>
-                              <p>{item.content}</p>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </Replies>
                       <div
                         key={`input-${postedComment.id}`}
@@ -556,6 +580,7 @@ const Main = () => {
               </div>
             </Article>
           ))}
+          <button onClick={() => showMoreItems()}>Load more</button>
         </Content>
         {openLikersModal && (
           <LikersModal
@@ -830,5 +855,7 @@ const UpdateButton = styled.div`
   }
 `;
 //const Comment = styled.div``;
+
+
 
 export default Main;

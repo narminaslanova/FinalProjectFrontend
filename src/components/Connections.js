@@ -95,7 +95,7 @@ const Connections = () => {
         `https://localhost:44331/api/Linker/GetConnectionsOfUser/${decoded.id}`
       )
       .then((response) => {
-        console.log(response.data);
+        console.log("connections", response.data);
         setConnections(response.data);
       })
       .catch((error) => console.log(error));
@@ -103,7 +103,8 @@ const Connections = () => {
 
   //delete connection
   const deleteConnection = (id, email) => {
-    console.log(id, email);
+    console.log("chosen", id);
+    console.log("chosen", email);
     const data = {
       deleterId: id,
       deletedEmail: email,
@@ -112,14 +113,18 @@ const Connections = () => {
       data,
     });
 
-    // const newconnections = connections.filter(
-    //   (connection) => connection.email !== data.email
-    // );
-    // setConnections(newconnections);
+    const newconnections = connections.filter(
+      (connection) => connection.email !== email
+    );
+
+    setConnections(newconnections);
   };
 
   useEffect(() => {
     getUsers();
+    if (deleteConnection) {
+      getUsers();
+    }
   }, []);
 
   useEffect(() => {
@@ -141,7 +146,9 @@ const Connections = () => {
                     <div className="user-info">
                       <div>
                         <h4>{applier.firstName + " " + applier.lastName}</h4>
-                        <span>Occupation</span>
+                        <span>
+                          {applier.occupation ? applier.occupation : "---"}
+                        </span>
                       </div>
                       <div className="user-actions">
                         <div>
@@ -215,7 +222,9 @@ const Connections = () => {
                       <h4>
                         {connection.firstName + " " + connection.lastName}
                       </h4>
-                      <span>{connection.occupation}</span>
+                      <span>
+                        {connection.occupation ? connection.occupation : "---"}
+                      </span>
                     </div>
                     <div className="user-actions">
                       <div>

@@ -13,6 +13,8 @@ const Header = (props) => {
   const dispatch = useDispatch();
   const token = user.user.token;
   const decoded = jwt_decode(token);
+  const [visited, setVisited] = useState(false);
+
   const logOut = () => {
     dispatch(userActions.logout());
     history.push("/");
@@ -44,9 +46,14 @@ const Header = (props) => {
         console.log(error);
       });
   }
+
+  const [test, setTest] = useState();
   useEffect(() => {
     getNotifications();
-  }, []);
+    if (test) {
+      getNotifications();
+    }
+  }, [notifications]);
 
   function displayDiv(id) {
     if (
@@ -84,7 +91,7 @@ const Header = (props) => {
         </Search>
         <Nav>
           <NavListWrap>
-            <NavList className="active">
+            <NavList>
               <a
                 onClick={() => {
                   history.push("/home");
@@ -97,6 +104,8 @@ const Header = (props) => {
             <NavList>
               <a
                 onClick={() => {
+                  setTest(true);
+                  setVisited(false);
                   history.push("/connections");
                 }}
               >
@@ -117,10 +126,16 @@ const Header = (props) => {
             <NavList>
               <a
                 onClick={() => {
+                  setVisited(true);
                   history.push("/notifications");
                 }}
               >
-                <img src="/images/nav-notifications.svg" alt="" />
+                {visited ? (
+                  <img src="/images/visitedntf.svg" alt="" />
+                ) : (
+                  <img src="/images/nav-notifications.svg" alt="" />
+                )}
+
                 <span>
                   Notifications
                   {notifications.length !== 0 && (
@@ -293,6 +308,7 @@ const NavListWrap = styled.ul`
 const NavList = styled.li`
   display: flex;
   align-items: center;
+  cursor: pointer;
   a {
     align-items: center;
     background: transparent;
