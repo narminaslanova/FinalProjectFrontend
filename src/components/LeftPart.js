@@ -37,6 +37,10 @@ const LeftPart = () => {
   const [postedComments, setPostedComments] = useState([]);
   const [educationId, setEducationId] = useState();
   const [experienceId, setExperienceId] = useState();
+  const [reply, setReply] = useState("");
+  const [replies, setReplies] = useState([]);
+  const [updateId, setUpdateId] = useState();
+  const [commentId, setCommentId] = useState();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -111,6 +115,89 @@ const LeftPart = () => {
       });
   };
 
+  const deleteReply = (id) => {
+    axios.delete(`https://localhost:44331/api/Post/DeleteComment/${id}`);
+    const newReplies = replies.filter((r) => r.id != id);
+    setReplies(newReplies);
+  };
+  //get replies of comment
+  const getReplies = (id) => {
+    axios
+      .get(`https://localhost:44331/api/Post/GetRepliesOfComment/${id}`)
+      .then((response) => {
+        setReplies(response.data);
+        //console.log(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+  const handleReply = (id) => {
+    const replyData = {
+      userId: decoded.id,
+      content: reply,
+      isReply: true,
+      parentId: commentId,
+    };
+    axios
+      .post(`https://localhost:44331/api/Post/AddCommentPost/${id}`, replyData)
+      .then((res) => console.log("handlereply", res))
+      .catch((error) => console.log(error));
+
+    setReply("");
+  };
+  function displayComment(id) {
+    const test = document.querySelectorAll(".commentContainer");
+
+    test.forEach((element) => {
+      //console.log(element.getAttribute("id") !== id);
+      if (element.getAttribute("id") !== id) {
+        element.classList.add("closeCommentContainer");
+      }
+    });
+
+    if (
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.contains(
+          "closeCommentContainer"
+        )
+    ) {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.remove(
+          "closeCommentContainer"
+        );
+    } else {
+      document
+        .getElementById(id)
+        .parentElement.nextElementSibling.classList.add(
+          "closeCommentContainer"
+        );
+    }
+  }
+
+  function openReply(id) {
+    let element =
+      document.getElementById(id).parentElement.parentElement
+        .nextElementSibling;
+    console.log(element);
+
+    let test = document.querySelectorAll(".postReply");
+
+    console.log(test);
+
+    test.forEach((element) => {
+      if (element.getAttribute("id") !== id) {
+        element.classList.remove("closePost");
+      }
+    });
+
+    // if (element.classList.contains("closePost")) {
+    //   element.classList.remove("closePost");
+    // } else {
+    //   element.classList.add("closePost");
+    // }
+  }
+
   //like post
   const likePost = (postId) => {
     const data = {
@@ -130,6 +217,7 @@ const LeftPart = () => {
       .then((response) => {
         const posts = response.data;
         setProfilePosts(posts);
+        console.log(posts);
       })
       .catch((error) => {
         console.log(error);
@@ -175,37 +263,6 @@ const LeftPart = () => {
     const newComments = postedComments.filter((c) => c.id !== id);
     setPostedComments(newComments);
   };
-
-  function displayComment(id) {
-    const test = document.querySelectorAll(".closeCommentContainer");
-
-    test.forEach((element) => {
-      console.log(element.getAttribute("id") !== id);
-      if (element.getAttribute("id") !== id) {
-        element.classList.remove("closeCommentContainer");
-      }
-    });
-
-    if (
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.contains(
-          "closeCommentContainer"
-        )
-    ) {
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.remove(
-          "closeCommentContainer"
-        );
-    } else {
-      document
-        .getElementById(id)
-        .parentElement.nextElementSibling.classList.add(
-          "closeCommentContainer"
-        );
-    }
-  }
 
   const [educations, setEducations] = useState([]);
 
@@ -428,7 +485,10 @@ const LeftPart = () => {
                   id={`l-${p.id}`}
                   onClick={() => {
                     // setPostId(post.id);
+
                     likePost(p.id);
+                    // setCheckLike(true);
+                    // setLikeId(p.id);
                   }}
                 >
                   <img src="/images/like.svg" alt="" />
@@ -454,7 +514,10 @@ const LeftPart = () => {
                   <span>Send</span>
                 </button>
               </SocialActions>
-              <div className="commentContainer" id={p.id}>
+              <div
+                className="commentContainer closeCommentContainer"
+                id={`commentContainer-${p.id}`}
+              >
                 <div className="postComment">
                   <div className="commentImage">
                     <img src="/images/user.svg" alt="" />
@@ -477,57 +540,180 @@ const LeftPart = () => {
                     Post
                   </button>
                 </div>
-                <AllComments id={p.id}>
+                <AllComments>
                   {postedComments.map((postedComment) => (
-                    <div
-                      key={postedComment.id}
-                      className="allComments"
-                      id={`allComments-${p.id}`}
-                    >
-                      <img src="/images/user.svg" alt="" />
-                      <div className="commentContent">
-                        <div className="comment-userInfo">
+                    <div>
+                      <div
+                        key={postedComment.id}
+                        className="allComments"
+                        id={`allComments-${p.id}`}
+                      >
+                        <img src="/images/user.svg" alt="" />
+                        <div className="commentContent">
+                          <div className="comment-userInfo">
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                fontSize: "13px",
+                                justifyContent: "left",
+                                padding: "10px 10px",
+                              }}
+                            >
+                              <span>
+                                {postedComment.firstName +
+                                  " " +
+                                  postedComment.lastName}
+                              </span>
+                              <span>{postedComment.occupation}</span>
+                            </div>
+
+                            <div className="smallContainer">
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  paddingRight: "10px",
+                                  paddingTop: "10px",
+                                }}
+                              >
+                                {postedComment.age}d
+                              </span>
+                              {postedComment.firstName ==
+                                user.user.user.firstName && (
+                                <DeleteIcon
+                                  fontSize="small"
+                                  style={{
+                                    paddingRight: "2px",
+                                    paddingTop: "5px",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    deleteComment(postedComment.id)
+                                  }
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <p>{postedComment.content}</p>
                           <div
                             style={{
                               display: "flex",
-                              flexDirection: "column",
-                              fontSize: "13px",
-                              justifyContent: "left",
-                              padding: "10px 10px",
+                              flexDirections: "row",
+                              justifyContent: "flex-start",
+                              fontSize: "12px",
+                              paddingLeft: "10px",
+                              paddingBottom: "5px",
                             }}
                           >
-                            <span>
-                              {postedComment.firstName +
-                                " " +
-                                postedComment.lastName}
-                            </span>
-                            <span>{postedComment.occupation}</span>
-                          </div>
-
-                          <div className="smallContainer">
                             <span
-                              style={{
-                                fontSize: "13px",
-                                paddingRight: "10px",
-                                paddingTop: "10px",
+                              className="reply-btn"
+                              id={`r-${postedComment.id}`}
+                              onClick={() => {
+                                openReply(`r-${postedComment.id}`);
+                                setCommentId(postedComment.id);
                               }}
                             >
-                              {postedComment.age}d
+                              reply
                             </span>
-                            {/* <img src="/images/ellipsis.svg" alt="" /> */}
-                            <DeleteIcon
-                              fontSize="small"
-                              style={{
-                                paddingRight: "2px",
-                                paddingTop: "5px",
-                                cursor: "pointer",
+                            <span
+                              className="reply-btn"
+                              id={`r-${postedComment.id}`}
+                              onClick={() => {
+                                getReplies(postedComment.id);
                               }}
-                              onClick={() => deleteComment(postedComment.id)}
-                            />
+                              style={{ paddingLeft: "5px" }}
+                            >
+                              see replies
+                            </span>
                           </div>
                         </div>
+                      </div>
+                      <Replies>
+                        {replies &&
+                          replies.map((item) => (
+                            <div
+                              key={item.id}
+                              className="allreplies"
+                              style={{
+                                position: "relative",
+                                display: "flex",
+                                paddingBottom: "10px",
+                                paddingLeft: "100px",
+                              }}
+                              id={`replies-${p.id}`}
+                            >
+                              <img src="/images/user.svg" alt="" />
+                              <div className="replyContent">
+                                <div className="comment-userInfo">
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      fontSize: "13px",
+                                      justifyContent: "left",
+                                      padding: "10px 10px",
+                                    }}
+                                  >
+                                    <span>
+                                      {item.firstName + " " + item.lastName}
+                                    </span>
+                                    <span>{item.occupation}</span>
+                                  </div>
 
-                        <p>{postedComment.content}</p>
+                                  <div className="smallContainer">
+                                    <span
+                                      style={{
+                                        fontSize: "13px",
+                                        paddingRight: "10px",
+                                        paddingTop: "10px",
+                                      }}
+                                    >
+                                      1d
+                                    </span>
+                                    {item.firstName ==
+                                      user.user.user.firstName && (
+                                      <DeleteIcon
+                                        fontSize="small"
+                                        style={{
+                                          paddingRight: "2px",
+                                          paddingTop: "5px",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() => deleteReply(item.id)}
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+                                <p>{item.content}</p>
+                              </div>
+                            </div>
+                          ))}
+                      </Replies>
+                      <div
+                        key={`input-${postedComment.id}`}
+                        id={`reply-${postedComment.id}`}
+                        className="postReply closePost"
+                      >
+                        <div className="commentImage">
+                          <img src="/images/user.svg" alt="" />
+                        </div>
+                        <div className="comment">
+                          <input
+                            type="text"
+                            // id="comment"
+                            //name="comment"
+                            value={reply}
+                            onChange={(e) => setReply(e.target.value)}
+                          />
+                        </div>
+                        <button
+                          className="postComment"
+                          onClick={() => {
+                            handleReply(p.id);
+                          }}
+                        >
+                          Reply
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -786,6 +972,19 @@ const Activity = styled.div`
     padding: 10px;
   }
 `;
+const Replies = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: left;
+    margin-left: 10px;
+  }
+`;
 const CardBackground = styled.div`
   background: url("/images/card-bg.svg");
   background-position: center;
@@ -946,7 +1145,6 @@ const Education = styled.div`
 const Experience = styled(Education)``;
 
 const AllComments = styled.div``;
-
 const Article = styled.div`
   text-align: center;
   overflow: hidden;
@@ -1110,7 +1308,6 @@ const Content = styled.div`
     width: 30px;
   }
 `;
-
 const DeleteButton = styled.div`
   span {
     display: flex;
@@ -1123,4 +1320,5 @@ const UpdateButton = styled.div`
     align-items: center;
   }
 `;
+
 export default LeftPart;

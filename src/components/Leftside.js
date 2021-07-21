@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
+import { firestore } from "./Messaging";
+import jwt_decode from "jwt-decode";
 
 const Leftside = () => {
   let history = useHistory();
@@ -10,7 +12,9 @@ const Leftside = () => {
   const [fixedPosition, setFixedPosition] = useState(false);
   const user = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
-  const [profileImg, setProfileImg] = useState("/images/user.svg");
+  const [profileImg, setProfileImg] = useState();
+  const token = user.user.token;
+  const decoded = jwt_decode(token);
 
   const imageHandler = (e) => {
     const reader = new FileReader();
@@ -20,7 +24,14 @@ const Leftside = () => {
       }
     };
     reader.readAsDataURL(e.target.files[0]);
+    console.log(e.target.files[0]);
   };
+
+  //  firestore.collection("images").add({
+  //    imageUrl: profileImg,
+  //    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  //    userId: decoded.id
+  //  });;
 
   useEffect(() => {
     //const initialTop = communityCard.current.getBoundingClientRect().top;
@@ -40,12 +51,7 @@ const Leftside = () => {
         <UserInfo>
           <CardBackground />
           <Photo>
-            <img src={user.user.user.imageUrl} alt="" />
-            {/* {user && user.user.user.ImageUrl ? (
-                <img src={user.user.user.ImageUrl} />
-              ) : ( */}
-
-            {/* )} */}
+            <img src={`images/${profileImg}`} alt="" />
           </Photo>
           <a
             onClick={() => {
