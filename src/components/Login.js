@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../actions/userActions";
-import axios from "axios";
 
 const Login = (props) => {
   let history = useHistory();
@@ -24,10 +23,9 @@ const Login = (props) => {
   };
 
   useEffect(() => {
-    if (user) {
-      if (user.loggedIn) {
-        history.push("/home");
-      }
+    if (user.loggedIn) {
+      history.push("/home");
+      console.log("loggedIn", user);
     }
   }, [user]);
 
@@ -35,6 +33,12 @@ const Login = (props) => {
     e.preventDefault();
     if (email && password) {
       dispatch(userActions.login(email, password));
+      setTimeout(() => {
+        let localUser = JSON.parse(localStorage.getItem("user"));
+        if (localUser == null) {
+          setText("Username or password is incorrect!");
+        }
+      }, 500);
     }
   };
 
@@ -57,7 +61,6 @@ const Login = (props) => {
             <Link to="/signup" style={{ textDecoration: "none" }}>
               <Join>Join now</Join>
             </Link>
-            <SignIn>Sign in</SignIn>
           </div>
         </Nav>
         <Section>
@@ -91,10 +94,6 @@ const Login = (props) => {
                 <LoginButton type="submit">Log In</LoginButton>
               </form>
             </LoginForm>
-            {/* <Google>
-              <img src="/images/google.svg" alt="" />
-              Sign in with google
-            </Google> */}
           </Form>
         </Section>
       </Container>

@@ -363,7 +363,7 @@ const LeftPart = () => {
     if (experienceModal) {
       getExperience();
     }
-  }, []);
+  }, [experienceModal]);
   return (
     <>
       <Container>
@@ -845,15 +845,18 @@ const LeftPart = () => {
                   </div>
                   <div>
                     <button
-                      className="ellipsisEd "
+                      className="ellipsisEd"
                       id={education.id}
                       onClick={() => {
-                        openEdSettings(education.id);
+                        //openSettings(education.id);
                       }}
                     >
                       <img src="/images/ellipsis.svg" alt="" />
                     </button>
-                    <div className="settingsEd">
+                    <div
+                      // className="settingsEd"
+                      className="settings close"
+                    >
                       <DeleteButton>
                         <span onClick={() => deleteEducation(education.id)}>
                           <DeleteIcon
