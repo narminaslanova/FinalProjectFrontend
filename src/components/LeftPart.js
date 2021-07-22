@@ -353,6 +353,16 @@ const LeftPart = () => {
 
   useEffect(() => {
     getEducation();
+    if (educationModal) {
+      getEducation();
+    }
+  }, [educationModal]);
+
+  useEffect(() => {
+    getExperience();
+    if (experienceModal) {
+      getExperience();
+    }
   }, []);
   return (
     <>
@@ -599,7 +609,14 @@ const LeftPart = () => {
                         className="allComments"
                         id={`allComments-${p.id}`}
                       >
-                        <img src="/images/user.svg" alt="" />
+                        {postedComment.imageUrl ? (
+                          <img
+                            src={`/images/${postedComment.imageUrl}`}
+                            alt=""
+                          />
+                        ) : (
+                          <img src="/images/user.svg" alt="" />
+                        )}
                         <div className="commentContent">
                           <div className="comment-userInfo">
                             <div
@@ -693,7 +710,11 @@ const LeftPart = () => {
                               }}
                               id={`replies-${p.id}`}
                             >
-                              <img src="/images/user.svg" alt="" />
+                              {item.imageUrl ? (
+                                <img src={`/images/${item.imageUrl}`} alt="" />
+                              ) : (
+                                <img src="/images/user.svg" alt="" />
+                              )}
                               <div className="replyContent">
                                 <div className="comment-userInfo">
                                   <div
