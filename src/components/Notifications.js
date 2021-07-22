@@ -62,10 +62,88 @@ const Notifications = () => {
       getNotifications();
     }
   }, []);
+
+  const [appliers, setAppliers] = useState([]);
+  const getUsers = async () => {
+    axios
+      .get(`https://localhost:44331/api/Linker/GetUsersForUser/${decoded.id}`)
+      .then((response) => {
+        console.log("connections-appliers", response.data);
+        setAppliers(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+  const sendConnectionRequest = (email, id) => {
+    const data = {
+      applierEmail: email,
+      senderId: id,
+    };
+    axios
+      .post("https://localhost:44331/api/Linker/AddConnectionRequest", data)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getButton = (id) => {
+    console.log(document.getElementById(id).innerHTML);
+    if (document.getElementById(id).classList.contains("clicked-btn")) {
+      document.getElementById(id).classList.remove("clicked-btn");
+      document.getElementById(id).innerHTML = "Connect";
+    } else {
+      document.getElementById(id).classList.add("clicked-btn");
+      document.getElementById(id).innerHTML = "Pending";
+    }
+  };
+
   return (
     <Container>
       <Layout>
-        <LeftPart>leftPart</LeftPart>
+        <LeftPart>
+          {appliers &&
+            appliers.map(
+              (applier) =>
+                decoded.id !== applier.id && (
+                  <div className="user-container" key={applier.id}>
+                    <div className="user-image">
+                      {applier.imageUrl ? (
+                        <img src={`/images/${applier.imageUrl}`} alt="" />
+                      ) : (
+                        <img src="/images/user.svg" alt="" />
+                      )}
+                    </div>
+                    <div className="user-info">
+                      <div>
+                        <h4>{applier.firstName + " " + applier.lastName}</h4>
+                        <span>
+                          {applier.occupation ? applier.occupation : "---"}
+                        </span>
+                      </div>
+                      <div className="user-actions">
+                        <div>
+                          <button
+                            id={`ct-${applier.id}`}
+                            className="connect-btn"
+                            onClick={() => {
+                              sendConnectionRequest(applier.email, decoded.id);
+                              getButton(`ct-${applier.id}`);
+                            }}
+                          >
+                            Connect
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+            )}
+        </LeftPart>
         <Main>
           {/* <NotificationsList> */}
           {notifications.length == 0 ? (
@@ -161,7 +239,7 @@ const Container = styled.div`
 const Layout = styled.div`
   display: grid;
   grid-template-areas: "leftpart main rightpart ";
-  grid-template-columns: minmax(0, 2fr) minmax(0, 12fr) minmax(0, 4fr);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 9fr) minmax(0, 4fr);
   column-gap: 25px;
   row-gap: 15px;
   grid-template-rows: auto;
@@ -180,13 +258,14 @@ const RightPart = styled.div`
 const LeftPart = styled.div`
   grid-area: leftpart;
   width: 100%;
-  height: 200px;
-  //overflow: hidden;
+  height: 350px;
+  overflow: auto;
   background-color: #fff;
   border-radius: 5px;
   position: relative;
   border: none;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 /20%);
+  margin-bottom: 10px;
 `;
 
 const Main = styled.div`

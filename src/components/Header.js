@@ -132,7 +132,7 @@ const Header = (props) => {
               {filteredData.slice(0, 15).map((linker) => {
                 return (
                   <a className="dataItem">
-                    <p>{linker.firstName} </p>
+                    <p>{linker.firstName + " " + linker.lastName} </p>
                   </a>
                 );
               })}
@@ -298,6 +298,10 @@ const Search = styled.div`
   & > div {
     max-width: 280px;
     input {
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      transition: 0.5s;
+      outline: none;
       border: none;
       box-shadow: none;
       background-color: #eef3f8;
@@ -326,7 +330,7 @@ const Search = styled.div`
 const DataResult = styled.div`
   position: absolute;
   margin-top: 5px;
-  width: 300px;
+  width: 250px;
   height: 200px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -334,13 +338,19 @@ const DataResult = styled.div`
   overflow-y: auto;
   a {
     width: 100%;
-    height: 50px;
+    height: 30px;
     display: flex;
     align-items: center;
     color: black;
+    padding: 10px;
     text-decoration: none;
     &:hover {
       background-color: lightgrey;
+    }
+    p {
+      letter-spacing: 1px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 13px;
     }
   }
 `;

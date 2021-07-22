@@ -390,6 +390,9 @@ const Footer = styled.div`
       object-fit: contain;
     }
   }
+  @media (max-width: 768px) {
+    margin-bottom: 15px;
+  }
 `;
 
 const LeftContent = styled.div`
@@ -420,6 +423,16 @@ const ChatList = styled.div`
     font-family: "Montserrat", sans-serif;
     font-weight: 600;
     border-bottom: 1px solid rgba(219, 210, 210, 0.445);
+  }
+  img {
+    object-fit: cover;
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    img {
+      object-fit: cover;
+    }
   }
 `;
 

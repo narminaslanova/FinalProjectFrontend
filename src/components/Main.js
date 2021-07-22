@@ -432,7 +432,14 @@ const Main = () => {
                         className="allComments"
                         id={`allComments-${post.id}`}
                       >
-                        <img src="/images/user.svg" alt="" />
+                        {postedComment.imageUrl ? (
+                          <img
+                            src={`/images/${postedComment.imageUrl}`}
+                            alt=""
+                          />
+                        ) : (
+                          <img src="/images/user.svg" alt="" />
+                        )}
                         <div className="commentContent">
                           <div className="comment-userInfo">
                             <div
@@ -526,7 +533,11 @@ const Main = () => {
                               }}
                               id={`replies-${post.id}`}
                             >
-                              <img src="/images/user.svg" alt="" />
+                              {item.imageUrl ? (
+                                <img src={`/images/${item.imageUrl}`} alt="" />
+                              ) : (
+                                <img src="/images/user.svg" alt="" />
+                              )}
                               <div className="replyContent">
                                 <div className="comment-userInfo">
                                   <div
