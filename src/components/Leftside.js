@@ -39,23 +39,24 @@ const Leftside = () => {
     setProfileImg(image);
     setTest(true);
   };
+   
+   if (test) {
+     const data = {
+       imageUrl: profileImg,
+     };
 
-  if (test) {
-    const data = {
-      imageUrl: profileImg,
-    };
-
-    axios
-      .put(
-        `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
-        data
-      )
-      .then((data) => {
-        user.user.user.imageUrl = profileImg;
-        localStorage.setItem("user", JSON.stringify(user.user));
-      })
-      .catch((error) => console.log(error));
-  }
+     axios
+       .put(
+         `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
+         data
+       )
+       .then(() => {
+           
+         user.user.user.imageUrl = profileImg;
+         localStorage.setItem("user", JSON.stringify(user.user));
+       })
+       .catch((error) => console.log(error));
+   }
 
   useEffect(() => {
     //const initialTop = communityCard.current.getBoundingClientRect().top;
@@ -147,7 +148,7 @@ const Leftside = () => {
       </CommunityCard> */}
     </Container>
   );
-};
+};;
 
 const Container = styled.div`
   grid-area: leftside;

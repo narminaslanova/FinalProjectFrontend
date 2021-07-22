@@ -117,7 +117,7 @@ const JoinNow = ({submitForm}) => {
           </button>
         </form>
         <h6>
-          Already on LinkedIn?<Link to="/signIn">Sign in</Link>
+          Already on LinkedIn?<Link to="/">Sign in</Link>
         </h6>
       </div>
     </Container>

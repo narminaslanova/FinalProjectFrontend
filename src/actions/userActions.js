@@ -11,7 +11,6 @@ function login(email, password) {
     userService
       .login(email, password)
       .then((response) => {
-        console.log("action", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
       })
       .then(() => {
