@@ -3,9 +3,11 @@ import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../actions/userActions";
+import axios from "axios";
 
 const Login = (props) => {
   let history = useHistory();
+  const [error, setError] = useState(false);
   const [logged, setLogged] = useState(false);
   const [values, setValues] = useState({ email: "", password: "" });
   const { email, password } = values;
@@ -18,12 +20,14 @@ const Login = (props) => {
       ...values,
       [name]: value,
     });
+    setText();
   };
 
   useEffect(() => {
-    if (user.loggedIn) {
-      setText();
-      history.push("/home");
+    if (user) {
+      if (user.loggedIn) {
+        history.push("/home");
+      }
     }
   }, [user]);
 
@@ -31,10 +35,6 @@ const Login = (props) => {
     e.preventDefault();
     if (email && password) {
       dispatch(userActions.login(email, password));
-      setLogged(true);
-    }
-    if (dispatch(userActions.login()) == undefined) {
-      setText("Email or password is wrong");
     }
   };
 
@@ -91,10 +91,10 @@ const Login = (props) => {
                 <LoginButton type="submit">Log In</LoginButton>
               </form>
             </LoginForm>
-            <Google onClick={() => props.signIn()}>
+            {/* <Google>
               <img src="/images/google.svg" alt="" />
               Sign in with google
-            </Google>
+            </Google> */}
           </Form>
         </Section>
       </Container>

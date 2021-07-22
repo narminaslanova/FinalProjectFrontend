@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { firestore } from "./Messaging";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 const Leftside = () => {
   let history = useHistory();
@@ -16,22 +17,45 @@ const Leftside = () => {
   const token = user.user.token;
   const decoded = jwt_decode(token);
 
-  const imageHandler = (e) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setProfileImg(reader.result);
-      }
-    };
-    reader.readAsDataURL(e.target.files[0]);
-    console.log(e.target.files[0]);
+  // const imageHandler = (e) => {
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     if (reader.readyState === 2) {
+  //       setProfileImg(reader.result);
+  //     }
+  //   };
+  //   reader.readAsDataURL(e.target.files[0]);
+  //   console.log(e.target.files[0]);
+  // };
+
+  const [test, setTest] = useState(false);
+
+  const handleChange = (e) => {
+    const image = e.target.files[0].name;
+    if (image === "" || image === undefined) {
+      alert(`not an image, the file is a ${typeof image}`);
+      return;
+    }
+    setProfileImg(image);
+    setTest(true);
   };
 
-  //  firestore.collection("images").add({
-  //    imageUrl: profileImg,
-  //    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-  //    userId: decoded.id
-  //  });;
+  if (test) {
+    const data = {
+      imageUrl: profileImg,
+    };
+
+    axios
+      .put(
+        `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
+        data
+      )
+      .then((data) => {
+        user.user.user.imageUrl = profileImg;
+        localStorage.setItem("user", JSON.stringify(user.user));
+      })
+      .catch((error) => console.log(error));
+  }
 
   useEffect(() => {
     //const initialTop = communityCard.current.getBoundingClientRect().top;
@@ -51,7 +75,11 @@ const Leftside = () => {
         <UserInfo>
           <CardBackground />
           <Photo>
-            <img src={`images/${profileImg}`} alt="" />
+            {user.user.user.imageUrl ? (
+              <img src={`/images/${user.user.user.imageUrl}`} alt="" />
+            ) : (
+              <img src="/images/user.svg" alt="" />
+            )}
           </Photo>
           <a
             onClick={() => {
@@ -68,7 +96,7 @@ const Leftside = () => {
             id="image-upload"
             accept="image/*"
             style={{ display: "none" }}
-            onChange={imageHandler}
+            onChange={handleChange}
           />
           <label htmlFor="image-upload">Add Photo</label>
         </UserInfo>
@@ -177,7 +205,8 @@ const Photo = styled.div`
   img {
     width: 72px;
     height: 72px;
-    object-fit: contain;
+    //object-fit: contain;
+    object-fit: cover;
     border-radius: 50%;
   }
 `;

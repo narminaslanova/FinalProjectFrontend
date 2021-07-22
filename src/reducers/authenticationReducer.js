@@ -5,7 +5,6 @@ let user = JSON.parse(localStorage.getItem("user"));
 const initialState = {
   loggedIn: false,
   user: user ? user : [],
-  error: "email or password is incorrect",
 };
 
 const authenticationReducer = (state = initialState, action) => {
@@ -23,7 +22,11 @@ const authenticationReducer = (state = initialState, action) => {
         user: action.user,
       };
     case userConstants.LOGIN_FAILURE:
-      return { initialState };
+      return {
+        ...state,
+        loggedIn: false,
+        user: {},
+      };
     case userConstants.LOGOUT:
       return { initialState };
     default:

@@ -9,17 +9,18 @@ import { Redirect } from "react-router";
 
 const Home = () => {
   const user = useSelector((state) => state.authentication);
+ 
   return (
     <>
-    {!user.user && <Redirect to="/"/>}
+      {!user.user && <Redirect to="/" />}
       <Container>
-          <Layout>
-            <Leftside />
-            <Main />
-            <Rightside />
-          </Layout>
+        <Layout>
+          <Leftside />
+          <Main />
+          <Rightside />
+        </Layout>
       </Container>
-   </>
+    </>
   );
 };
 

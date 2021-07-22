@@ -6,6 +6,7 @@ import { userActions } from "../actions/userActions";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { SettingsBackupRestoreSharp } from "@material-ui/icons";
 
 const Header = (props) => {
   let history = useHistory();
@@ -47,13 +48,18 @@ const Header = (props) => {
       });
   }
 
+  // useEffect(() => {
+  //   getNotifications();
+  // }, []);
   const [test, setTest] = useState();
-  useEffect(() => {
-    getNotifications();
-    if (test) {
-      getNotifications();
-    }
-  }, [notifications]);
+  // useEffect(() => {
+  //   if (test) {
+  //     getNotifications();
+  //   }
+  // }, [notifications]);
+  // useEffect(() => {
+  //   getNotifications();
+  // }, []);
 
   function displayDiv(id) {
     if (
@@ -69,6 +75,34 @@ const Header = (props) => {
     }
   }
 
+  const [linkers, setLinkers] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [wordEntered, setWordEntered] = useState("");
+  function getAllUsers() {
+    axios
+      .get("https://localhost:44331/api/Authenticate/GetAllUsers")
+      .then((response) => {
+        setLinkers(response.data);
+      })
+      .catch((error) => console.log(error));
+  }
+  useEffect(() => {
+    getAllUsers();
+  }, []);
+
+  const handleFilter = (event) => {
+    const searchWord = event.target.value;
+    setWordEntered(searchWord);
+    const newFilter = linkers.filter((value) => {
+      return value.firstName.toLowerCase().includes(searchWord.toLowerCase());
+    });
+    if (searchWord === "") {
+      setFilteredData([]);
+    } else {
+      setFilteredData(newFilter);
+    }
+  };
+
   return (
     <Container>
       <Content>
@@ -83,16 +117,33 @@ const Header = (props) => {
         </Logo>
         <Search>
           <div>
-            <input type="text" placeholder="Search" />
+            <input
+              type="text"
+              placeholder="search"
+              value={wordEntered}
+              onChange={handleFilter}
+            />
           </div>
           <SearchIcon>
             <img src="/images/search-icon.svg" alt="" />
           </SearchIcon>
+          {filteredData.length != 0 && (
+            <DataResult>
+              {filteredData.slice(0, 15).map((linker) => {
+                return (
+                  <a className="dataItem">
+                    <p>{linker.firstName} </p>
+                  </a>
+                );
+              })}
+            </DataResult>
+          )}
         </Search>
         <Nav>
           <NavListWrap>
             <NavList>
               <a
+                className="home"
                 onClick={() => {
                   history.push("/home");
                 }}
@@ -146,7 +197,16 @@ const Header = (props) => {
             </NavList>
             <User>
               <a id="test" onClick={() => displayDiv("test")}>
-                <img className="userImage" src="/images/user.svg" alt="" />
+                {user.user.user.imageUrl ? (
+                  <img
+                    className="userImage"
+                    src={`/images/${user.user.user.imageUrl}`}
+                    alt=""
+                  />
+                ) : (
+                  <img className="userImage" src="/images/user.svg" alt="" />
+                )}
+
                 <span>
                   Me
                   <img src="/images/down-icon.svg" alt="" />
@@ -160,7 +220,11 @@ const Header = (props) => {
                     flexDirection: "row",
                   }}
                 >
-                  <img src="/images/user.svg" alt="" />
+                  {user.user.user.imageUrl ? (
+                    <img src={`/images/${user.user.user.imageUrl}`} alt="" />
+                  ) : (
+                    <img src="/images/user.svg" alt="" />
+                  )}
                   <h4
                     style={{
                       margin: "30px 0",
@@ -182,8 +246,8 @@ const Header = (props) => {
               </div>
             </User>
 
-            <Work>
-              <a>
+            <Work className="home">
+              <a className="home">
                 <img src="/images/nav-work.svg" alt="" />
                 <span>
                   Work
@@ -250,16 +314,36 @@ const Search = styled.div`
     }
   }
   @media (max-width: 768px) {
-    width: 50px;
+    width: 20px;
     & > div {
-      width: 50px;
+      width: 20px;
       input {
-        width: 50px;
+        visibility: hidden;
       }
     }
   }
 `;
-
+const DataResult = styled.div`
+  position: absolute;
+  margin-top: 5px;
+  width: 300px;
+  height: 200px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  overflow: hidden;
+  overflow-y: auto;
+  a {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+    &:hover {
+      background-color: lightgrey;
+    }
+  }
+`;
 const SearchIcon = styled.div`
   width: 40px;
   position: absolute;
@@ -278,10 +362,11 @@ const Nav = styled.nav`
   margin-left: auto;
   display: block;
   @media (max-width: 768px) {
-    position: fixed;
+    /* position: fixed;
     left: 0;
     bottom: 0;
     background: white;
+    width: 100%; */
     width: 100%;
   }
 `;
@@ -302,6 +387,9 @@ const NavListWrap = styled.ul`
       width: 100%;
       border-color: rgba(0, 0, 0, 0.9);
     }
+  }
+  @media (max-width: 768px) {
+    width: 40px;
   }
 `;
 
@@ -404,6 +492,7 @@ const User = styled(NavList)`
     width: 24px;
     height: 24px;
     border-radius: 50%;
+    object-fit: cover;
   }
   span {
     display: flex;

@@ -59,7 +59,6 @@ const Main = () => {
     }
   }
 
-  const [t, setT] = useState(false);
   //post comment
   const handleComment = (id) => {
     const commentData = {
@@ -72,27 +71,25 @@ const Main = () => {
         `https://localhost:44331/api/Post/AddCommentPost/${id}`,
         commentData
       )
-      .then((res) => console.log(res))
-      .catch((error) => console.log(error));
+      .then((res) => {
+        axios
+          .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
+          .then((response) => {
+            setPostedComments(response.data);
+          })
+          .catch((error) => console.log(error));
+      });
 
     setComment("");
-    
   };
 
   //get comments
   const getComments = (id) => {
-    if(t){
-       axios
-         .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
-         .then((response) => {
-           setPostedComments(response.data);
-         })
-         .catch((error) => console.log(error));
-    }
     axios
       .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
       .then((response) => {
         setPostedComments(response.data);
+        console.log("comments", response.data);
       })
       .catch((error) => console.log(error));
   };
@@ -126,17 +123,28 @@ const Main = () => {
     setPosts(newpost);
   };
 
-  
   //like post
-  const likePost = (postId) => {
+  function likePost(postId) {
     const data = {
       userId: decoded.id,
     };
+
     axios
       .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
-      .then((data) => console.log("like", data))
+      .then((res) => {
+        console.log("liked", res.data);
+        const newPosts = posts.map((item) => {
+          console.log("item", item);
+          if (item.id == res.data.id) {
+            return res.data;
+          } else {
+            return item;
+          }
+        });
+        setPosts(newPosts);
+      })
       .catch((error) => console.log(error));
-  };
+  }
 
   //open and close postModal
   const handleClick = (e) => {
@@ -168,7 +176,16 @@ const Main = () => {
     };
     axios
       .post(`https://localhost:44331/api/Post/AddCommentPost/${id}`, replyData)
-      .then((res) => console.log("handlereply", res))
+      .then((res) => {
+        axios
+          .get(
+            `https://localhost:44331/api/Post/GetRepliesOfComment/${commentId}`
+          )
+          .then((response) => {
+            setReplies(response.data);
+          })
+          .catch((error) => console.log(error));
+      })
       .catch((error) => console.log(error));
 
     setReply("");
@@ -218,7 +235,6 @@ const Main = () => {
     let element =
       document.getElementById(id).parentElement.parentElement
         .nextElementSibling;
-    console.log(element);
 
     let test = document.querySelectorAll(".postReply");
 
@@ -236,7 +252,11 @@ const Main = () => {
       <Container>
         <ShareBox>
           <div>
-            <img src="/images/user.svg" alt="" />
+            {user.user.user.imageUrl ? (
+              <img src={`/images/${user.user.user.imageUrl}`} alt="" />
+            ) : (
+              <img src="/images/user.svg" alt="" />
+            )}
             <button onClick={handleClick}>Start a post</button>
           </div>
           <div>
@@ -255,7 +275,11 @@ const Main = () => {
             <Article key={post.id}>
               <SharedActor>
                 <a>
-                  <img src={"images/user.svg"} alt="" />
+                  {post.userImageUrl ? (
+                    <img src={`/images/${post.userImageUrl}`} alt="" />
+                  ) : (
+                    <img src="/images/user.svg" alt="" />
+                  )}
                   <div>
                     <span>{post.firstname + " " + post.lastname}</span>
                     <span>
@@ -343,10 +367,8 @@ const Main = () => {
                 <LikeButton
                   id={`l-${post.id}`}
                   onClick={() => {
-                    //setPostId(post.id);
+                    //setCheckLike(true);
                     likePost(post.id);
-                    // setCheckLike(true);
-                    // setLikeId(post.id);
                   }}
                 >
                   <img src="/images/like.svg" alt="" />
@@ -378,7 +400,11 @@ const Main = () => {
               >
                 <div className="postComment">
                   <div className="commentImage">
-                    <img src="/images/user.svg" alt="" />
+                    {user.user.user.imageUrl ? (
+                      <img src={`/images/${user.user.user.imageUrl}`} alt="" />
+                    ) : (
+                      <img src="/images/user.svg" alt="" />
+                    )}
                   </div>
                   <div className="comment">
                     <input
@@ -392,7 +418,6 @@ const Main = () => {
                   <button
                     className="postComment"
                     onClick={() => {
-                      setT(true);
                       handleComment(post.id);
                     }}
                   >
@@ -554,7 +579,14 @@ const Main = () => {
                         className="postReply closePost"
                       >
                         <div className="commentImage">
-                          <img src="/images/user.svg" alt="" />
+                          {user.user.user.imageUrl ? (
+                            <img
+                              src={`/images/${user.user.user.imageUrl}`}
+                              alt=""
+                            />
+                          ) : (
+                            <img src="/images/user.svg" alt="" />
+                          )}
                         </div>
                         <div className="comment">
                           <input
@@ -651,8 +683,10 @@ const ShareBox = styled(CommonCard)`
       padding: 8px 16px 0px 16px;
       img {
         width: 48px;
+        height: 48px;
         border-radius: 50%;
         margin-right: 8px;
+        object-fit: cover;
       }
       button {
         margin: 4px 0;
@@ -710,6 +744,7 @@ const SharedActor = styled.div`
     img {
       width: 48px;
       height: 48px;
+      object-fit: cover;
     }
 
     & > div {
