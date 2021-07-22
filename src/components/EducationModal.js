@@ -35,7 +35,9 @@ const EducationModal = ({ setEducationModalOpen, props }) => {
         `https://localhost:44331/api/MyProfile/PostUserEducation/${user.user.user.email}`,
         data
       )
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+      })
       .catch((error) => console.log(error));
 
     setEducationModalOpen(false);

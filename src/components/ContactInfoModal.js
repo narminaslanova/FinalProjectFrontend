@@ -16,22 +16,6 @@ const ContactInfoModal = ({ setOpenModal, props }) => {
     setLocation("");
   };
 
-  // function updateContactInfo(occupation, location) {
-  //   const data = {
-  //     occupation: occupation,
-  //     location: location,
-  //   };
-  //   axios
-  //     .put(
-  //       `https://localhost:44331/api/MyProfile/PutUserAsync/${user.user.user.email}`,
-  //       { data }
-  //     )
-  //     .then((data) => console.log(data))
-  //     .catch((error) => console.log(error));
-
-  //   setOpenModal(false);
-  //   reset();
-  // }
   const data = {
     occupation: occupation,
     location: location,

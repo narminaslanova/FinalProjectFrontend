@@ -39,6 +39,7 @@ const Messaging = () => {
       )
       .then((response) => {
         setUsers(response.data);
+        console.log("messaging", response.data);
       })
       .catch((error) => console.log(error));
   };
@@ -100,7 +101,11 @@ const Messaging = () => {
                 decoded.id !== item.id && (
                   <UserList key={item.id}>
                     <UserImage>
-                      <img src="/images/user.svg" alt="" />
+                      {item.imageUrl ? (
+                        <img src={`/images/${item.imageUrl}`} alt="" />
+                      ) : (
+                        <img src="/images/user.svg" alt="" />
+                      )}
                     </UserImage>
                     <UserInfo
                       onClick={() => {

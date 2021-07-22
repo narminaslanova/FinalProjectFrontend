@@ -43,22 +43,7 @@ const Connections = () => {
         setAppliers(response.data);
       })
       .catch((error) => console.log(error));
-
-    // axios
-    //   .get("https://localhost:44331/api/Authenticate/GetAllUsers")
-    //   .then((response) => {
-    //     setAppliers(response.data);
-    //   })
-    //   .catch((error) => console.log(error));
   };
-
-  // useEffect(() => {
-  //   setRequest(JSON.parse(window.localStorage.getItem("request")));
-  // }, []);
-
-  // useEffect(() => {
-  //   window.localStorage.setItem("request", request);
-  // }, [request]);
 
   //sendrequest to connect
   const sendConnectionRequest = (email, id) => {
@@ -120,9 +105,17 @@ const Connections = () => {
     setConnections(newconnections);
   };
 
+  const [deleted, setDeleted] = useState(false);
+  // useEffect(() => {
+  //   getUsers();
+  //   if (deleted) {
+  //     getUsers();
+  //   }
+  // }, []);
+
   useEffect(() => {
     getUsers();
-    if (deleteConnection) {
+    if (deleted) {
       getUsers();
     }
   }, []);
@@ -141,7 +134,11 @@ const Connections = () => {
                 decoded.id !== applier.id && (
                   <div className="user-container" key={applier.id}>
                     <div className="user-image">
-                      <img src="/images/user.svg" alt="" />
+                      {applier.imageUrl ? (
+                        <img src={`/images/${applier.imageUrl}`} alt="" />
+                      ) : (
+                        <img src="/images/user.svg" alt="" />
+                      )}
                     </div>
                     <div className="user-info">
                       <div>
@@ -215,7 +212,11 @@ const Connections = () => {
               connections.map((connection) => (
                 <div className="user-container" key={connection.id}>
                   <div className="user-image">
-                    <img src="/images/user.svg" alt="" />
+                    {connection.imageUrl ? (
+                      <img src={`/images/${connection.imageUrl}`} alt="" />
+                    ) : (
+                      <img src="/images/user.svg" alt="" />
+                    )}
                   </div>
                   <div className="user-info">
                     <div>
@@ -246,9 +247,10 @@ const Connections = () => {
                         <button
                           className="remove-button"
                           id={`r-${connection.id}`}
-                          onClick={() =>
-                            deleteConnection(decoded.id, connection.email)
-                          }
+                          onClick={() => {
+                            setDeleted(true);
+                            deleteConnection(decoded.id, connection.email);
+                          }}
                         >
                           <BackspaceIcon fontSize="small" />
                           <span>Remove connection</span>

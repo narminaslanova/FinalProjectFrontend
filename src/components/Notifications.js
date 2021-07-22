@@ -17,6 +17,7 @@ const Notifications = () => {
       )
       .then((response) => {
         setNotifications(response.data);
+        console.log("ntf", response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -32,7 +33,7 @@ const Notifications = () => {
     axios
       .post("https://localhost:44331/api/Linker/AddConnection", data)
       .then((response) => {
-        console.log(response.data);
+        console.log("accepted", response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -54,9 +55,13 @@ const Notifications = () => {
       });
   };
 
+  const [accepted, setAccepted] = useState(false);
   useEffect(() => {
     getNotifications();
-  }, [acceptRequest]);
+    if (accepted) {
+      getNotifications();
+    }
+  }, []);
   return (
     <Container>
       <Layout>
@@ -72,7 +77,11 @@ const Notifications = () => {
               <Content key={notification.id}>
                 <UserList>
                   <UserImage>
-                    <img src="/images/user.svg" alt="" />
+                    {notification.imageUrl ? (
+                      <img src={`/images/${notification.imageUrl}`} alt="" />
+                    ) : (
+                      <img src="/images/user.svg" alt="" />
+                    )}
                   </UserImage>
                   <UserInfo>
                     <h4>
@@ -80,14 +89,15 @@ const Notifications = () => {
                     </h4>
                   </UserInfo>
                   <Text>
-                    <p>Whants to connect.</p>
+                    <p>wants to connect.</p>
                   </Text>
                 </UserList>
                 <Buttons>
                   <AcceptButton
-                    onClick={() =>
-                      acceptRequest(notification.id, user.user.user.email)
-                    }
+                    onClick={() => {
+                      setAccepted(true);
+                      acceptRequest(notification.id, user.user.user.email);
+                    }}
                   >
                     <span>Accept</span>
                   </AcceptButton>

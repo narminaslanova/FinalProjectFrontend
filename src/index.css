@@ -171,6 +171,7 @@ body{
     justify-content: left;
     padding: 5px 10px;
     border-radius: 50%;
+    object-fit: cover;
   }
 
   .displayed{
@@ -287,15 +288,17 @@ body{
     padding-top: 20px;
  }
  .user-image{
-   width: 50px;
-   height: 50px;
+   width: 48px;
+   height: 48px;
    padding-left: 10px;
    padding-top: 20px;
    padding-bottom: 20px;
+  
  }
  .user-image img{
-   width: 100%;
-   object-fit: contain;
+   width: 48px;
+   height: 48px;
+   object-fit: cover;
    border-radius: 50%;
  }
  .user-info{
@@ -448,6 +451,9 @@ cursor: pointer;
   border:none;
   padding: 10px 10px;
 }
+.postComment img{
+  object-fit: cover;
+}
 .postReply{
   display: flex;
   flex-direction: row;
@@ -462,8 +468,14 @@ cursor: pointer;
       width: auto;
     }
   }
+
+
 .closePost{
 display: none !important;
+}
+
+.postReply img{
+  object-fit: cover;
 }
 .commentImage{
    padding-right: 10px;
@@ -595,4 +607,9 @@ display: none !important;
   height: 40px;
   border-radius: 50%;
   margin: 2px 5px;
+}
+@media only screen and (max-width: 768px){
+  .home{
+    display: none !important;
+  }
 }

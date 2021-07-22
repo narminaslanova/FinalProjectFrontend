@@ -11,6 +11,7 @@ const LikersModal = ({ setOpenModalLikers, postId }) => {
       .get(`https://localhost:44331/api/Post/GetLikersOfPost/${postId}`)
       .then((response) => {
         setLikers(response.data);
+        console.log("likers", response.data);
       })
       .catch((error) => console.log(error));
   }
@@ -35,7 +36,11 @@ const LikersModal = ({ setOpenModalLikers, postId }) => {
             likers.map((liker) => (
               <UserList>
                 <UserImage>
-                  <img src="/images/user.svg" alt="" />
+                  {liker.imageUrl ? (
+                    <img src={`/images/${liker.imageUrl}`} alt="" />
+                  ) : (
+                    <img src="/images/user.svg" alt="" />
+                  )}
                 </UserImage>
                 <UserInfo>
                   <h4>{liker.firstName + " " + liker.lastName}</h4>

@@ -39,8 +39,8 @@ const LeftPart = () => {
   const [experienceId, setExperienceId] = useState();
   const [reply, setReply] = useState("");
   const [replies, setReplies] = useState([]);
-  const [updateId, setUpdateId] = useState();
   const [commentId, setCommentId] = useState();
+  const [check, setCheck] = useState(false);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -51,6 +51,7 @@ const LeftPart = () => {
     switch (showModal) {
       case "open":
         setShowModal("close");
+        setCheck(true);
         break;
       case "close":
         setShowModal("open");
@@ -139,7 +140,17 @@ const LeftPart = () => {
     };
     axios
       .post(`https://localhost:44331/api/Post/AddCommentPost/${id}`, replyData)
-      .then((res) => console.log("handlereply", res))
+      .then((res) => {
+        axios
+          .get(
+            `https://localhost:44331/api/Post/GetRepliesOfComment/${commentId}`
+          )
+          .then((response) => {
+            setReplies(response.data);
+            //console.log(response.data);
+          })
+          .catch((error) => console.log(error));
+      })
       .catch((error) => console.log(error));
 
     setReply("");
@@ -203,9 +214,21 @@ const LeftPart = () => {
     const data = {
       userId: decoded.id,
     };
+
     axios
       .put(`https://localhost:44331/api/Post/LikePost/${postId}`, data)
-      .then((data) => console.log("like", data))
+      .then((res) => {
+        console.log("liked", res.data);
+        const newPosts = profilePosts.map((item) => {
+          console.log("item", item);
+          if (item.id == res.data.id) {
+            return res.data;
+          } else {
+            return item;
+          }
+        });
+        setProfilePosts(newPosts);
+      })
       .catch((error) => console.log(error));
   };
 
@@ -223,10 +246,21 @@ const LeftPart = () => {
         console.log(error);
       });
   };
+
+  const [checked, setChecked] = useState(false);
   useEffect(() => {
     getInfo();
+    if (checked) {
+      getInfo();
+    }
+  }, [checked]);
+
+  useEffect(() => {
     getPosts();
-  }, []);
+    if (check) {
+      getPosts();
+    }
+  }, [check]);
 
   const handleComment = (id) => {
     const commentData = {
@@ -239,7 +273,15 @@ const LeftPart = () => {
         `https://localhost:44331/api/Post/AddCommentPost/${id}`,
         commentData
       )
-      .then((res) => console.log(res))
+      .then((res) => {
+        axios
+          .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
+          .then((response) => {
+            setPostedComments(response.data);
+            //console.log(response.data);
+          })
+          .catch((error) => console.log(error));
+      })
       .catch((error) => console.log(error));
 
     setComment("");
@@ -252,6 +294,7 @@ const LeftPart = () => {
       .get(`https://localhost:44331/api/Post/GetCommentsOfPost/${id}`)
       .then((response) => {
         setPostedComments(response.data);
+
         //console.log(response.data);
       })
       .catch((error) => console.log(error));
@@ -310,7 +353,6 @@ const LeftPart = () => {
 
   useEffect(() => {
     getEducation();
-    getExperience();
   }, []);
   return (
     <>
@@ -318,8 +360,8 @@ const LeftPart = () => {
         <UserInfo>
           <CardBackground />
           <Photo>
-            {user && user.user.user.imageUrl ? (
-              <img src={user.user.user.imageUrl} />
+            {user.user.user.imageUrl ? (
+              <img src={`/images/${user.user.user.imageUrl}`} alt="" />
             ) : (
               <img src="/images/user.svg" alt="" />
             )}
@@ -343,6 +385,7 @@ const LeftPart = () => {
               <img
                 src="/images/edit-info.svg"
                 onClick={() => {
+                  setChecked(true);
                   setModalOpen(true);
                 }}
               />
@@ -399,7 +442,11 @@ const LeftPart = () => {
             <Article key={p.id}>
               <SharedActor>
                 <a>
-                  <img src={"/images/google.svg"} alt="" />
+                  {p.userImageUrl ? (
+                    <img src={`/images/${p.userImageUrl}`} alt="" />
+                  ) : (
+                    <img src="/images/user.svg" alt="" />
+                  )}
 
                   <div>
                     <span>{p.firstname + " " + p.lastname}</span>
@@ -520,7 +567,11 @@ const LeftPart = () => {
               >
                 <div className="postComment">
                   <div className="commentImage">
-                    <img src="/images/user.svg" alt="" />
+                    {user.user.user.imageUrl ? (
+                      <img src={`/images/${user.user.user.imageUrl}`} alt="" />
+                    ) : (
+                      <img src="/images/user.svg" alt="" />
+                    )}
                   </div>
                   <div className="comment">
                     <input
@@ -1006,7 +1057,7 @@ const Photo = styled.div`
   img {
     width: 160px;
     height: 160px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 50%;
   }
 `;
@@ -1180,6 +1231,7 @@ const SharedActor = styled.div`
     img {
       width: 48px;
       height: 48px;
+      object-fit: cover;
     }
 
     & > div {
